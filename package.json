@@ -1,11 +1,16 @@
 {
   "name": "onepass",
   "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
+  "author": "abhijithvijayan",
+  "description": "OnePass Password Manager",
   "private": true,
   "engines": {
     "node": ">= 8 <11"
+  },
+  "main": "app.js",
+  "scripts": {
+    "start": "node start.js",
+    "server": "nodemon ./start.js --ignore client/"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -30,13 +35,5 @@
     "passport-local": "^1.0.0",
     "passport-localapikey-update": "^0.6.0"
   },
-  "devDependencies": {},
-  "scripts": {
-    "start": "node start.js",
-    "server": "nodemon ./start.js --ignore client/",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
-  },
-  "author": "abhijithvijayan",
-  "license": "ISC"
+  "devDependencies": {}
 }
