@@ -87,3 +87,5 @@ variables.env
 
 # DynamoDB Local files
 .dynamodb/
+
+.vscode

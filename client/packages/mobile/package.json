@@ -1,12 +1,11 @@
 {
-  "name": "mobile",
+  "name": "@onepass/mobile",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "node ../../node_modules/react-native/local-cli/cli.js start --projectRoot ../../",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "bundle": "babel ./src --out-dir ./dist --copy-files",
     "bundle:android": "cd android && ./gradlew assembleRelease",
     "build:android": "react-native run-android --variant=release",
     "android-emulator": "emulator -avd Pixel2 -gpu on -memory 4096",

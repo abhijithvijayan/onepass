@@ -1,8 +1,5 @@
+*.jsbundle
 .DS_Store
-.env.development.local
-.env.local
-.env.production.local
-.env.test.local
 .history
 .jest
 .vscode

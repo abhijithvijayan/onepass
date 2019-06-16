@@ -1,10 +1,22 @@
 {
   "name": "onepass",
+  "version": "0.0.1",
   "private": true,
+  "author": "abhijithvijayan",
   "workspaces": {
     "packages": [
       "packages/*"
     ],
     "nohoist": []
+  },
+  "scripts": {
+    "clean": "yarn workspaces run clean",
+    "dev:mobile": "concurrently \"yarn workspace @onepass/mobile android\" \"yarn workspace @onepass/mobile start\"",
+    "dev:web": "yarn workspace @onepass/web start",
+    "studio": "yarn workspace @onepass/mobile studio",
+    "xcode": "yarn workspace @onepass/mobile xcode"
+  },
+  "devDependencies": {
+    "concurrently": "^4.1.0"
   }
 }
