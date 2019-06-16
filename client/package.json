@@ -7,10 +7,11 @@
     "packages": [
       "packages/*"
     ],
-    "nohoist": []
+    "nohoist": [
+      "**/react-native"
+    ]
   },
   "scripts": {
-    "clean": "yarn workspaces run clean",
     "dev:mobile": "concurrently \"yarn workspace @onepass/mobile android\" \"yarn workspace @onepass/mobile start\"",
     "dev:web": "yarn workspace @onepass/web start",
     "studio": "yarn workspace @onepass/mobile studio",
