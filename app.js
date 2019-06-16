@@ -1,7 +1,6 @@
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
-const expressValidator = require('express-validator');
 
 const routes = require('./server/routes');
 const errorHandlers = require('./server/handlers/errorHandlers');
@@ -15,8 +14,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
-
-app.use(expressValidator());
 
 app.use('/', routes);
 
