@@ -1,10 +1,12 @@
-const path = require('path');
+const morgan = require('morgan');
 const express = require('express');
 const bodyParser = require('body-parser');
+const path = require('path');
 
 const routes = require('./server/routes');
 const errorHandlers = require('./server/handlers/errorHandlers');
 
+const dev = process.env.NODE_ENV !== 'production';
 
 // create our Express app
 const app = express();
@@ -15,11 +17,16 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
+/* Logger */
+if (dev) {
+  app.use(morgan('dev'));
+}
+
 app.use('/', routes);
 
 app.use(errorHandlers.notFound);
 
-if (app.get('env') === 'development') {
+if (dev) {
   /* Development Error Handler - Prints stack trace */
   app.use(errorHandlers.developmentErrors);
 }
