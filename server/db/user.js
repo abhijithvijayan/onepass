@@ -11,6 +11,24 @@ exports.createUser = ({ email, password }) => {
             )
             .then(function (res) {
                 session.close();
+                const user = res.records[0].get('u').properties;              
+                return resolve(user);
+            })
+            .catch(err => reject(err));
+    })
+};
+
+exports.getUserDetails = ({ email }) => {
+    return new Promise((resolve, reject) => {
+        const session = driver.session();
+        session
+            .readTransaction(tx => 
+                tx.run(
+                    'MATCH (u:Users { email : $emailParam }) RETURN u', { emailParam: email }
+                )    
+            )
+            .then(function (res) {
+                session.close();
                 const user = res.records.length && res.records[0].get('u').properties;
                 return resolve(user);
             })
