@@ -39,7 +39,7 @@ exports.validateSignUpBody = (req, res, next) => {
 
 exports.emailVerificationCriterias = [
     validator
-      .param('email')
+      .query('email')
       .exists()
       .withMessage('Link doesn\'t contain an email address.')
       .isEmail()
@@ -47,7 +47,7 @@ exports.emailVerificationCriterias = [
       .trim()
       .normalizeEmail(),
     validator
-      .param('verificationToken')
+      .query('verificationToken')
       .exists()
       .withMessage('Link doesn\'t contain a valid verification token.')
 ];

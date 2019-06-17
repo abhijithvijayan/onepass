@@ -22,8 +22,8 @@ router.post('/api/v1/auth/signup',
     catchErrors(auth.signup)
 );
 router.get('/api/v1/auth/verify:email?:verificationToken?', 
-    // emailVerificationCriterias,
-    // validateVerificationEmailBody,
+    emailVerificationCriterias,
+    validateVerificationEmailBody,
     catchErrors(auth.verify),
     api.sendStatus
 );
