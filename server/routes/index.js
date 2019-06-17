@@ -12,7 +12,9 @@ const {
     emailVerificationCriterias,
     emailVerificationBody,
     resetPasswordFormCriterias,
-    resetPasswordFormBody
+    resetPasswordFormBody,
+    emailPasswordResetCriterias,
+    emailPasswordResetBody
 } = require('../controllers/validateBodyController');
 
 
@@ -38,7 +40,12 @@ router.post('/api/v1/auth/reset',
     catchErrors(auth.requestPasswordReset),
     api.sendStatus
 )
-
+/* Email - Password Reset */
+router.get('/api/v1/auth/reset:email?:passwordResetToken?',
+    emailPasswordResetCriterias,
+    emailPasswordResetBody,
+    api.sendStatus
+);
 
 
 module.exports = router;

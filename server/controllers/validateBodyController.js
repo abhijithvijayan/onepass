@@ -86,4 +86,29 @@ exports.resetPasswordFormBody = (req, res, next) => {
   return next();
 }
 
-// ToDo: Email - Reset Password Link
+/* Email - Password Reset Link */
+exports.emailPasswordResetCriterias = [
+  validator
+    .query('email')
+    .exists()
+    .withMessage('Link doesn\'t contain an email address.')
+    .isEmail()
+    .withMessage('Link doesn\'t contain a valid email address.')
+    .trim()
+    .normalizeEmail(),
+  validator
+    .query('passwordResetToken')
+    .exists()
+    .withMessage('Link doesn\'t contain a valid password reset token.')
+];
+
+exports.emailPasswordResetBody = (req, res, next) => {
+const errors = validationResult(req);
+if (!errors.isEmpty()) {
+  const errorsObj = errors.mapped();
+  const emailError = errorsObj.email && errorsObj.email.msg;  
+  const tokenError = errorsObj.passwordResetToken && errorsObj.passwordResetToken.msg;  
+  return res.status(400).json({ error: emailError || tokenError });
+}
+return next();
+}
