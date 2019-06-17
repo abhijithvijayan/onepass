@@ -14,7 +14,10 @@ const api = require('./api');
 router.get('/api/v1/', api.sendStatus);
 
 /* User and authentication routes */
-router.post('/api/v1/auth/signup', validationCriterias, validateBody, api.sendStatus);
+router.post('/api/v1/auth/signup', 
+    validationCriterias, 
+    validateBody,
+    catchErrors(auth.signup));
 // router.post('/api/v1/auth/login', validationCriterias, validateBody, auth.login);
 
 

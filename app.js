@@ -11,16 +11,16 @@ const dev = process.env.NODE_ENV !== 'production';
 // create our Express app
 const app = express();
 
+/* Logger */
+if (dev) {
+  app.use(morgan('dev'));
+}
+
 // Takes the raw requests and turns them into usable properties on req.body
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
-
-/* Logger */
-if (dev) {
-  app.use(morgan('dev'));
-}
 
 app.use('/', routes);
 
