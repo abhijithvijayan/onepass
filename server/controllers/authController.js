@@ -1,7 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 
-const { createUser, getUserDetails, verifyUser, requestResetPassword } = require('../db/user');
+const { createUser, 
+    getUserDetails, 
+    verifyUser, 
+    requestResetPassword,
+    validatePasswordRequest, 
+} = require('../db/user');
 
 /* Email Template and Options */
 const transporter = require('../mail/mail');
@@ -75,3 +80,17 @@ exports.requestPasswordReset = async (req, res) => {
     }
     return res.status(400).json({ error: "Couldn't send password reset email. Try again." });
 };
+
+/* Reset the passwordResetToken and timer */
+exports.resetPasswordValidation = async (req, res, next) => {
+    console.log(req.query);
+    const { email, passwordResetToken } = req.query;
+    const user = await validatePasswordRequest({ email, passwordResetToken });
+    if (user) {
+        // generate some new token for other api
+        return next();
+    }
+    return res.status(403).json({ error: 'Invalid email id or password reset token'});
+};
+
+// ToDo: changePassword method after resetting flags

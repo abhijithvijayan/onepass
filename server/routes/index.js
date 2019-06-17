@@ -24,13 +24,15 @@ router.get('/api/v1/', api.sendStatus);
 router.post('/api/v1/auth/signup', 
     signUpValidationCriterias, 
     signUpValidationBody,
-    catchErrors(auth.signup)
+    catchErrors(auth.signup),
+    // ToDo: alert to check mailbox
 );
 /* Email - Verification */
 router.get('/api/v1/auth/verify:email?:verificationToken?', 
     emailVerificationCriterias,
     emailVerificationBody,
     catchErrors(auth.verify),
+    // ToDo: alert email verified
     api.sendStatus
 );
 /* Forget Password Form submission */
@@ -38,12 +40,15 @@ router.post('/api/v1/auth/reset',
     resetPasswordFormCriterias,
     resetPasswordFormBody,
     catchErrors(auth.requestPasswordReset),
+    // ToDo: alert to check mailbox
     api.sendStatus
 )
 /* Email - Password Reset */
 router.get('/api/v1/auth/reset:email?:passwordResetToken?',
     emailPasswordResetCriterias,
     emailPasswordResetBody,
+    catchErrors(auth.resetPasswordValidation),
+    // ToDo: change password action
     api.sendStatus
 );
 

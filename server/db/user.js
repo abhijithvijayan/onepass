@@ -60,16 +60,35 @@ exports.requestResetPassword = ({ email }) => {
     return new Promise((resolve, reject) => {
         const session = driver.session();
         const passwordResetToken = nanoid(40);
-        const timeOfExpiry = Date.now() + 3600000;
+        const passwordResetExpires = Date.now() + 3600000;
         session
             .writeTransaction(tx =>
                 tx.run(
-                    'MATCH (u:Users { email: $emailParam }) SET u.passwordResetToken = $passwordResetTokenParam, u.passwordResetExpires = $passwordResetExpiresParam RETURN u', { emailParam: email, passwordResetTokenParam : passwordResetToken, passwordResetExpiresParam: timeOfExpiry }
+                    'MATCH (u:Users { email: $emailParam }) SET u.passwordResetToken = $passwordResetTokenParam, u.passwordResetExpires = $passwordResetExpiresParam RETURN u', { emailParam: email, passwordResetTokenParam : passwordResetToken, passwordResetExpiresParam: passwordResetExpires }
                 )    
             )
             .then(function (res) {
                 session.close();
                 const user = res.records.length && res.records[0].get('u').properties;
+                return resolve(user);
+            })
+            .catch(err => reject(err));
+    })
+};
+
+exports.validatePasswordRequest = ({ email, passwordResetToken }) => {
+    return new Promise((resolve, reject) => {
+        const session = driver.session();
+        session
+            .writeTransaction(tx =>
+                tx.run(
+                    'MATCH (u:Users) WHERE u.email = $emailParam AND u.passwordResetToken = $passwordResetTokenParam AND u.passwordResetExpires > $currentTime SET u.passwordResetToken = NULL, u.passwordResetExpires = NULL RETURN u', { emailParam: email, passwordResetTokenParam: passwordResetToken, currentTime: Date.now() }
+                )
+            )
+            .then(function (res) {
+                session.close();
+                const user = res.records.length && res.records[0].get('u').properties;
+                console.log(user);
                 return resolve(user);
             })
             .catch(err => reject(err));
