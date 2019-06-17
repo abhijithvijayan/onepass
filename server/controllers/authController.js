@@ -1,4 +1,16 @@
+const fs = require('fs');
+const path = require('path');
+
 const { createUser, getUserDetails, verifyUser } = require('../db/user');
+
+/* Email Template and Options */
+const transporter = require('../mail/mail');
+const { verifyMailText } = require('../mail/text');
+const verifyEmailTemplatePath = path.join(__dirname, '../mail/template-verify.html');
+const verifyEmailTemplate = fs
+  .readFileSync(verifyEmailTemplatePath, { encoding: 'utf-8' })
+  .replace(/{{domain}}/gm, process.env.DEFAULT_DOMAIN);
+
 
 exports.signup = async (req, res) => {
     const { email, password } = req.body;
@@ -13,8 +25,19 @@ exports.signup = async (req, res) => {
         return res.status(403).json({ error: 'This email is already registered'});
     }
     const newUser = await createUser({ email, password });
-    return res.status(200).json({ status: 'Registered successfully', verified: newUser.isVerified });
-    /* ToDo: send a verification token and link to email */
+    /* Handle Verification email */
+    const text = verifyMailText.replace(/{{domain}}/gim, process.env.DEFAULT_DOMAIN);
+    const mail = await transporter.sendMail({
+        from: process.env.MAIL_FROM || process.env.MAIL_USER,
+        to: newUser.email,
+        subject: 'Verify your OnePass account',
+        text: text.replace(/{{verification}}/gim, `api/v1/auth/verify?email=${newUser.email}&verificationToken=${newUser.verificationToken}`),
+        html: verifyEmailTemplate.replace(/{{verification}}/gim, `api/v1/auth/verify?email=${newUser.email}&verificationToken=${newUser.verificationToken}`),
+    });
+    if (mail.accepted.length) {
+        return res.status(201).json({ email, message: 'Verification email has been sent.' });
+    }
+    return res.status(400).json({ error: "Couldn't send verification email. Try again." });
 };
 
 exports.verify = async (req, res, next) => {
