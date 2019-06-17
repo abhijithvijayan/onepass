@@ -2,7 +2,7 @@ const validator = require('express-validator/check');
 const { validationResult } = require('express-validator/check');
 
 
-exports.validationCriterias = [
+exports.signUpValidationCriterias = [
     validator
       .body('email')
       .exists()
@@ -24,7 +24,7 @@ exports.validationCriterias = [
     //   .custom((value, { req }) => (value === req.body.password)),
 ];
 
-exports.validateBody = (req, res, next) => {
+exports.validateSignUpBody = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const errorsObj = errors.mapped();
@@ -36,3 +36,29 @@ exports.validateBody = (req, res, next) => {
   }
   return next();
 };
+
+exports.emailVerificationCriterias = [
+    validator
+      .param('email')
+      .exists()
+      .withMessage('Link doesn\'t contain an email address.')
+      .isEmail()
+      .withMessage('Link doesn\'t contain a valid email address.')
+      .trim()
+      .normalizeEmail(),
+    validator
+      .param('verificationToken')
+      .exists()
+      .withMessage('Link doesn\'t contain a valid verification token.')
+];
+
+exports.validateVerificationEmailBody = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorsObj = errors.mapped();
+    const emailError = errorsObj.email && errorsObj.email.msg;  
+    const tokenError = errorsObj.verificationToken && errorsObj.verificationToken.msg;  
+    return res.status(400).json({ error: emailError || tokenError });
+  }
+  return next();
+}

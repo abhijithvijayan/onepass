@@ -6,8 +6,10 @@ const { catchErrors } = require('../handlers/errorHandlers');
 const user = require('../controllers/userController');
 const auth = require('../controllers/authController');
 const { 
-    validationCriterias,
-    validateBody
+    signUpValidationCriterias,
+    validateSignUpBody,
+    emailVerificationCriterias,
+    validateVerificationEmailBody
 } = require('../controllers/validateBodyController');
 const api = require('./api');
 
@@ -15,10 +17,16 @@ router.get('/api/v1/', api.sendStatus);
 
 /* User and authentication routes */
 router.post('/api/v1/auth/signup', 
-    validationCriterias, 
-    validateBody,
-    catchErrors(auth.signup));
-// router.post('/api/v1/auth/login', validationCriterias, validateBody, auth.login);
+    signUpValidationCriterias, 
+    validateSignUpBody,
+    catchErrors(auth.signup)
+);
+router.get('/api/v1/auth/verify:email?:verificationToken?', 
+    // emailVerificationCriterias,
+    // validateVerificationEmailBody,
+    catchErrors(auth.verify),
+    api.sendStatus
+);
 
 
 

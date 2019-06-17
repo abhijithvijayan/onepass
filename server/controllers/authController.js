@@ -1,4 +1,4 @@
-const { createUser, getUserDetails } = require('../db/user');
+const { createUser, getUserDetails, verifyUser } = require('../db/user');
 
 exports.signup = async (req, res) => {
     const { email, password } = req.body;
@@ -15,4 +15,14 @@ exports.signup = async (req, res) => {
     const newUser = await createUser({ email, password });
     return res.status(200).json({ status: 'Registered successfully', verified: newUser.isVerified });
     /* ToDo: send a verification token and link to email */
+};
+
+exports.verify = async (req, res, next) => {
+    const { verificationToken = '', email = '' } = req.query;
+    const user = await verifyUser({ email, verificationToken });
+    if (user) {
+        // generate some new token for other api
+        return next();
+    }
+    return res.status(403).json({ error: 'Invalid email id or verification code'});
 };

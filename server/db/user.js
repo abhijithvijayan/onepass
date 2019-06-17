@@ -13,8 +13,7 @@ exports.createUser = ({ email, password }) => {
             )
             .then(function (res) {
                 session.close();
-                const user = res.records[0].get('u').properties;
-                console.log(user);              
+                const user = res.records[0].get('u').properties;          
                 return resolve(user);
             })
             .catch(err => reject(err));
@@ -29,6 +28,24 @@ exports.getUserDetails = ({ email }) => {
                 tx.run(
                     'MATCH (u:Users { email : $emailParam }) RETURN u', { emailParam: email }
                 )    
+            )
+            .then(function (res) {
+                session.close();
+                const user = res.records.length && res.records[0].get('u').properties;
+                return resolve(user);
+            })
+            .catch(err => reject(err));
+    })
+};
+
+exports.verifyUser = ( { email, verificationToken }) => {
+    return new Promise((resolve, reject) => {
+        const session = driver.session();
+        session
+            .writeTransaction(tx => 
+                tx.run(
+                    'MATCH (u:Users { email: $emailParam, verificationToken: $verificationTokenParam }) SET u.isVerified = true, u.verificationToken = NULL RETURN u', { emailParam: email, verificationTokenParam: verificationToken }
+                )
             )
             .then(function (res) {
                 session.close();
