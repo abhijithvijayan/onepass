@@ -24,6 +24,7 @@
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.11",
     "morgan": "^1.9.1",
+    "nanoid": "^2.0.3",
     "neo4j-driver": "^1.7.5",
     "node-cron": "^2.0.3",
     "node-forge": "^0.8.4",

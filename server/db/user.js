@@ -1,17 +1,20 @@
 const driver = require('./neo4j');
+const nanoid = require('nanoid');
 
 exports.createUser = ({ email, password }) => {
     return new Promise((resolve, reject) => {
         const session = driver.session();
+        const verificationToken = nanoid(40);
         session
             .writeTransaction(tx =>
                 tx.run(
-                    'MERGE (u:Users { email : $emailParam }) SET u.password = $passwordParam, u.isVerified = $isVerifiedParam, u.createdAt= $createdAtParam  RETURN u', { emailParam: email, passwordParam: password, isVerifiedParam: false, createdAtParam: new Date().toJSON() }
+                    'MERGE (u:Users { email : $emailParam }) SET u.password = $passwordParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.createdAt= $createdAtParam  RETURN u', { emailParam: email, passwordParam: password, verificationTokenParam: verificationToken, isVerifiedParam: false, createdAtParam: new Date().toJSON() }
                 )
             )
             .then(function (res) {
                 session.close();
-                const user = res.records[0].get('u').properties;              
+                const user = res.records[0].get('u').properties;
+                console.log(user);              
                 return resolve(user);
             })
             .catch(err => reject(err));
