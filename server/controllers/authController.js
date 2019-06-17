@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const { createUser, getUserDetails, verifyUser } = require('../db/user');
+const { createUser, getUserDetails, verifyUser, requestResetPassword } = require('../db/user');
 
 /* Email Template and Options */
 const transporter = require('../mail/mail');
@@ -48,4 +48,13 @@ exports.verify = async (req, res, next) => {
         return next();
     }
     return res.status(403).json({ error: 'Invalid email id or verification code'});
+};
+
+exports.requestPasswordReset = async (req, res) => {
+    const email = req.body.email;
+    const user = await requestResetPassword({ email });
+    if (!user) {
+        return res.status(400).json({ error: "No account found for this email." });
+    }
+    return res.status(200).json({ status: "Password Reset Token generated" });
 };

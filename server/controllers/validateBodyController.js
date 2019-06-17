@@ -1,7 +1,7 @@
 const validator = require('express-validator/check');
 const { validationResult } = require('express-validator/check');
 
-
+/* SignUp Form */
 exports.signUpValidationCriterias = [
     validator
       .body('email')
@@ -24,7 +24,7 @@ exports.signUpValidationCriterias = [
     //   .custom((value, { req }) => (value === req.body.password)),
 ];
 
-exports.validateSignUpBody = (req, res, next) => {
+exports.signUpValidationBody = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const errorsObj = errors.mapped();
@@ -37,6 +37,7 @@ exports.validateSignUpBody = (req, res, next) => {
   return next();
 };
 
+/* Email - Verification Link */
 exports.emailVerificationCriterias = [
     validator
       .query('email')
@@ -52,7 +53,7 @@ exports.emailVerificationCriterias = [
       .withMessage('Link doesn\'t contain a valid verification token.')
 ];
 
-exports.validateVerificationEmailBody = (req, res, next) => {
+exports.emailVerificationBody = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const errorsObj = errors.mapped();
@@ -62,3 +63,27 @@ exports.validateVerificationEmailBody = (req, res, next) => {
   }
   return next();
 }
+
+/* Forget Password Form */
+exports.resetPasswordFormCriterias = [
+  validator
+    .body('email')
+    .exists()
+    .withMessage('You must provide a valid email address.')
+    .isEmail()
+    .withMessage('Email address you entered is not valid.')
+    .trim()
+    .normalizeEmail(),
+];
+
+exports.resetPasswordFormBody = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorsObj = errors.mapped();
+    const emailError = errorsObj.email && errorsObj.email.msg;  
+    return res.status(400).json({ error: emailError });
+  }
+  return next();
+}
+
+// ToDo: Email - Reset Password Link

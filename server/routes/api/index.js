@@ -1,3 +1,3 @@
 exports.sendStatus = (req, res) => {
-    res.json({ status: 200 });
+    res.status(200).json({ status: 'OK' });
 }
