@@ -5,11 +5,16 @@ const { createUser, getUserDetails, verifyUser, requestResetPassword } = require
 
 /* Email Template and Options */
 const transporter = require('../mail/mail');
-const { verifyMailText } = require('../mail/text');
+const { verifyMailText, resetMailText } = require('../mail/text');
 const verifyEmailTemplatePath = path.join(__dirname, '../mail/template-verify.html');
 const verifyEmailTemplate = fs
   .readFileSync(verifyEmailTemplatePath, { encoding: 'utf-8' })
   .replace(/{{domain}}/gm, process.env.DEFAULT_DOMAIN);
+const resetEmailTemplatePath = path.join(__dirname, '../mail/template-reset.html');
+const resetEmailTemplate = fs
+  .readFileSync(resetEmailTemplatePath, { encoding: 'utf-8' })
+  .replace(/{{domain}}/gm, process.env.DEFAULT_DOMAIN);
+
 
 
 exports.signup = async (req, res) => {
@@ -56,5 +61,17 @@ exports.requestPasswordReset = async (req, res) => {
     if (!user) {
         return res.status(400).json({ error: "No account found for this email." });
     }
-    return res.status(200).json({ status: "Password Reset Token generated" });
+    /* Handle Password Reset email */
+    const text = resetMailText.replace(/{{domain}}/gim, process.env.DEFAULT_DOMAIN);
+    const mail = await transporter.sendMail({
+        from: process.env.MAIL_FROM || process.env.MAIL_USER,
+        to: user.email,
+        subject: 'Reset your OnePass Master Password',
+        text: text.replace(/{{reset}}/gim, `api/v1/auth/reset?email=${user.email}&passwordResetToken=${user.passwordResetToken}`),
+        html: resetEmailTemplate.replace(/{{reset}}/gim, `api/v1/auth/reset?email=${user.email}&passwordResetToken=${user.passwordResetToken}`),
+    });
+    if (mail.accepted.length) {
+        return res.status(201).json({ email, message: 'Password reset email has been sent.' });
+    }
+    return res.status(400).json({ error: "Couldn't send password reset email. Try again." });
 };
