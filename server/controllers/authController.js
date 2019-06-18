@@ -86,7 +86,7 @@ exports.login = (req, res) => {
         if (user && !user.isVerified) {
             return res.status(400).json({
               error:
-                'Your email address is not verified. Check you email or Sign Up again to get the verification link',
+                'Your email address is not verified. Please check you mailbox or Sign Up again to get the verification link',
             });
         }
         req.login(user, { session: false }, (err) => {

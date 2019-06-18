@@ -156,3 +156,21 @@ exports.changePasswordBody = (req, res, next) => {
   }
   return next();
 };
+
+exports.createPasswordEntryCriterias = [
+  validator
+    .body('sitename', 'Sitename should be less than 1024 character')
+    .exists()
+    .withMessage('A sitename is required for the entry.')
+    .isLength({ max: 1024 }),
+];
+
+exports.createPasswordEntryBody = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorsObj = errors.mapped();
+    const sitenameError = errorsObj.sitename && errorsObj.sitename.msg;
+    return res.status(400).json({ error: sitenameError });
+  }
+  return next();
+};

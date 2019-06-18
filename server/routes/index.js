@@ -5,6 +5,7 @@ const router = express.Router();
 const api = require('./api');
 const { catchErrors } = require('../handlers/errorHandlers');
 const auth = require('../controllers/authController');
+const vault = require('../controllers/vaultController');
 const { 
     signUpValidationCriterias,
     signUpValidationBody,
@@ -18,8 +19,9 @@ const {
     emailPasswordResetBody,
     changePasswordCriterias,
     changePasswordBody,
+    createPasswordEntryCriterias,
+    createPasswordEntryBody,
 } = require('../controllers/validateBodyController');
-
 
 router.get('/api/v1/', api.sendStatus);
 
@@ -63,7 +65,7 @@ router.get('/api/v1/auth/reset:email?:passwordResetToken?',
     emailPasswordResetBody,
     // middleware
     catchErrors(auth.resetPasswordValidation),
-    // ToDo: change password action
+    // ToDo: change password action (redo encryption of every password collection)
     api.sendStatus
 );
 router.post('/api/v1/auth/updatePassword',
@@ -72,5 +74,17 @@ router.post('/api/v1/auth/updatePassword',
     // ToDo: Change password
     api.sendStatus
 );
+
+/* ---------------------------------------- */
+/* --------- Vault Archive Routes --------- */
+/* ---------------------------------------- */
+
+router.post('/api/v1/vault/createPasswordEntry',
+    createPasswordEntryCriterias,
+    createPasswordEntryBody,
+    catchErrors(vault.createPasswordEntry),
+    api.sendStatus
+);
+
 
 module.exports = router;

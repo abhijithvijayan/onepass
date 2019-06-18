@@ -11,8 +11,17 @@ exports.createUser = ({ email, password }) => {
         const verificationToken = nanoid(40);
         session
             .writeTransaction(tx =>
+                // ToDo: Refactor this for scalability
+                // Current: create user and password collection and relate them
                 tx.run(
-                    'MERGE (u:Users { email : $emailParam }) SET u.password = $passwordParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.createdAt= $createdAtParam  RETURN u', { emailParam: email, passwordParam: hash, verificationTokenParam: verificationToken, isVerifiedParam: false, createdAtParam: new Date().toJSON() }
+                    'MERGE (u:User { email : $emailParam }) SET u.password = $passwordParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.createdAt= $createdAtParam MERGE(p: PasswordCollection { email: $emailParam }) CREATE (u)-[:PASSWORDS]->(p) RETURN u', 
+                    { 
+                        emailParam: email, 
+                        passwordParam: hash, 
+                        verificationTokenParam: verificationToken, 
+                        isVerifiedParam: false, 
+                        createdAtParam: new Date().toJSON() 
+                    }
                 )
             )
             .then(function (res) {
@@ -30,7 +39,7 @@ exports.getUserDetails = ({ email }) => {
         session
             .readTransaction(tx => 
                 tx.run(
-                    'MATCH (u:Users { email : $emailParam }) RETURN u', { emailParam: email }
+                    'MATCH (u:User { email : $emailParam }) RETURN u', { emailParam: email }
                 )    
             )
             .then(function (res) {
@@ -48,7 +57,7 @@ exports.verifyUser = ({ email, verificationToken }) => {
         session
             .writeTransaction(tx => 
                 tx.run(
-                    'MATCH (u:Users { email: $emailParam, verificationToken: $verificationTokenParam }) SET u.isVerified = true, u.verificationToken = NULL RETURN u', { emailParam: email, verificationTokenParam: verificationToken }
+                    'MATCH (u:User { email: $emailParam, verificationToken: $verificationTokenParam }) SET u.isVerified = true, u.verificationToken = NULL RETURN u', { emailParam: email, verificationTokenParam: verificationToken }
                 )
             )
             .then(function (res) {
@@ -68,7 +77,7 @@ exports.requestResetPassword = ({ email }) => {
         session
             .writeTransaction(tx =>
                 tx.run(
-                    'MATCH (u:Users { email: $emailParam }) SET u.passwordResetToken = $passwordResetTokenParam, u.passwordResetExpires = $passwordResetExpiresParam RETURN u', { emailParam: email, passwordResetTokenParam : passwordResetToken, passwordResetExpiresParam: passwordResetExpires }
+                    'MATCH (u:User { email: $emailParam }) SET u.passwordResetToken = $passwordResetTokenParam, u.passwordResetExpires = $passwordResetExpiresParam RETURN u', { emailParam: email, passwordResetTokenParam : passwordResetToken, passwordResetExpiresParam: passwordResetExpires }
                 )    
             )
             .then(function (res) {
@@ -86,7 +95,7 @@ exports.validatePasswordRequest = ({ email, passwordResetToken }) => {
         session
             .writeTransaction(tx =>
                 tx.run(
-                    'MATCH (u:Users) WHERE u.email = $emailParam AND u.passwordResetToken = $passwordResetTokenParam AND u.passwordResetExpires > $currentTime SET u.passwordResetToken = NULL, u.passwordResetExpires = NULL RETURN u', { emailParam: email, passwordResetTokenParam: passwordResetToken, currentTime: Date.now() }
+                    'MATCH (u:User) WHERE u.email = $emailParam AND u.passwordResetToken = $passwordResetTokenParam AND u.passwordResetExpires > $currentTime SET u.passwordResetToken = NULL, u.passwordResetExpires = NULL RETURN u', { emailParam: email, passwordResetTokenParam: passwordResetToken, currentTime: Date.now() }
                 )
             )
             .then(function (res) {
