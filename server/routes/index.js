@@ -38,7 +38,8 @@ router.post('/api/v1/auth/signup',
 router.post('/api/v1/auth/login',
     loginValidationCriterias,
     loginValidationBody,
-    api.sendStatus
+    auth.login,
+    // api.sendStatus
 );
 /* Email - Verification */
 router.get('/api/v1/auth/verify:email?:verificationToken?', 

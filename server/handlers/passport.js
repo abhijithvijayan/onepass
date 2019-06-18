@@ -1,0 +1,57 @@
+const bcrypt = require('bcryptjs');
+const passport = require('passport');
+const { ExtractJwt } = require('passport-jwt');
+const JwtStrategy = require('passport-jwt').Strategy;
+const LocalStrategy = require('passport-local').Strategy;
+
+const { getUserDetails } = require('../db/user.js');
+
+const localPassportOptions = {
+    usernameField: 'email',
+};
+
+passport.use(
+    new LocalStrategy(localPassportOptions, async (email, password, cb) => {
+        try {
+            // find user from db
+            const user = await getUserDetails({ email });
+            if (!user) {
+              return cb(null, false, { message: "Incorrect email or password."});
+            }
+            // bcrypt auth
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                return cb(null, false, {
+                    message: 'Incorrect Master Password, Please try again.'
+                });
+            }
+            // successfull
+            return cb(null, user, {
+                message: 'Logged In Successfully'
+            });
+        }
+        catch (err) {
+            return cb(err);
+        }      
+    }
+));
+
+const jwtPassportOptions = {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: process.env.JWT_SECRET,
+};
+  
+passport.use(
+    new JwtStrategy(jwtPassportOptions, async (payload, cb) => {
+        try {
+            //find the user in db if needed
+            const user = await getUserDetails({ email: payload.id });
+            if (!user) {
+                return cb(null, false);
+            }    
+            return cb(null, user);
+        } catch (err) {
+            return cb(err);
+        }
+    }
+));

@@ -1,5 +1,7 @@
 const fs = require('fs');
 const path = require('path');
+const JWT = require('jsonwebtoken');
+const passport = require('passport');
 
 const { createUser, 
     getUserDetails, 
@@ -21,6 +23,17 @@ const resetEmailTemplate = fs
   .replace(/{{domain}}/gm, process.env.DEFAULT_DOMAIN);
 
 
+/* Function to generate JWT Token */
+const signToken = user =>
+    JWT.sign(
+    {
+        iss: 'ApiAuth',
+        id: user.email,
+        iat: new Date().getTime(),
+        exp: new Date().setDate(new Date().getDate() + 7),
+    },
+    process.env.JWT_SECRET
+);
 
 exports.signup = async (req, res) => {
     const { email, password } = req.body;
@@ -49,6 +62,32 @@ exports.signup = async (req, res) => {
     }
     return res.status(400).json({ error: "Couldn't send verification email. Try again." });
 };
+
+exports.login = (req, res) => {
+    passport.authenticate('local', { session: false }, (err, user, info) => {
+        if (err || !user) {
+            return res.status(400).json({
+                user,
+                message: info ? info.message : 'Login failed'
+            });
+        }
+        if (user && !user.isVerified) {
+            return res.status(400).json({
+              error:
+                'Your email address is not verified. Check you email or Sign Up again to get the verification link',
+            });
+        }
+        req.login(user, { session: false }, (err) => {
+            if (err) {
+                res.send(err);
+            }
+            // generate token and return it
+            const token = signToken(user);
+            return res.status(200).json({ user, token });
+        });
+    })
+    (req, res);
+}
 
 exports.verify = async (req, res, next) => {
     const { verificationToken = '', email = '' } = req.query;

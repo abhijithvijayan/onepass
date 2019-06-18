@@ -1,14 +1,18 @@
-const driver = require('./neo4j');
 const nanoid = require('nanoid');
+const bcrypt = require('bcryptjs');
+
+const driver = require('./neo4j');
 
 exports.createUser = ({ email, password }) => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         const session = driver.session();
+        const salt = await bcrypt.genSalt(13);
+        const hash = await bcrypt.hash(password, salt);
         const verificationToken = nanoid(40);
         session
             .writeTransaction(tx =>
                 tx.run(
-                    'MERGE (u:Users { email : $emailParam }) SET u.password = $passwordParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.createdAt= $createdAtParam  RETURN u', { emailParam: email, passwordParam: password, verificationTokenParam: verificationToken, isVerifiedParam: false, createdAtParam: new Date().toJSON() }
+                    'MERGE (u:Users { email : $emailParam }) SET u.password = $passwordParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.createdAt= $createdAtParam  RETURN u', { emailParam: email, passwordParam: hash, verificationTokenParam: verificationToken, isVerifiedParam: false, createdAtParam: new Date().toJSON() }
                 )
             )
             .then(function (res) {
