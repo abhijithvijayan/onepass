@@ -8,23 +8,37 @@ const auth = require('../controllers/authController');
 const { 
     signUpValidationCriterias,
     signUpValidationBody,
+    loginValidationCriterias,
+    loginValidationBody,
     emailVerificationCriterias,
     emailVerificationBody,
     resetPasswordFormCriterias,
     resetPasswordFormBody,
     emailPasswordResetCriterias,
-    emailPasswordResetBody
+    emailPasswordResetBody,
+    changePasswordCriterias,
+    changePasswordBody,
 } = require('../controllers/validateBodyController');
 
 
 router.get('/api/v1/', api.sendStatus);
 
-/* User and authentication routes */
+/* ---------------------------------------- */
+/* ---- User and Authentication routes ---- */
+/* ---------------------------------------- */
+
+/* User Signup */
 router.post('/api/v1/auth/signup', 
     signUpValidationCriterias, 
     signUpValidationBody,
     catchErrors(auth.signup),
     // ToDo: alert to check mailbox
+);
+/* User Login */
+router.post('/api/v1/auth/login',
+    loginValidationCriterias,
+    loginValidationBody,
+    api.sendStatus
 );
 /* Email - Verification */
 router.get('/api/v1/auth/verify:email?:verificationToken?', 
@@ -50,6 +64,11 @@ router.get('/api/v1/auth/reset:email?:passwordResetToken?',
     // ToDo: change password action
     api.sendStatus
 );
-
+router.post('/api/v1/auth/updatePassword',
+    changePasswordCriterias,
+    changePasswordBody,
+    // ToDo: Change password
+    api.sendStatus
+);
 
 module.exports = router;

@@ -110,3 +110,49 @@ if (!errors.isEmpty()) {
 }
 return next();
 }
+
+/* Login Form */
+exports.loginValidationCriterias = [
+  validator
+    .body('email')
+    .exists()
+    .withMessage('You must provide a valid email address.')
+    .isEmail()
+    .withMessage('Email address you entered is not valid.')
+    .trim()
+    .normalizeEmail(),
+  validator
+    .body('password', 'Master Password is at least 8 chars long.')
+    .exists()
+    .withMessage('You must supply your OnePass Master Password.')
+    .isLength({ min: 8 }),
+];
+
+exports.loginValidationBody = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorsObj = errors.mapped();
+    const emailError = errorsObj.email && errorsObj.email.msg;
+    const passwordError = errorsObj.password && errorsObj.password.msg;
+    return res.status(400).json({ error: emailError || passwordError });
+  }
+  return next();
+};
+
+exports.changePasswordCriterias = [
+  validator
+    .body('password', 'New Master Password should be at least 8 chars long.')
+    .exists()
+    .withMessage('You must supply a new OnePass Master Password.')
+    .isLength({ min: 8 }),
+];
+
+exports.changePasswordBody = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorsObj = errors.mapped();
+    const passwordError = errorsObj.password && errorsObj.password.msg;
+    return res.status(400).json({ error: passwordError });
+  }
+  return next();
+};
