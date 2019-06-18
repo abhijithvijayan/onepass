@@ -30,9 +30,8 @@ const genToken = user =>
         iss: 'ApiAuth',
         id: user.email,
         iat: new Date().getTime(),
-        exp: new Date().setDate(new Date().getDate() + 7),
     },
-    process.env.JWT_SECRET
+    process.env.JWT_SECRET, { expiresIn: '1h' }
 );
 
 exports.signup = async (req, res) => {
