@@ -4,7 +4,6 @@ const router = express.Router();
 
 const api = require('./api');
 const { catchErrors } = require('../handlers/errorHandlers');
-const user = require('../controllers/userController');
 const auth = require('../controllers/authController');
 const { 
     signUpValidationCriterias,

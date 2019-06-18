@@ -16,12 +16,11 @@ exports.signUpValidationCriterias = [
       .exists()
       .withMessage('You must supply a secure Master Password.')
       .isLength({ min: 8 }),
-    // ToDo: Ignore the confirm password validation on login
-    // validator
-    //   .body('confirmPassword', 'Passwords do not match')
-    //   .exists()
-    //   .withMessage('You must confirm the Master Password')
-    //   .custom((value, { req }) => (value === req.body.password)),
+    validator
+      .body('confirmPassword', 'Passwords do not match')
+      .exists()
+      .withMessage('You must confirm the Master Password')
+      .custom((value, { req }) => (value === req.body.password)),
 ];
 
 exports.signUpValidationBody = (req, res, next) => {
@@ -30,9 +29,8 @@ exports.signUpValidationBody = (req, res, next) => {
     const errorsObj = errors.mapped();
     const emailError = errorsObj.email && errorsObj.email.msg;
     const passwordError = errorsObj.password && errorsObj.password.msg;
-    // ToDo: return the error
-    // const confirmPasswordError = errorsObj.confirmPassword && errorsObj.confirmPassword.msg;
-    return res.status(400).json({ error: emailError || passwordError });
+    const confirmPasswordError = errorsObj.confirmPassword && errorsObj.confirmPassword.msg;
+    return res.status(400).json({ error: emailError || passwordError || confirmPasswordError });
   }
   return next();
 };
