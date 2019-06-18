@@ -8,13 +8,11 @@ exports.createUser = ({ email, password }) => {
         const session = driver.session();
         const salt = await bcrypt.genSalt(12);
         const passwordHash = await bcrypt.hash(password, salt);
-        const emailHash = await bcrypt.hash(email, salt);
         const verificationToken = nanoid(40);
         session
             .writeTransaction(tx =>
-                // ToDo: Refactor this : use unique key as param instead of email, encrypt email too
                 tx.run(
-                    'MERGE (u:User { email : $emailParam }) SET u.password = $passwordParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.createdAt= $createdAtParam RETURN u', 
+                    'MERGE (u:User { email : $emailParam }) SET u.password = $passwordParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.createdAt= $createdAtParam RETURN u, id(u) as nodeId', 
                     { 
                         emailParam: email, 
                         passwordParam: passwordHash, 
@@ -26,8 +24,13 @@ exports.createUser = ({ email, password }) => {
             )
             .then(function (res) {
                 session.close();
-                const user = res.records[0].get('u').properties;          
-                return resolve(user);
+                const user = res.records[0].get('u').properties;   
+                console.log('id ',res.records[0].get('nodeId').low);       
+                // console.log(user);
+                return resolve({
+                    ...user,
+                    nodeId: res.records[0].get('nodeId').low,
+                });
             })
             .catch(err => reject(err));
     })
