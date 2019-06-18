@@ -24,7 +24,7 @@ const resetEmailTemplate = fs
 
 
 /* Function to generate JWT Token */
-const signToken = user =>
+const genToken = user =>
     JWT.sign(
     {
         iss: 'ApiAuth',
@@ -63,6 +63,18 @@ exports.signup = async (req, res) => {
     return res.status(400).json({ error: "Couldn't send verification email. Try again." });
 };
 
+exports.verify = async (req, res, next) => {
+    const { verificationToken = '', email = '' } = req.query;
+    const user = await verifyUser({ email, verificationToken });
+    if (user) {
+        // generate some new token for other api request after this
+        const token = genToken(user);
+        req.user = { token };
+        return next();
+    }
+    return res.status(403).json({ error: 'Invalid email id or verification code'});
+};
+
 exports.login = (req, res) => {
     passport.authenticate('local', { session: false }, (err, user, info) => {
         if (err || !user) {
@@ -82,22 +94,12 @@ exports.login = (req, res) => {
                 res.send(err);
             }
             // generate token and return it
-            const token = signToken(user);
-            return res.status(200).json({ user, token });
+            const token = genToken(user);
+            return res.status(200).json({ token });
         });
     })
     (req, res);
 }
-
-exports.verify = async (req, res, next) => {
-    const { verificationToken = '', email = '' } = req.query;
-    const user = await verifyUser({ email, verificationToken });
-    if (user) {
-        // generate some new token for other api
-        return next();
-    }
-    return res.status(403).json({ error: 'Invalid email id or verification code'});
-};
 
 exports.requestPasswordReset = async (req, res) => {
     const email = req.body.email;
@@ -122,11 +124,12 @@ exports.requestPasswordReset = async (req, res) => {
 
 /* Reset the passwordResetToken and timer */
 exports.resetPasswordValidation = async (req, res, next) => {
-    console.log(req.query);
     const { email, passwordResetToken } = req.query;
     const user = await validatePasswordRequest({ email, passwordResetToken });
     if (user) {
-        // generate some new token for other api
+        // generate some new token for other api after this middleware
+        const token = genToken(user);
+        req.user = { token };
         return next();
     }
     return res.status(403).json({ error: 'Invalid email id or password reset token'});

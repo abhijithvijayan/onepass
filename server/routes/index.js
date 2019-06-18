@@ -39,12 +39,12 @@ router.post('/api/v1/auth/login',
     loginValidationCriterias,
     loginValidationBody,
     auth.login,
-    // api.sendStatus
 );
 /* Email - Verification */
 router.get('/api/v1/auth/verify:email?:verificationToken?', 
     emailVerificationCriterias,
     emailVerificationBody,
+    // middleware
     catchErrors(auth.verify),
     // ToDo: alert email verified
     api.sendStatus
@@ -61,6 +61,7 @@ router.post('/api/v1/auth/reset',
 router.get('/api/v1/auth/reset:email?:passwordResetToken?',
     emailPasswordResetCriterias,
     emailPasswordResetBody,
+    // middleware
     catchErrors(auth.resetPasswordValidation),
     // ToDo: change password action
     api.sendStatus
