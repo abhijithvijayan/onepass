@@ -6,18 +6,18 @@ const driver = require('./neo4j');
 exports.createUser = ({ email, password }) => {
     return new Promise(async (resolve, reject) => {
         const session = driver.session();
-        const salt = await bcrypt.genSalt(13);
-        const hash = await bcrypt.hash(password, salt);
+        const salt = await bcrypt.genSalt(12);
+        const passwordHash = await bcrypt.hash(password, salt);
+        const emailHash = await bcrypt.hash(email, salt);
         const verificationToken = nanoid(40);
         session
             .writeTransaction(tx =>
-                // ToDo: Refactor this for scalability
-                // Current: create user and password collection and relate them
+                // ToDo: Refactor this : use unique key as param instead of email, encrypt email too
                 tx.run(
-                    'MERGE (u:User { email : $emailParam }) SET u.password = $passwordParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.createdAt= $createdAtParam MERGE(p: PasswordCollection { email: $emailParam }) CREATE (u)-[:PASSWORDS]->(p) RETURN u', 
+                    'MERGE (u:User { email : $emailParam }) SET u.password = $passwordParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.createdAt= $createdAtParam RETURN u', 
                     { 
                         emailParam: email, 
-                        passwordParam: hash, 
+                        passwordParam: passwordHash, 
                         verificationTokenParam: verificationToken, 
                         isVerifiedParam: false, 
                         createdAtParam: new Date().toJSON() 

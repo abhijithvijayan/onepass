@@ -14,10 +14,9 @@ exports.addPasswordEntry = ({ email, sitename, username, password, url }) => {
         cipher.finish();
         session
             .writeTransaction(tx => 
-                // ToDo: Refactor
-                // Current: find password collection with email and inject into it
+                // ToDo: Refactor this : use unique id instead of raw email
                 tx.run(
-                    'MATCH (p: PasswordCollection { email: $emailParam }) CREATE (e: PasswordEntry { sitename: $sitenameParam, username: $usernameParam, password: $passwordParam, salt: $saltParam, iv: $ivParam, url: $urlParam, createdAt: $createdAtParam }) CREATE (p)-[:ARCHIVE]->(e) RETURN e',
+                    'MATCH (u: User { email : $emailParam }) MERGE (p: PasswordCollection { email : $emailParam })<-[:PASSWORDS]-(u) CREATE (e: PasswordEntry { sitename: $sitenameParam, username: $usernameParam, password: $passwordParam, salt: $saltParam, iv: $ivParam, url: $urlParam, createdAt: $createdAtParam }) CREATE (p)-[a:Archive]->(e) RETURN e',
                     {
                         emailParam: email,
                         sitenameParam: sitename,
