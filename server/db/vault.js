@@ -28,7 +28,11 @@ exports.addPasswordEntry = ({ id, sitename, username, password, url }) => {
             .writeTransaction(tx => 
                 // ToDo: get user node id and assign to p: Label instead of email                
                 tx.run(
-                    'MATCH (u: User) WHERE id(u) = $userIdParam MERGE (p: PasswordCollection { userId : $userIdParam })<-[:PASSWORDS]-(u) CREATE (e: PasswordEntry { sitename: $sitenameParam, username: $usernameParam, password: $passwordParam, salt: $saltParam, iv: $ivParam, url: $urlParam, createdAt: $createdAtParam }) CREATE (p)-[a:Archive]->(e) RETURN e',
+                    'MATCH (u) WHERE id(u) = $userIdParam' + 
+                    'MERGE (p: PasswordCollection { userId : $userIdParam })<-[:PASSWORDS]-(u)' + 
+                    'CREATE (e: PasswordEntry { sitename: $sitenameParam, username: $usernameParam, password: $passwordParam, salt: $saltParam, iv: $ivParam, url: $urlParam, createdAt: $createdAtParam })' + 
+                    'CREATE (p)-[a:Archive]->(e)' + 
+                    'RETURN e',
                     {
                         userIdParam: id,
                         sitenameParam: sitename,
