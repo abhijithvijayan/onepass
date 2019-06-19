@@ -12,10 +12,17 @@ exports.createUser = ({ email, password }) => {
         session
             .writeTransaction(tx =>
                 tx.run(
-                    'MERGE (u:User { email : $emailParam }) ' + 
-                    'SET u.password = $passwordParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.createdAt = $createdAtParam ' + 
-                    'RETURN u, id(u) as nodeId', 
+                    'MERGE (id:UniqueId { identifier: $identifierParam, userPrefix: $userPrefixParam }) ' + 
+                    'ON CREATE SET id.count = 1 ' +
+                    'ON MATCH SET id.count = id.count + 1 ' +
+                    'WITH id.userPrefix + id.count AS uid, id ' +  
+                    'MERGE (u:User { email : $emailParam }) ' +
+                    'ON CREATE SET u.uid = uid, u.password = $passwordParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.createdAt = $createdAtParam ' + 
+                    'ON MATCH SET id.count = id.count - 1, u.password = $passwordParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.createdAt = $createdAtParam ' + 
+                    'RETURN u, id AS userId',
                     { 
+                        identifierParam: 'UserCounter',
+                        userPrefixParam: 'user_',
                         emailParam: email, 
                         passwordParam: passwordHash, 
                         verificationTokenParam: verificationToken, 
@@ -26,14 +33,9 @@ exports.createUser = ({ email, password }) => {
             )
             .then(function (res) {
                 session.close();
-                const user = res.records.length && res.records[0].get('u').properties;   
-                const nodeId = res.records.length && res.records[0].get('nodeId').low;     
-                console.log('nodeId: ');
+                const user = res.records.length && res.records[0].get('u').properties;                   
                 // console.log(user);
-                return resolve({
-                    ...user,
-                    nodeId,
-                });
+                return resolve(user);
             })
             .catch(err => reject(err));
     })
