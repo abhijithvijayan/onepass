@@ -19,7 +19,7 @@ exports.createUser = ({ email, password }) => {
                     'MERGE (u:User { email : $emailParam }) ' +
                     'ON CREATE SET u.uid = uid, u.password = $passwordParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.createdAt = $createdAtParam ' + 
                     'ON MATCH SET id.count = id.count - 1, u.password = $passwordParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.createdAt = $createdAtParam ' + 
-                    'RETURN u, id AS userId',
+                    'RETURN u',
                     { 
                         identifierParam: 'UserCounter',
                         userPrefixParam: 'user_',
@@ -33,7 +33,7 @@ exports.createUser = ({ email, password }) => {
             )
             .then(function (res) {
                 session.close();
-                const user = res.records.length && res.records[0].get('u').properties;                   
+                const user = res.records.length && res.records[0].get('u').properties;                                   
                 // console.log(user);
                 return resolve(user);
             })

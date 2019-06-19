@@ -20,7 +20,7 @@ const encryptString = (username, password) => {
     };
 }
 
-exports.addPasswordEntry = ({ id, email, sitename, username, password, url }) => {
+exports.addPasswordEntry = ({ uid, email, sitename, username, password, url }) => {
     return new Promise((resolve, reject) => {
         const session = driver.session();
         const { iv, salt, passwordCipher, usernameCipher } = encryptString(username, password);
@@ -29,12 +29,14 @@ exports.addPasswordEntry = ({ id, email, sitename, username, password, url }) =>
                 tx.run(
                     'MATCH (u: User { email: $emailParam }) ' + 
                     'MERGE (p: PasswordCollection { userId : $userIdParam })<-[:PASSWORDS]-(u) ' + 
+                    'ON CREATE SET p.lastEntryNum = 1 ' +
+                    'ON MATCH SET p.lastEntryNum = p.lastEntryNum + 1 ' + 
                     'CREATE (e: PasswordEntry { sitename: $sitenameParam, username: $usernameParam, password: $passwordParam, salt: $saltParam, iv: $ivParam, url: $urlParam, createdAt: $createdAtParam }) ' + 
-                    'CREATE (p)-[a:Archive]->(e) ' + 
+                    'CREATE (p)-[a:Archive { entryNum: p.lastEntryNum }]->(e) ' + 
                     'RETURN e',
                     {
                         emailParam: email,
-                        userIdParam: id,
+                        userIdParam: uid,
                         sitenameParam: sitename,
                         urlParam: url,
                         createdAtParam: new Date().toJSON(),

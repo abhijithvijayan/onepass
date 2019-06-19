@@ -7,8 +7,8 @@ const {
 exports.createPasswordEntry = async (req, res) => {
     // temporary workaround for testing | id, email 
     // ToDo: Use jwt auth and get useremail and id
-    const { id, email, sitename, username = '', password = '', url = '' } = req.body;
-    const entry = await addPasswordEntry({ id, email, sitename, username, password, url });
+    const { uid, email, sitename, username = '', password = '', url = '' } = req.body;
+    const entry = await addPasswordEntry({ uid, email, sitename, username, password, url });
     if (entry) {
         // success
         return res.status(200).json({ message: "Site successfully added to the vault." });
