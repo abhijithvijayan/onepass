@@ -12,8 +12,8 @@ exports.createUser = ({ email, password }) => {
         session
             .writeTransaction(tx =>
                 tx.run(
-                    'MERGE (u:User { email : $emailParam })' + 
-                    'SET u.password = $passwordParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.createdAt= $createdAtParam' + 
+                    'MERGE (u:User { email : $emailParam }) ' + 
+                    'SET u.password = $passwordParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.createdAt = $createdAtParam ' + 
                     'RETURN u, id(u) as nodeId', 
                     { 
                         emailParam: email, 
@@ -26,12 +26,13 @@ exports.createUser = ({ email, password }) => {
             )
             .then(function (res) {
                 session.close();
-                const user = res.records[0].get('u').properties;   
-                console.log('id ',res.records[0].get('nodeId').low);       
+                const user = res.records.length && res.records[0].get('u').properties;   
+                const nodeId = res.records.length && res.records[0].get('nodeId').low;     
+                console.log('nodeId: ');
                 // console.log(user);
                 return resolve({
                     ...user,
-                    nodeId: res.records[0].get('nodeId').low,
+                    nodeId,
                 });
             })
             .catch(err => reject(err));
@@ -44,7 +45,7 @@ exports.getUserDetails = ({ email }) => {
         session
             .readTransaction(tx => 
                 tx.run(
-                    'MATCH (u:User { email : $emailParam })' + 
+                    'MATCH (u:User { email : $emailParam }) ' + 
                     'RETURN u', 
                     { 
                         emailParam: email 
@@ -66,8 +67,8 @@ exports.verifyUser = ({ email, verificationToken }) => {
         session
             .writeTransaction(tx => 
                 tx.run(
-                    'MATCH (u:User { email: $emailParam, verificationToken: $verificationTokenParam })' + 
-                    'SET u.isVerified = true, u.verificationToken = NULL' + 
+                    'MATCH (u:User { email: $emailParam, verificationToken: $verificationTokenParam }) ' + 
+                    'SET u.isVerified = true, u.verificationToken = NULL ' + 
                     'RETURN u', 
                     { 
                         emailParam: email, 
@@ -92,8 +93,8 @@ exports.requestResetPassword = ({ email }) => {
         session
             .writeTransaction(tx =>
                 tx.run(
-                    'MATCH (u:User { email: $emailParam })' +
-                    'SET u.passwordResetToken = $passwordResetTokenParam, u.passwordResetExpires = $passwordResetExpiresParam' + 
+                    'MATCH (u:User { email: $emailParam }) ' +
+                    'SET u.passwordResetToken = $passwordResetTokenParam, u.passwordResetExpires = $passwordResetExpiresParam ' + 
                     'RETURN u', 
                     { 
                         emailParam: email, 
@@ -117,9 +118,9 @@ exports.validatePasswordRequest = ({ email, passwordResetToken }) => {
         session
             .writeTransaction(tx =>
                 tx.run(
-                    'MATCH (u:User)' +
-                    'WHERE u.email = $emailParam AND u.passwordResetToken = $passwordResetTokenParam AND u.passwordResetExpires > $currentTime' +
-                    'SET u.passwordResetToken = NULL, u.passwordResetExpires = NULL' +
+                    'MATCH (u:User) ' +
+                    'WHERE u.email = $emailParam AND u.passwordResetToken = $passwordResetTokenParam AND u.passwordResetExpires > $currentTime ' +
+                    'SET u.passwordResetToken = NULL, u.passwordResetExpires = NULL ' +
                     'RETURN u', 
                     { 
                         emailParam: email, 
