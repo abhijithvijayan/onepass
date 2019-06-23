@@ -11,7 +11,7 @@
   },
   "scripts": {
     "dev:mobile": "concurrently \"yarn workspace @onepass/mobile android\" \"yarn workspace @onepass/mobile start\"",
-    "dev:web": "yarn workspace @onepass/web start",
+    "dev:web": "yarn workspace @onepass/web dev",
     "studio": "yarn workspace @onepass/mobile studio",
     "xcode": "yarn workspace @onepass/mobile xcode"
   },
