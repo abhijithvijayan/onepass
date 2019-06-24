@@ -16,10 +16,10 @@ require('./handlers/passport');
 const dev = process.env.NODE_ENV !== 'production';
 const port = parseInt(process.env.PORT, 10) || 4000;
 
-const app = next({ dev });
-const handle = app.getRequestHandler();
+const nextApp = next({ dev, dir: '../packages/web' });
+const handle = nextApp.getRequestHandler();
 
-app.prepare().then(() => {
+nextApp.prepare().then(() => {
   const app = express();
 
   /* Logger */
@@ -36,16 +36,8 @@ app.prepare().then(() => {
   app.use(passport.initialize());
   
   app.use('/', routes);
-  
-  app.use(errorHandlers.notFound);
-  
-  if (dev) {
-    /* Development Error Handler - Prints stack trace */
-    app.use(errorHandlers.developmentErrors);
-  }
-  
-  // production error handler
-  app.use(errorHandlers.productionErrors);
+
+  app.get('*', (req, res) => handle(req, res));
 
   app.listen(port, err => {
     if (err) throw err

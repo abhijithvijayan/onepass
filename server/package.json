@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "server": "nodemon ./server.js --ignore client/"
+    "server": "nodemon ./server.js --ignore packages/"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
