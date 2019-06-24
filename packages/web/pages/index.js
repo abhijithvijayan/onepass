@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { startClock, serverRenderClock } from '../redux/ducks';
+import { startClock, serverRenderClock } from '../redux/modules';
 import Examples from '../components/examples'
 
 class Index extends React.Component {
