@@ -16,7 +16,6 @@ const { verifyMailText, resetMailText } = require('../mail/text');
 const verifyEmailTemplatePath = path.join(__dirname, '../mail/template-verify.html');
 const verifyEmailTemplate = fs
   .readFileSync(verifyEmailTemplatePath, { encoding: 'utf-8' })
-  .replace(/{{domain}}/gm, process.env.DEFAULT_DOMAIN);
 const resetEmailTemplatePath = path.join(__dirname, '../mail/template-reset.html');
 const resetEmailTemplate = fs
   .readFileSync(resetEmailTemplatePath, { encoding: 'utf-8' })
@@ -51,13 +50,12 @@ exports.signup = async (req, res) => {
     }
     const newUser = await createUser({ email, name });
     /* Handle Verification email */
-    const text = verifyMailText.replace(/{{domain}}/gim, process.env.DEFAULT_DOMAIN);
     const mail = await transporter.sendMail({
         from: process.env.MAIL_FROM || process.env.MAIL_USER,
         to: newUser.email,
-        subject: 'Verify your OnePass account',
-        text: text.replace(/{{verification}}/gim, `api/v1/auth/verify?email=${newUser.email}&verificationToken=${newUser.verificationToken}`),
-        html: verifyEmailTemplate.replace(/{{verification}}/gim, `api/v1/auth/verify?email=${newUser.email}&verificationToken=${newUser.verificationToken}`),
+        subject: `Verification code: ${newUser.verificationToken}`,
+        text: verifyMailText.replace(/{{verification}}/gim, newUser.verificationToken),
+        html: verifyEmailTemplate.replace(/{{verification}}/gim, newUser.verificationToken),
     });
     if (mail.accepted.length) {
         return res.status(201).json({ email, message: 'Verification email has been sent.' });
@@ -115,7 +113,7 @@ exports.requestPasswordReset = async (req, res) => {
         from: process.env.MAIL_FROM || process.env.MAIL_USER,
         to: user.email,
         subject: 'Reset your OnePass Master Password',
-        text: text.replace(/{{reset}}/gim, `api/v1/auth/reset?email=${user.email}&passwordResetToken=${user.passwordResetToken}`),
+        text: text.replace(/{{reset}}/gim, user.passwordResetToken),
         html: resetEmailTemplate.replace(/{{reset}}/gim, `api/v1/auth/reset?email=${user.email}&passwordResetToken=${user.passwordResetToken}`),
     });
     if (mail.accepted.length) {

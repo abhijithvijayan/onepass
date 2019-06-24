@@ -6,7 +6,6 @@ const driver = require('./neo4j');
 
 exports.createUser = async ({ email, name }) => {
     const session = driver.session();
-    const uuid = generate('1234567890abcdefghijklmnopqrstuvwxyz', 5)
     const verificationToken = generate('1234567890', 6);
     const { records = [] } = await session.writeTransaction(tx =>
         tx.run(
