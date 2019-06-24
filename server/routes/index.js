@@ -43,7 +43,7 @@ router.post('/api/v1/auth/login',
     auth.login,
 );
 /* Email - Verification */
-router.get('/api/v1/auth/verify:email?:verificationToken?', 
+router.post('/api/v1/auth/verify', 
     emailVerificationCriterias,
     emailVerificationBody,
     // middleware

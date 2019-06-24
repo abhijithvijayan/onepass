@@ -12,15 +12,19 @@ exports.signUpValidationCriterias = [
       .trim()
       .normalizeEmail(),
     validator
-      .body('password', 'Master Password must be at least 8 chars long.')
+      .body('name')
       .exists()
-      .withMessage('You must supply a secure Master Password.')
-      .isLength({ min: 8 }),
-    validator
-      .body('confirmPassword', 'Passwords do not match')
-      .exists()
-      .withMessage('You must confirm the Master Password')
-      .custom((value, { req }) => (value === req.body.password)),
+      .withMessage('You must provide your name.')
+    // validator
+    //   .body('password', 'Master Password must be at least 8 chars long.')
+    //   .exists()
+    //   .withMessage('You must supply a secure Master Password.')
+    //   .isLength({ min: 8 }),
+    // validator
+    //   .body('confirmPassword', 'Passwords do not match')
+    //   .exists()
+    //   .withMessage('You must confirm the Master Password')
+    //   .custom((value, { req }) => (value === req.body.password)),
 ];
 
 exports.signUpValidationBody = (req, res, next) => {
@@ -28,9 +32,10 @@ exports.signUpValidationBody = (req, res, next) => {
   if (!errors.isEmpty()) {
     const errorsObj = errors.mapped();
     const emailError = errorsObj.email && errorsObj.email.msg;
-    const passwordError = errorsObj.password && errorsObj.password.msg;
-    const confirmPasswordError = errorsObj.confirmPassword && errorsObj.confirmPassword.msg;
-    return res.status(400).json({ error: emailError || passwordError || confirmPasswordError });
+    const nameError = errorsObj.name && errorsObj.name.msg;
+    // const passwordError = errorsObj.password && errorsObj.password.msg;
+    // const confirmPasswordError = errorsObj.confirmPassword && errorsObj.confirmPassword.msg;
+    return res.status(400).json({ error: emailError || nameError });
   }
   return next();
 };
@@ -38,17 +43,17 @@ exports.signUpValidationBody = (req, res, next) => {
 /* Email - Verification Link */
 exports.emailVerificationCriterias = [
     validator
-      .query('email')
+      .body('email')
       .exists()
-      .withMessage('Link doesn\'t contain an email address.')
+      .withMessage('No email address found.')
       .isEmail()
-      .withMessage('Link doesn\'t contain a valid email address.')
+      .withMessage('Invalid email address.')
       .trim()
       .normalizeEmail(),
     validator
-      .query('verificationToken')
+      .body('verificationToken')
       .exists()
-      .withMessage('Link doesn\'t contain a valid verification token.')
+      .withMessage('No valid verification token.')
 ];
 
 exports.emailVerificationBody = (req, res, next) => {
