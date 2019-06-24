@@ -1,14 +1,14 @@
 {
   "name": "@onepass/server",
   "version": "0.0.1",
-  "main": "app.js",
+  "main": "server.js",
   "license": "MIT",
   "engines": {
     "node": ">= 8 <11"
   },
   "scripts": {
-    "start": "node start.js",
-    "server": "nodemon ./start.js --ignore client/"
+    "start": "node server.js",
+    "server": "nodemon ./server.js --ignore client/"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
