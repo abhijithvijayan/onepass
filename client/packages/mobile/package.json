@@ -12,6 +12,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@onepass/core": "0.0.1",
     "react": "16.8.6",
     "react-native": "0.59.9"
   },

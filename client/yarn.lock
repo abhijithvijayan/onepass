@@ -5700,6 +5700,11 @@ next-server@8.1.0:
     send "0.16.1"
     url "0.11.0"
 
+next-transpile-modules@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/next-transpile-modules/-/next-transpile-modules-2.3.1.tgz#8977c070912fbc3e927c662431fc4e91ae335b43"
+  integrity sha512-euNOBAk/CXZA6binwL47+QpcxAmK1pzH2zjF7XnRN55f2iuN/ecpUw5p3x4bikFu0yDPtSLS92nv9fcgcCo0vg==
+
 next@^8.1.0:
   version "8.1.0"
   resolved "https://registry.yarnpkg.com/next/-/next-8.1.0.tgz#2a996dcd611f9e16920841c615e8bd6e5ada6e1c"
@@ -7209,9 +7214,9 @@ schema-utils@^1.0.0:
   integrity sha512-Ya52jSX2u7QKghxeoFGpLwCtGlt7j0oY9DYb5apt9nPlJ42ID+ulTXESnt/qAQcoSERyZ5sl3LDIOw0nAn/5DA==
 
 semver@^6.0.0:
-  version "6.1.1"
-  resolved "https://registry.yarnpkg.com/semver/-/semver-6.1.1.tgz#53f53da9b30b2103cd4f15eab3a18ecbcb210c9b"
-  integrity sha512-rWYq2e5iYW+fFe/oPPtYJxYgjBm8sC4rmoGdUOgBB7VnwKt6HrL793l2voH1UlsyYZpJ4g0wfjnTEO1s1NP2eQ==
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/semver/-/semver-6.1.2.tgz#079960381376a3db62eb2edc8a3bfb10c7cfe318"
+  integrity sha512-z4PqiCpomGtWj8633oeAdXm1Kn1W++3T8epkZYnwiVgIYIJ0QHszhInYSJTYxebByQH7KVCEAn8R9duzZW2PhQ==
 
 send@0.16.1:
   version "0.16.1"

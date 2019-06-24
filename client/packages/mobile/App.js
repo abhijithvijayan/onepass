@@ -9,6 +9,8 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
 
+import { testMonorepo } from '@onepass/core';
+
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
   android:
@@ -21,7 +23,7 @@ export default class App extends Component<Props> {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to OnePass</Text>
+        <Text style={styles.welcome}>Welcome to {testMonorepo()}</Text>
         <Text style={styles.instructions}>A Password Manager made with modern web/native technologies</Text>
       </View>
     );
