@@ -12,6 +12,7 @@
     "nohoist": []
   },
   "scripts": {
+    "clean": "lerna clean",
     "dev:server": "yarn workspace @onepass/server server",
     "dev:web": "concurrently \"yarn workspace @onepass/web dev\" \"yarn workspace @onepass/server server\" --names \"N,E\" --prefix name",
     "dev:mobile": "concurrently \"yarn workspace @onepass/mobile android\" \"yarn workspace @onepass/mobile start\""
@@ -19,5 +20,6 @@
   "devDependencies": {
     "concurrently": "^4.1.0",
     "lerna": "^3.15.0"
-  }
+  },
+  "repository": "https://github.com/onepassapp/onepass.git"
 }
