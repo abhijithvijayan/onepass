@@ -4,12 +4,12 @@ const express = require('express');
 const passport = require('passport');
 const bodyParser = require('body-parser');
 
-const routes = require('./server/routes');
-const errorHandlers = require('./server/handlers/errorHandlers');
+const routes = require('./routes');
+const errorHandlers = require('./handlers/errorHandlers');
 
 const dev = process.env.NODE_ENV !== 'production';
 
-require('./server/handlers/passport');
+require('./handlers/passport');
 
 // create our Express app
 const app = express();
