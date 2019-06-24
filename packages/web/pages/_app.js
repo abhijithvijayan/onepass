@@ -1,6 +1,6 @@
 import App, { Container } from 'next/app';
 import React from 'react';
-import configureStore from '../redux/configureStore';
+import configureStore from '../state/configureStore';
 import { Provider } from 'react-redux';
 
 class MyApp extends App {

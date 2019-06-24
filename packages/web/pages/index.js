@@ -1,28 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { startClock, serverRenderClock } from '../redux/modules';
-import Examples from '../components/examples'
 
-class Index extends React.Component {
-  static getInitialProps ({ reduxStore, req }) {
-    const isServer = !!req
-    reduxStore.dispatch(serverRenderClock(isServer))
-
-    return {}
-  }
-
-  componentDidMount () {
-    const { dispatch } = this.props
-    this.timer = startClock(dispatch)
-  }
-
-  componentWillUnmount () {
-    clearInterval(this.timer)
-  }
-
-  render () {
-    return <Examples />
-  }
+class Index extends Component {
+  render() {
+    return <div>OnePass Password Manager</div>;
+  };
 }
 
 export default connect()(Index);

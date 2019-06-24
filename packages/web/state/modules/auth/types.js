@@ -1,0 +1,2 @@
+export const CLEAR = "CLEAR";
+export const FETCH_LIST_COMPLETED = 'FETCH_LIST_COMPLETED';
