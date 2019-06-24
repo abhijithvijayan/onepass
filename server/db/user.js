@@ -69,7 +69,7 @@ exports.verifyUser = async ({ email, verificationToken }) => {
 
 exports.requestResetPassword = async ({ email }) => {
     const session = driver.session();
-    const passwordResetToken = nanoid(40);
+    const passwordResetToken = generate('1234567890', 6);
     const passwordResetExpires = Date.now() + 3600000;
     const { records = [] } = await session.writeTransaction(tx =>
         tx.run(
