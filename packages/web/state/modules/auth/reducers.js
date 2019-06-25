@@ -1,6 +1,6 @@
-import { combineReducers } from "redux";
-import * as types from "./types";
-import { createReducer } from "../../utils";
+import { combineReducers } from 'redux';
+import * as types from './types';
+import { createReducer } from '../../utils';
 
 /** State shape
 {
@@ -9,11 +9,15 @@ import { createReducer } from "../../utils";
 }
 */
 
-const initialState = [ ];
+const initialState = [];
 
-const listReducer = createReducer( initialState )({
-    [ types.FETCH_LIST_COMPLETED ]: ( state, action ) => action.payload.items,
-    [ types.CLEAR ]: ( ) => [ ],
+const listReducer = createReducer(initialState)({
+    [types.FETCH_LIST_COMPLETED]: (state, action) => {
+        return action.payload.items;
+    },
+    [types.CLEAR]: () => {
+        return [];
+    },
 });
 
 export default combineReducers({

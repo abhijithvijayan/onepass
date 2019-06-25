@@ -1,4 +1,4 @@
-
+/* eslint-disable no-console */
 import unorm from 'unorm';
 import bitwise from 'bitwise';
 import forge from 'node-forge';
@@ -64,7 +64,7 @@ const generateHashedKey = async () => {
     console.log('normalised master password : ', normalisedMasterPassword);
     const uint8MasterPassword = encodeMasterPassword(normalisedMasterPassword);
     try {
-    	// password derivation salt
+        // password derivation salt
         const salt = await deriveEncryptionKeySalt(); // send to server
         console.log('32 byte salt : ', salt);
         // perform PBKDF2-HMAC-SHA256 hashing
@@ -90,9 +90,9 @@ const generateSecretKey = () => {
 };
 
 function generateKeypair() {
-    let crypt = null;
-    let privateKey = null;
-    let publicKey = null;
+    const crypt = null;
+    const privateKey = null;
+    const publicKey = null;
     // ToDo: use node-forge if needed
     // crypt = new JSEncrypt({ default_key_size: 2056 });
     // privateKey = crypt.getPrivateKey();
@@ -122,6 +122,8 @@ const encryptPrivateKey = masterUnlockKey => {
     // https://kutt.it/FxInxm
 };
 
-const testMonorepo = () => 'OnePass';
+const testMonorepo = () => {
+    return 'OnePass';
+};
 
 export { generateHashedKey, generateSecretKey, deriveIntermediateKey, testMonorepo };

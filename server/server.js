@@ -20,28 +20,32 @@ const nextApp = next({ dev, dir: '../packages/web' });
 const handle = nextApp.getRequestHandler();
 
 nextApp.prepare().then(() => {
-  const app = express();
+    const app = express();
 
-  /* Logger */
-  if (dev) {
-    app.use(morgan('dev'));
-  }
-  
-  // Takes the raw requests and turns them into usable properties on req.body
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({
-    extended: true
-  }));
-  
-  app.use(passport.initialize());
-  
-  app.use('/', routes);
+    /* Logger */
+    if (dev) {
+        app.use(morgan('dev'));
+    }
 
-  app.get('*', (req, res) => handle(req, res));
+    // Takes the raw requests and turns them into usable properties on req.body
+    app.use(bodyParser.json());
+    app.use(
+        bodyParser.urlencoded({
+            extended: true,
+        })
+    );
 
-  app.listen(port, err => {
-    if (err) throw err
-    console.log(`> Express running on http://localhost:${port}`)
-  });
+    app.use(passport.initialize());
 
+    app.use('/', routes);
+
+    app.get('*', (req, res) => {
+        return handle(req, res);
+    });
+
+    app.listen(port, err => {
+        if (err) throw err;
+        // eslint-disable-next-line no-console
+        console.log(`> Express running on http://localhost:${port}`);
+    });
 });

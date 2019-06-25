@@ -5,10 +5,10 @@ const mailConfig = {
     port: process.env.MAIL_PORT,
     secure: process.env.MAIL_SECURE === 'true',
     auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASSWORD,
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASSWORD,
     },
-  };
-  
-  const transporter = nodemailer.createTransport(mailConfig);
-  module.exports = transporter;
+};
+
+const transporter = nodemailer.createTransport(mailConfig);
+module.exports = transporter;

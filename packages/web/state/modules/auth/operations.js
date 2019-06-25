@@ -1,5 +1,3 @@
-import { doSomething } from "./actions";
+import { doSomething } from './actions';
 
-export {
-    doSomething
-};
+export { doSomething };

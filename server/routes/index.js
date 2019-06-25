@@ -1,12 +1,13 @@
 const path = require('path');
 const express = require('express');
+
 const router = express.Router();
 
 const api = require('./api');
 const { catchErrors } = require('../handlers/errorHandlers');
 const auth = require('../controllers/authController');
 const vault = require('../controllers/vaultController');
-const { 
+const {
     signUpValidationCriterias,
     signUpValidationBody,
     loginValidationCriterias,
@@ -30,20 +31,18 @@ router.get('/api/v1/', api.sendStatus);
 /* ---------------------------------------- */
 
 /* User Signup */
-router.post('/api/v1/auth/signup', 
-    signUpValidationCriterias, 
+router.post(
+    '/api/v1/auth/signup',
+    signUpValidationCriterias,
     signUpValidationBody,
-    catchErrors(auth.signup),
+    catchErrors(auth.signup)
     // ToDo: alert to check mailbox
 );
 /* User Login */
-router.post('/api/v1/auth/login',
-    loginValidationCriterias,
-    loginValidationBody,
-    auth.login,
-);
+router.post('/api/v1/auth/login', loginValidationCriterias, loginValidationBody, auth.login);
 /* Email - Verification */
-router.post('/api/v1/auth/verify', 
+router.post(
+    '/api/v1/auth/verify',
     emailVerificationCriterias,
     emailVerificationBody,
     // middleware
@@ -52,15 +51,17 @@ router.post('/api/v1/auth/verify',
     api.sendStatus
 );
 /* Forget Password Form submission */
-router.post('/api/v1/auth/reset',
+router.post(
+    '/api/v1/auth/reset',
     resetPasswordFormCriterias,
     resetPasswordFormBody,
     catchErrors(auth.requestPasswordReset),
     // ToDo: alert to check mailbox
     api.sendStatus
-)
+);
 /* Email - Password Reset */
-router.get('/api/v1/auth/reset:email?:passwordResetToken?',
+router.get(
+    '/api/v1/auth/reset:email?:passwordResetToken?',
     emailPasswordResetCriterias,
     emailPasswordResetBody,
     // middleware
@@ -68,7 +69,8 @@ router.get('/api/v1/auth/reset:email?:passwordResetToken?',
     // ToDo: change password action (redo encryption of every password collection)
     api.sendStatus
 );
-router.post('/api/v1/auth/updatePassword',
+router.post(
+    '/api/v1/auth/updatePassword',
     changePasswordCriterias,
     changePasswordBody,
     // ToDo: Change password
@@ -79,12 +81,12 @@ router.post('/api/v1/auth/updatePassword',
 /* --------- Vault Archive Routes --------- */
 /* ---------------------------------------- */
 
-router.post('/api/v1/vault/createPasswordEntry',
+router.post(
+    '/api/v1/vault/createPasswordEntry',
     createPasswordEntryCriterias,
     createPasswordEntryBody,
     catchErrors(vault.createPasswordEntry),
     api.sendStatus
 );
-
 
 module.exports = router;

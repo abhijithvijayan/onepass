@@ -1,5 +1,7 @@
-import * as types from "./types";
+import * as types from './types';
 
-export const doSomething = () => ( {
-    type: types.CLEAR,
-});
+export const doSomething = () => {
+    return {
+        type: types.CLEAR,
+    };
+};
