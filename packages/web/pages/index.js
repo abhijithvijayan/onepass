@@ -13,7 +13,7 @@ const Wrapper = styled.section`
   background: rgba(255, 255, 255, 0.8);
 `;
 
-class Index extends Component {
+class IndexPage extends Component {
   render() {
     return (
       <Wrapper>
@@ -23,4 +23,4 @@ class Index extends Component {
   };
 }
 
-export default connect()(Index);
+export default connect()(IndexPage);
