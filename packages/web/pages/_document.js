@@ -2,13 +2,6 @@ import React from 'react';
 import Document, { Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
 
-const style = {
-    margin: 0,
-    backgroundColor: '#fff',
-    overflowX: 'hidden',
-    color: 'black',
-};
-
 class OnePassDocument extends Document {
     static getInitialProps({ renderPage }) {
         const sheet = new ServerStyleSheet();
@@ -32,7 +25,7 @@ class OnePassDocument extends Document {
                         content="OnePass Password Manager: A free and open source secure password manager"
                     />
                 </Head>
-                <body style={style}>
+                <body>
                     <Main />
                     <NextScript />
                 </body>
