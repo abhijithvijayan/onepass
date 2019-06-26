@@ -4,6 +4,8 @@ import { Provider } from 'react-redux';
 import App, { Container } from 'next/app';
 import withRedux from 'next-redux-wrapper';
 
+/* Common SASS styles */
+import '../styles/main.scss';
 import { initializeStore } from '../state/store';
 
 class OnePassApp extends App {
