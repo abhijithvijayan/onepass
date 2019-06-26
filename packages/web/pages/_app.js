@@ -6,9 +6,11 @@ import App, { Container } from 'next/app';
 import withRedux from 'next-redux-wrapper';
 import { ThemeProvider } from 'styled-components';
 
-/* Common SASS styles */
-import '../styles/main.scss';
 import { initializeStore } from '../state/store';
+
+/* Common SASS styles */
+import 'normalize.css/normalize.css';
+import '../styles/main.scss';
 
 // eslint-disable-next-line import/no-webpack-loader-syntax
 const theme = require('sass-extract-loader?{"plugins": ["sass-extract-js"]}!../styles/base/_variables.scss');
