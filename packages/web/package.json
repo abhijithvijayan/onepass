@@ -23,6 +23,7 @@
     "redux": "^4.0.1",
     "redux-devtools-extension": "^2.13.8",
     "redux-form": "^8.2.4",
+    "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
     "sass-extract": "^2.1.0",
     "sass-extract-js": "^0.4.0",
