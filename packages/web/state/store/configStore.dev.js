@@ -1,19 +1,12 @@
 import { createStore, applyMiddleware, combineReducers } from 'redux';
 
 import thunkMiddleware from 'redux-thunk';
-import { createLogger } from 'redux-logger';
 import { composeWithDevTools } from 'redux-devtools-extension';
 
 import * as reducers from '../modules';
 
-const logger = createLogger({
-    collapsed: (getState, action, logEntry) => {
-        return !logEntry.error;
-    },
-});
-
 function createMiddleware() {
-    return composeWithDevTools(applyMiddleware(thunkMiddleware, logger));
+    return composeWithDevTools(applyMiddleware(thunkMiddleware));
 }
 
 export function initializeStore(initialState) {
