@@ -6,8 +6,14 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 
 import * as reducers from '../modules';
 
+const logger = createLogger({
+    collapsed: (getState, action, logEntry) => {
+        return !logEntry.error;
+    },
+});
+
 function createMiddleware() {
-    return composeWithDevTools(applyMiddleware(thunkMiddleware, createLogger(true)));
+    return composeWithDevTools(applyMiddleware(thunkMiddleware, logger));
 }
 
 export function initializeStore(initialState) {
