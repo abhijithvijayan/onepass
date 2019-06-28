@@ -1,10 +1,3 @@
-import { combineReducers } from 'redux';
-import { reducer as form } from 'redux-form';
-import vault from './vault';
-
-const rootReducer = combineReducers({
-    vault,
-    form,
-});
-
-export default rootReducer;
+export { default as vault } from './vault';
+export { default as auth } from './auth';
+export { default as common } from './common/form';
