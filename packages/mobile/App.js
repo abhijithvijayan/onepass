@@ -9,8 +9,6 @@
 import React, { Component } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
 
-import { testMonorepo } from '@onepass/core';
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -40,7 +38,7 @@ export default class App extends Component<Props> {
     render() {
         return (
             <View style={styles.container}>
-                <Text style={styles.welcome}>Welcome to {testMonorepo()}</Text>
+                <Text style={styles.welcome}>Welcome to MonoRepo</Text>
                 <Text style={styles.instructions}>A Password Manager made with modern web/native technologies</Text>
             </View>
         );

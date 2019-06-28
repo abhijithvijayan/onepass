@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import { combineReducers } from 'redux';
 
 import * as types from './types';
@@ -8,10 +9,12 @@ const initialState = {
 };
 
 const loginReducer = createReducer(initialState)({
-    [types.SUBMIT_SIGNUP_DATA]: (state, action) => {
-        return state.merge({ response: action.payload });
-    },
+    [types.SUBMIT_SIGNUP_DATA]: onSignUpRequest,
 });
+
+function onSignUpRequest(state, action) {
+    return state.merge({ response: action.payload });
+}
 
 export default combineReducers({
     login: loginReducer,

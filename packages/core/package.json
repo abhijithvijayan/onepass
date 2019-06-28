@@ -1,6 +1,5 @@
 {
   "name": "@onepass/core",
   "version": "0.0.1",
-  "private": true,
-  "devDependencies": {}
+  "private": true
 }
