@@ -40,6 +40,34 @@ exports.signUpValidationBody = (req, res, next) => {
     return next();
 };
 
+/* Login Form */
+exports.loginValidationCriterias = [
+    validator
+        .body('email')
+        .exists()
+        .withMessage('You must provide a valid email address.')
+        .isEmail()
+        .withMessage('Email address you entered is not valid.')
+        .trim()
+        .normalizeEmail(),
+    validator
+        .body('secretKey', 'Secret Key is at least 5 chars long.')
+        .exists()
+        .withMessage('You must supply your OnePass Secret Account Key.')
+        .isLength({ min: 5 }),
+];
+
+exports.loginValidationBody = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const errorsObj = errors.mapped();
+        const emailError = errorsObj.email && errorsObj.email.msg;
+        const passwordError = errorsObj.password && errorsObj.password.msg;
+        return res.status(400).json({ error: emailError || passwordError });
+    }
+    return next();
+};
+
 /* Email - Verification Link */
 exports.emailVerificationCriterias = [
     validator
@@ -112,34 +140,6 @@ exports.emailPasswordResetBody = (req, res, next) => {
         const emailError = errorsObj.email && errorsObj.email.msg;
         const tokenError = errorsObj.passwordResetToken && errorsObj.passwordResetToken.msg;
         return res.status(400).json({ error: emailError || tokenError });
-    }
-    return next();
-};
-
-/* Login Form */
-exports.loginValidationCriterias = [
-    validator
-        .body('email')
-        .exists()
-        .withMessage('You must provide a valid email address.')
-        .isEmail()
-        .withMessage('Email address you entered is not valid.')
-        .trim()
-        .normalizeEmail(),
-    validator
-        .body('password', 'Master Password is at least 8 chars long.')
-        .exists()
-        .withMessage('You must supply your OnePass Master Password.')
-        .isLength({ min: 8 }),
-];
-
-exports.loginValidationBody = (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        const errorsObj = errors.mapped();
-        const emailError = errorsObj.email && errorsObj.email.msg;
-        const passwordError = errorsObj.password && errorsObj.password.msg;
-        return res.status(400).json({ error: emailError || passwordError });
     }
     return next();
 };

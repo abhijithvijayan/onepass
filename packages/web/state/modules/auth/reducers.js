@@ -9,10 +9,12 @@ const initialState = {
 };
 
 const loginReducer = createReducer(initialState)({
-    [types.SUBMIT_SIGNUP_DATA]: onSignUpRequest,
+    [types.SUBMIT_LOGIN_DATA]: onLoginRequest,
 });
 
-function onSignUpRequest(state, action) {
+function onLoginRequest(state, action) {
+    // eslint-disable-next-line no-console
+    console.log('payload:', action.payload);
     return state.merge({ response: action.payload });
 }
 

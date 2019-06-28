@@ -17,7 +17,8 @@ const Login = () => {
     return (
         <LoginContentsHolder>
             <Row>
-                <Col md={6} className="pt-20">
+                <Col md={6} className="pt-20" style={{ paddingLeft: '5vh' }}>
+                    <h2 className="text-center">Login</h2>
                     <LoginForm />
                 </Col>
                 <Col md={6}>

@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { Form, Button } from 'react-bootstrap';
 
-import { submitSignUpData } from '../../state/modules/auth/operations';
+import { submitLoginData } from '../../state/modules/auth/operations';
 
 const renderField = ({ input, label, type, meta: { touched, error, warning } }) => {
     return (
@@ -19,7 +19,7 @@ class LoginForm extends Component {
     onSubmit = formValues => {
         // eslint-disable-next-line no-console
         console.log(formValues);
-        this.props.submitSignUpData(formValues);
+        this.props.submitLoginData(formValues);
     };
 
     render() {
@@ -60,7 +60,7 @@ const validate = values => {
 const LoginFormWrapper = connect(
     null,
     {
-        submitSignUpData,
+        submitLoginData,
     }
 )(LoginForm);
 
