@@ -1,5 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 const webpack = require('webpack');
+const withImages = require('next-images');
 const withCSS = require('@zeit/next-css');
 const withSass = require('@zeit/next-sass');
 const withTM = require('next-transpile-modules');
@@ -17,6 +18,7 @@ module.exports = withPlugins(
         ],
         withCSS,
         withSass,
+        withImages,
     ],
     {
         webpack(config) {
