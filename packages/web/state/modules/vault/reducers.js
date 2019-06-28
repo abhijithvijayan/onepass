@@ -1,6 +1,4 @@
 /* eslint-disable no-use-before-define */
-import { combineReducers } from 'redux';
-
 import * as types from './types';
 import { createReducer } from '../../utils';
 
@@ -29,6 +27,4 @@ function onSearchCompleted(state, action) {
     });
 }
 
-export default combineReducers({
-    list: listReducer,
-});
+export default listReducer;
