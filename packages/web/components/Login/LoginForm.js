@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { Form, Button } from 'react-bootstrap';
 
+import { submitSignUpData } from '../../state/modules/auth/operations';
+
 const renderField = ({ input, label, type, meta: { touched, error, warning } }) => {
     return (
         <Form.Group controlId={label}>
@@ -17,6 +19,7 @@ class LoginForm extends Component {
     onSubmit = formValues => {
         // eslint-disable-next-line no-console
         console.log(formValues);
+        this.props.submitSignUpData(formValues);
     };
 
     render() {
@@ -54,7 +57,12 @@ const validate = values => {
     return errors;
 };
 
-const LoginFormWrapper = connect()(LoginForm);
+const LoginFormWrapper = connect(
+    null,
+    {
+        submitSignUpData,
+    }
+)(LoginForm);
 
 export default reduxForm({
     form: 'login_form',
