@@ -66,6 +66,10 @@ nextApp.prepare().then(() => {
         return nextApp.render(req, res, '/login');
     });
 
+    server.get('/signup', (req, res) => {
+        return nextApp.render(req, res, '/signup');
+    });
+
     /* ---------------------------------------- */
     /* ---- User and Authentication routes ---- */
     /* ---------------------------------------- */

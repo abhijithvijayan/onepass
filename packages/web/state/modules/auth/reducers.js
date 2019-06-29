@@ -12,6 +12,14 @@ const loginReducer = createReducer(initialState)({
     [types.SUBMIT_LOGIN_DATA]: onLoginRequest,
 });
 
+const signUpReducer = createReducer(initialState)({
+    [types.SUBMIT_SIGNUP_DATA]: (state, action) => {
+        // eslint-disable-next-line no-console
+        console.log('payload:', action.payload);
+        return state.merge({ response: action.payload });
+    },
+});
+
 function onLoginRequest(state, action) {
     // eslint-disable-next-line no-console
     console.log('payload:', action.payload);
@@ -20,4 +28,5 @@ function onLoginRequest(state, action) {
 
 export default combineReducers({
     login: loginReducer,
+    signup: signUpReducer,
 });
