@@ -74,7 +74,7 @@ export const submitVerificationToken = (verificationToken, email) => {
             });
             // route after verification
             // ToDo: get master password
-            Router.push('/');
+            Router.push('/masterpassword', '/signup/masterpassword');
         } catch ({ response }) {
             // eslint-disable-next-line no-console
             console.log(response.data.error);

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Col, Row, Button } from 'react-bootstrap';
 import styled from 'styled-components';
-import Router from 'next/router';
 
 import '../../styles/base/_variables.scss';
 import VerifyForm from './VerifyForm';
