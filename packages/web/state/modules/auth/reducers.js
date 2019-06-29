@@ -10,6 +10,7 @@ const initialLoginState = {
 
 const initialSignUpState = {
     isVerificationSent: false,
+    isVerified: false,
 };
 
 const loginReducer = createReducer(initialLoginState)({
@@ -30,7 +31,7 @@ function onSignUpRequest(state, action) {
 function onTokenSubmission(state, action) {
     // eslint-disable-next-line no-console
     console.log('payload:', action.payload);
-    return { ...state, response: action.payload };
+    return { ...state, response: action.payload, isVerified: true };
 }
 
 function onLoginRequest(state, action) {

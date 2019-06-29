@@ -4,6 +4,7 @@ const JWT = require('jsonwebtoken');
 const passport = require('passport');
 
 const { createUser, getUserDetails, verifyUser, requestResetPassword, validatePasswordRequest } = require('../db/user');
+const { saveVerifier } = require('../db/auth');
 
 /* Email Template and Options */
 const transporter = require('../mail/mail');
@@ -27,6 +28,7 @@ const genToken = user => {
     );
 };
 
+/* Done */
 exports.signup = async (req, res) => {
     const { email, name } = req.body;
     if (email.length > 64) {
@@ -54,6 +56,7 @@ exports.signup = async (req, res) => {
     return res.status(400).json({ error: "Couldn't send verification email. Try again." });
 };
 
+/* Done */
 exports.verify = async (req, res) => {
     const { verificationToken = '', email = '' } = req.body;
     const user = await verifyUser({ email, verificationToken });
@@ -61,11 +64,22 @@ exports.verify = async (req, res) => {
         // generate some new token for other api request after this
         // const token = genToken(user);
         // req.user = { token };
-        return res.status(201).json({ userId: user.uid });
+        return res.status(201).json({ userId: user.uid, email: user.email });
     }
     return res.status(403).json({ error: 'Invalid email id or verification code' });
 };
 
+/* Done */
+exports.saveSRPVerifier = async (req, res) => {
+    const { verifier, salt, email, userId } = req.body;
+    const userAuth = await saveVerifier({ verifier, salt, email, userId });
+    if (userAuth) {
+        return res.status(201).json({ status: 'ok' });
+    }
+    return res.status(403).json({ error: 'SRP Verifier not saved.' });
+};
+
+// ToDo: Refactor
 exports.login = (req, res) => {
     passport.authenticate('local', { session: false }, (err, user, info) => {
         if (err || !user) {
@@ -91,6 +105,7 @@ exports.login = (req, res) => {
     })(req, res);
 };
 
+// ToDo: Refactor
 exports.requestPasswordReset = async (req, res) => {
     const { email } = req.body;
     const user = await requestResetPassword({ email });
@@ -111,6 +126,7 @@ exports.requestPasswordReset = async (req, res) => {
     return res.status(400).json({ error: "Couldn't send password reset email. Try again." });
 };
 
+// ToDo: Refactor
 /* Reset the passwordResetToken and timer */
 exports.resetPasswordValidation = async (req, res, next) => {
     const { email, passwordResetToken } = req.query;

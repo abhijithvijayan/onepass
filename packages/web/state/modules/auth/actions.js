@@ -73,8 +73,33 @@ export const submitVerificationToken = (verificationToken, email) => {
                 payload: response.data,
             });
             // route after verification
-            // ToDo: get master password
             Router.push('/masterpassword', '/signup/masterpassword');
+        } catch ({ response }) {
+            // eslint-disable-next-line no-console
+            console.log(response.data.error);
+            // ToDo: report invalid token
+        }
+    };
+};
+
+export const submitSRPVerifierOnSignUp = (verifier, salt, email, userId) => {
+    return async dispatch => {
+        try {
+            const response = await api({
+                method: 'POST',
+                url: endpoints.VERIFIER_SUBMIT_ENDPOINT,
+                data: {
+                    verifier,
+                    salt,
+                    email,
+                    userId,
+                },
+            });
+            dispatch({
+                type: types.SUBMIT_SRP_VERIFIER,
+                payload: response.data,
+            });
+            // Router.push('/home');
         } catch ({ response }) {
             // eslint-disable-next-line no-console
             console.log(response.data.error);
