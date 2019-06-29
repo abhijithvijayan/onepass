@@ -1,5 +1,8 @@
 {
   "name": "@onepass/core",
   "version": "0.0.1",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "secure-remote-password": "^0.3.1"
+  }
 }
