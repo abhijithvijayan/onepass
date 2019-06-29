@@ -57,14 +57,14 @@ export const submitLoginData = formValues => {
     };
 };
 
-export const submitVerificationToken = (token, email) => {
+export const submitVerificationToken = (verificationToken, email) => {
     return async dispatch => {
         try {
             const response = await api({
                 method: 'POST',
                 url: endpoints.TOKEN_VERIFICATION_ENDPOINT,
                 data: {
-                    token,
+                    verificationToken,
                     email,
                 },
             });
@@ -72,9 +72,13 @@ export const submitVerificationToken = (token, email) => {
                 type: types.SUBMIT_VERIFICATION_TOKEN,
                 payload: response.data,
             });
+            // route after verification
+            // ToDo: get master password
+            Router.push('/');
         } catch ({ response }) {
             // eslint-disable-next-line no-console
             console.log(response.data.error);
+            // ToDo: report invalid token
         }
     };
 };

@@ -1,10 +1,10 @@
 import React from 'react';
-import { Col, Row, Button } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 import styled from 'styled-components';
-import Router from 'next/router';
 
 import '../../styles/base/_variables.scss';
 import SignUpForm from './SignUpForm';
+import BottomButtonHolder from '../common/BottomButtonHolder';
 
 const SignUpContentsHolder = styled.div`
     height: 100vh;
@@ -16,21 +16,11 @@ const SignUpContentsHolder = styled.div`
 const SignUp = () => {
     return (
         <SignUpContentsHolder>
-            <Row>
-                <Col md={6} className="pt-20" style={{ paddingLeft: '5vh' }}>
+            <Row className="d-center" style={{ height: '80%' }}>
+                <Col md={4} className="pt-20">
                     <h2 className="text-center">SignUp</h2>
                     <SignUpForm />
-                    <p className="pt-20">Already have an account?</p>
-                    <Button
-                        onClick={() => {
-                            return Router.push('/login');
-                        }}
-                    >
-                        LOGIN NOW
-                    </Button>
-                </Col>
-                <Col md={6}>
-                    <div></div>
+                    <BottomButtonHolder route="/login" buttonText="LOGIN NOW" text="Already have an account?" />
                 </Col>
             </Row>
         </SignUpContentsHolder>

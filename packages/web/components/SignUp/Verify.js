@@ -16,7 +16,7 @@ const VerifyContentsHolder = styled.div`
 const Verify = () => {
     return (
         <VerifyContentsHolder>
-            <Row className="d-center" style={{ height: '50%' }}>
+            <Row className="d-center" style={{ height: '80%' }}>
                 <Col md={4} className="pt-20">
                     <h2 className="text-center">Verify your OnePass account</h2>
                     <p className="pt-20">Enter your 6 digit verification token</p>
