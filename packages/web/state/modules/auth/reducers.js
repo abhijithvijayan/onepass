@@ -4,26 +4,30 @@ import { combineReducers } from 'redux';
 import * as types from './types';
 import { createReducer } from '../../utils';
 
-const initialState = {
-    response: {},
+const initialLoginState = {
+    isAuthenticated: false,
 };
 
-const loginReducer = createReducer(initialState)({
+const initialSignUpState = {
+    isVerificationSent: false,
+};
+
+const loginReducer = createReducer(initialLoginState)({
     [types.SUBMIT_LOGIN_DATA]: onLoginRequest,
 });
 
-const signUpReducer = createReducer(initialState)({
+const signUpReducer = createReducer(initialSignUpState)({
     [types.SUBMIT_SIGNUP_DATA]: onSignUpRequest,
     [types.SUBMIT_VERIFICATION_TOKEN]: onTokenSubmission,
 });
 
-function onTokenSubmission(state, action) {
+function onSignUpRequest(state, action) {
     // eslint-disable-next-line no-console
     console.log('payload:', action.payload);
-    return { ...state, response: action.payload };
+    return { ...state, response: action.payload, isVerificationSent: true };
 }
 
-function onSignUpRequest(state, action) {
+function onTokenSubmission(state, action) {
     // eslint-disable-next-line no-console
     console.log('payload:', action.payload);
     return { ...state, response: action.payload };

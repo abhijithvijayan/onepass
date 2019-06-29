@@ -27,6 +27,7 @@ export const submitSignUpData = formValues => {
         } catch ({ response }) {
             // eslint-disable-next-line no-console
             console.log(response.data.error);
+            // ToDo: Dispatch some error handler
         }
     };
 };
@@ -52,7 +53,6 @@ export const submitLoginData = formValues => {
         } catch ({ response }) {
             // eslint-disable-next-line no-console
             console.log(response.data.error);
-            // ToDo: Dispatch some error handler
         }
     };
 };

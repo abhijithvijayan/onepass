@@ -16,10 +16,11 @@ const renderField = ({ input, label, type, meta: { touched, error, warning } }) 
 
 class VerifyForm extends Component {
     onSubmit = formValues => {
+        const { verifyToken } = formValues;
+        const { email } = this.props;
         // eslint-disable-next-line no-console
-        console.log(formValues);
-        // ToDo: pass in the email
-        this.props.submitVerificationToken(formValues);
+        console.log(verifyToken, email);
+        this.props.submitVerificationToken(verifyToken, email);
     };
 
     render() {
@@ -48,8 +49,15 @@ const validate = values => {
     return errors;
 };
 
+const mapStateToProps = state => {
+    const { signup } = state.auth;
+    return {
+        email: signup.response.email,
+    };
+};
+
 const VerifyFormWrapper = connect(
-    null,
+    mapStateToProps,
     {
         submitVerificationToken,
     }

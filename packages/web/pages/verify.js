@@ -6,12 +6,17 @@ import Verify from '../components/SignUp/Verify';
 
 class VerifyPage extends Component {
     render() {
-        return (
-            <BodyWrapper>
-                <Verify />
-            </BodyWrapper>
-        );
+        const { isAuthenticated, isVerificationSent } = this.props;
+        return <BodyWrapper>{isAuthenticated || isVerificationSent ? <Verify /> : null}</BodyWrapper>;
     }
 }
 
-export default connect()(VerifyPage);
+const mapStateToProps = state => {
+    const { login, signup } = state.auth;
+    return {
+        isAuthenticated: login.isAuthenticated,
+        isVerificationSent: signup.isVerificationSent,
+    };
+};
+
+export default connect(mapStateToProps)(VerifyPage);
