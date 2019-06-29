@@ -55,7 +55,7 @@ exports.signup = async (req, res) => {
 };
 
 exports.verify = async (req, res, next) => {
-    const { verificationToken = '', email = '' } = req.query;
+    const { verificationToken = '', email = '' } = req.body;
     const user = await verifyUser({ email, verificationToken });
     if (user) {
         // generate some new token for other api request after this

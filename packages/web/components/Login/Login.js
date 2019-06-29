@@ -21,7 +21,7 @@ const Login = () => {
                 <Col md={6} className="pt-20" style={{ paddingLeft: '5vh' }}>
                     <h2 className="text-center">Login</h2>
                     <LoginForm />
-                    <p>Don't have account?</p>
+                    <p className="pt-20">Don't have account?</p>
                     <Button
                         onClick={() => {
                             return Router.push('/signup');

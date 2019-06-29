@@ -104,6 +104,8 @@ nextApp.prepare().then(() => {
         api.sendStatus
     );
     /* Email - Password Reset */
+
+    // ToDo: post request
     server.get(
         '/api/v1/auth/reset:email?:passwordResetToken?',
         emailPasswordResetCriterias,

@@ -20,7 +20,7 @@ const SignUp = () => {
                 <Col md={6} className="pt-20" style={{ paddingLeft: '5vh' }}>
                     <h2 className="text-center">SignUp</h2>
                     <SignUpForm />
-                    <p>Already have an account?</p>
+                    <p className="pt-20">Already have an account?</p>
                     <Button
                         onClick={() => {
                             return Router.push('/login');
