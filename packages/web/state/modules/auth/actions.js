@@ -99,7 +99,7 @@ export const submitSRPVerifierOnSignUp = (verifier, salt, email, userId) => {
                 type: types.SUBMIT_SRP_VERIFIER,
                 payload: response.data,
             });
-            // Router.push('/home');
+            Router.push('/home');
         } catch ({ response }) {
             // eslint-disable-next-line no-console
             console.log(response.data.error);

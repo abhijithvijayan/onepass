@@ -2,7 +2,7 @@ import srpClient from 'secure-remote-password/client';
 
 /**
  *  Derive verifier from userId, masterpassword & salt
- * @param {String} userId
+ * @param {String} userId eg: user_9xxbk9_1
  * @param {String} masterPassword
  */
 

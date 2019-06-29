@@ -15,11 +15,11 @@ exports.createUser = async ({ email, name }) => {
                 'ON MATCH SET id.count = id.count + 1, id.userRandomPrefix = $userRandomPrefixParam ' +
                 'WITH id.userFixedPrefix + id.userRandomPrefix + id.count AS uid, id ' +
                 'MERGE (u:User { email : $emailParam }) ' +
-                'ON CREATE SET u.uid = uid, u.name = $nameParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.createdAt = $createdAtParam ' +
+                'ON CREATE SET u.accountId = uid, u.name = $nameParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.createdAt = $createdAtParam ' +
                 'ON MATCH SET id.count = id.count - 1, u.name = $nameParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.createdAt = $createdAtParam ' +
                 'RETURN u',
             {
-                identifierParam: 'UserCounter',
+                identifierParam: 'User_Counter',
                 userFixedPrefixParam: `user_`,
                 userRandomPrefixParam: `${userRandomPrefix}_`,
                 emailParam: email,
@@ -51,7 +51,7 @@ exports.verifyUser = async ({ email, verificationToken }) => {
     const session = driver.session();
     const { records = [] } = await session.writeTransaction(tx => {
         return tx.run(
-            'MATCH (u:User { email: $emailParam, verificationToken: $verificationTokenParam }) ' +
+            'MATCH (u:User { email: $emailParam, verificationToken: $verificationTokenParam, isVerified: false  }) ' +
                 'SET u.isVerified = true, u.verificationToken = NULL ' +
                 'RETURN u',
             {

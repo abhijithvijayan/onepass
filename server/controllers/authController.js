@@ -64,7 +64,7 @@ exports.verify = async (req, res) => {
         // generate some new token for other api request after this
         // const token = genToken(user);
         // req.user = { token };
-        return res.status(201).json({ userId: user.uid, email: user.email });
+        return res.status(201).json({ userId: user.accountId, email: user.email });
     }
     return res.status(403).json({ error: 'Invalid email id or verification code' });
 };

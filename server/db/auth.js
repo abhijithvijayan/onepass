@@ -5,13 +5,13 @@ exports.saveVerifier = async ({ email, verifier, salt, userId }) => {
     const { records = [] } = await session.writeTransaction(tx => {
         return tx.run(
             'MATCH (u: User { email: $emailParam, isVerified: true }) ' +
-                'MERGE (a: auth { userId : $userIdParam })<-[:SRP]-(u) ' +
+                'MERGE (a: auth { accountId : $accountIdParam })<-[:SRP]-(u) ' +
                 'ON CREATE SET a.createdAt = $createdAtParam, a.verifier = $verifierParam, a.salt = $saltParam ' +
                 'ON MATCH SET a.updatedAt = $updatedAtParam, a.verifier = $verifierParam, a.salt = $saltParam ' +
                 'RETURN a',
             {
                 emailParam: email,
-                userIdParam: userId,
+                accountIdParam: userId,
                 createdAtParam: new Date().toJSON(),
                 updatedAtParam: new Date().toJSON(),
                 verifierParam: verifier,
