@@ -13,17 +13,19 @@ const loginReducer = createReducer(initialState)({
 });
 
 const signUpReducer = createReducer(initialState)({
-    [types.SUBMIT_SIGNUP_DATA]: (state, action) => {
-        // eslint-disable-next-line no-console
-        console.log('payload:', action.payload);
-        return state.merge({ response: action.payload });
-    },
+    [types.SUBMIT_SIGNUP_DATA]: onSignUpRequest,
 });
+
+function onSignUpRequest(state, action) {
+    // eslint-disable-next-line no-console
+    console.log('payload:', action.payload);
+    return { ...state, response: action.payload };
+}
 
 function onLoginRequest(state, action) {
     // eslint-disable-next-line no-console
     console.log('payload:', action.payload);
-    return state.merge({ response: action.payload });
+    return { ...state, response: action.payload };
 }
 
 export default combineReducers({

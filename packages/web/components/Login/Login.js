@@ -30,9 +30,7 @@ const Login = () => {
                         JOIN NOW
                     </Button>
                 </Col>
-                <Col md={6}>
-                    <LoginCarousel />
-                </Col>
+                <Col md={6}>{/* <LoginCarousel /> */}</Col>
             </Row>
         </LoginContentsHolder>
     );

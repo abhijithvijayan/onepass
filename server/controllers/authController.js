@@ -29,9 +29,6 @@ const genToken = user => {
 
 exports.signup = async (req, res) => {
     const { email, name } = req.body;
-    // if (password.length > 64) {
-    //     return res.status(400).json({ error: "Maximum length of Master Password is 64 characters"});
-    // }
     if (email.length > 64) {
         return res.status(400).json({ error: 'Maximum length of email id is 64 characters' });
     }
@@ -74,7 +71,7 @@ exports.login = (req, res) => {
         if (err || !user) {
             return res.status(400).json({
                 user,
-                message: info ? info.message : 'Login failed',
+                error: info ? info.message : 'Login failed',
             });
         }
         if (user && !user.isVerified) {
