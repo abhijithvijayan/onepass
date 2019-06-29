@@ -82,8 +82,7 @@ nextApp.prepare().then(() => {
         catchErrors(auth.signup)
         // ToDo: alert to check mailbox
     );
-    /* User Login */
-    server.post('/api/v1/auth/login', loginValidationCriterias, loginValidationBody, auth.login);
+
     /* Email - Verification */
     server.post(
         '/api/v1/auth/verify',
@@ -94,7 +93,13 @@ nextApp.prepare().then(() => {
         // ToDo: alert email verified
         api.sendStatus
     );
+
+    /* User Login */
+    // ToDo Route
+    server.post('/api/v1/auth/login', loginValidationCriterias, loginValidationBody, auth.login);
+
     /* Forget Password Form submission */
+    // ToDo Route
     server.post(
         '/api/v1/auth/reset',
         resetPasswordFormCriterias,
@@ -103,7 +108,9 @@ nextApp.prepare().then(() => {
         // ToDo: alert to check mailbox
         api.sendStatus
     );
+
     /* Email - Password Reset */
+    // ToDo Route
     server.get(
         '/api/v1/auth/reset:email?:passwordResetToken?',
         emailPasswordResetCriterias,
@@ -113,6 +120,8 @@ nextApp.prepare().then(() => {
         // ToDo: change password action (redo encryption of every password collection)
         api.sendStatus
     );
+
+    // ToDo Route
     server.post(
         '/api/v1/auth/updatePassword',
         changePasswordCriterias,
@@ -125,6 +134,7 @@ nextApp.prepare().then(() => {
     /* --------- Vault Archive Routes --------- */
     /* ---------------------------------------- */
 
+    // ToDo Route
     server.post(
         '/api/v1/vault/createPasswordEntry',
         createPasswordEntryCriterias,

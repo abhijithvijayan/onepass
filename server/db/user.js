@@ -7,19 +7,21 @@ const driver = require('./neo4j');
 exports.createUser = async ({ email, name }) => {
     const session = driver.session();
     const verificationToken = generate('1234567890', 6);
+    const userRandomPrefix = generate('1245689abefklprtvxz', 6);
     const { records = [] } = await session.writeTransaction(tx => {
         return tx.run(
-            'MERGE (id:UniqueId { identifier: $identifierParam, userPrefix: $userPrefixParam }) ' +
-                'ON CREATE SET id.count = 1 ' +
-                'ON MATCH SET id.count = id.count + 1 ' +
-                'WITH id.userPrefix + id.count AS uid, id ' +
+            'MERGE (id:UniqueId { identifier: $identifierParam, userFixedPrefix: $userFixedPrefixParam }) ' +
+                'ON CREATE SET id.count = 1, id.userRandomPrefix = $userRandomPrefixParam ' +
+                'ON MATCH SET id.count = id.count + 1, id.userRandomPrefix = $userRandomPrefixParam ' +
+                'WITH id.userFixedPrefix + id.userRandomPrefix + id.count AS uid, id ' +
                 'MERGE (u:User { email : $emailParam }) ' +
                 'ON CREATE SET u.uid = uid, u.name = $nameParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.createdAt = $createdAtParam ' +
                 'ON MATCH SET id.count = id.count - 1, u.name = $nameParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.createdAt = $createdAtParam ' +
                 'RETURN u',
             {
                 identifierParam: 'UserCounter',
-                userPrefixParam: 'user_',
+                userFixedPrefixParam: `user_`,
+                userRandomPrefixParam: `${userRandomPrefix}_`,
                 emailParam: email,
                 nameParam: name,
                 verificationTokenParam: verificationToken,

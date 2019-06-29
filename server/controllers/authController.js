@@ -54,14 +54,14 @@ exports.signup = async (req, res) => {
     return res.status(400).json({ error: "Couldn't send verification email. Try again." });
 };
 
-exports.verify = async (req, res, next) => {
+exports.verify = async (req, res) => {
     const { verificationToken = '', email = '' } = req.body;
     const user = await verifyUser({ email, verificationToken });
     if (user) {
         // generate some new token for other api request after this
-        const token = genToken(user);
-        req.user = { token };
-        return next();
+        // const token = genToken(user);
+        // req.user = { token };
+        return res.status(201).json({ userId: user.uid });
     }
     return res.status(403).json({ error: 'Invalid email id or verification code' });
 };

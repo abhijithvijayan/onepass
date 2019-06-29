@@ -51,6 +51,6 @@ const validate = values => {
 const MasterPasswordWrapper = connect()(MasterPasswordForm);
 
 export default reduxForm({
-    form: 'setmasterpassword_form',
+    form: 'setMasterPassword_form',
     validate,
 })(MasterPasswordWrapper);
