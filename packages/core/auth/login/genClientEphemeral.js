@@ -1,7 +1,7 @@
 const srp = require('secure-remote-password/client');
 
 /**
- * Generates ecret/public ephemeral value pair
+ * Generates secret/public ephemeral value pair
  */
 
 export const genClientEphemeral = () => {

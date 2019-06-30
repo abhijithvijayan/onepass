@@ -6,7 +6,7 @@ const generate = require('nanoid/generate');
 const srp = require('secure-remote-password/server');
 
 const { createUser, getUserDetails, verifyUser, requestResetPassword, validatePasswordRequest } = require('../db/user');
-const { saveVerifier, retrieveSRPVerifier, saveServerEphemeral } = require('../db/auth');
+const { saveVerifier, retrieveSRPVerifier, saveServerEphemeral, retrieveSRPCredentials } = require('../db/auth');
 
 /* Email Template and Options */
 const transporter = require('../mail/mail');
@@ -83,12 +83,11 @@ exports.saveSRPVerifier = async (req, res) => {
 
 // ToDo: Refactor
 exports.login = async (req, res) => {
-    const { stage } = req.body;
+    const { stage, email } = req.body;
     switch (stage) {
         case 1: {
-            const { email } = req.body;
             const { verifier, salt, accountId } = await retrieveSRPVerifier({ email });
-            if (salt && verifier) {
+            if (salt && verifier && accountId) {
                 // Compute serverEphemeral
                 const serverEphemeral = srp.generateEphemeral(verifier);
                 // Store `serverEphemeral.secret`
@@ -105,6 +104,27 @@ exports.login = async (req, res) => {
             return res
                 .status(201)
                 .json({ userId: sampleUserId, salt: sampleSalt, serverPublicEphemeral: sampleEphemeral.public });
+        }
+        case 2: {
+            const { clientPublicEphemeral, clientSessionProof } = req.body;
+            const { verifier, salt, accountId, serverSecretEphemeral } = await retrieveSRPCredentials({ email });
+            if (verifier && salt && accountId && serverSecretEphemeral) {
+                try {
+                    const serverSession = srp.deriveSession(
+                        serverSecretEphemeral,
+                        clientPublicEphemeral,
+                        salt,
+                        accountId,
+                        verifier,
+                        clientSessionProof
+                    );
+                    const serverSessionProof = serverSession.proof;
+                    return res.status(201).json({ serverSessionProof });
+                } catch (err) {
+                    return res.status(403).json({ error: 'Invalid client session proof' });
+                }
+            }
+            return res.status(201).json({ status: 'Send some dummy content' });
         }
         default: {
             return res.status(403).json({ error: 'Invalid Request' });

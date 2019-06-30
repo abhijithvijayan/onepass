@@ -1,5 +1,5 @@
 import { computeVerifier } from './signup/computeVerifier';
 import { genClientEphemeral } from './login/genClientEphemeral';
-import { deriveSession } from './login/deriveSession';
+import { deriveClientSession, verifyLoginSession } from './login/deriveClientSession';
 
-export { computeVerifier, genClientEphemeral, deriveSession };
+export { computeVerifier, genClientEphemeral, deriveClientSession, verifyLoginSession };

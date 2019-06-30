@@ -1,6 +1,6 @@
 const driver = require('./neo4j');
 
-exports.saveVerifier = async ({ email, verifier, salt, userId }) => {
+exports.saveVerifier = async ({ verifier, salt, email, userId }) => {
     const session = driver.session();
     const { records = [] } = await session.writeTransaction(tx => {
         return tx.run(
@@ -50,4 +50,16 @@ exports.saveServerEphemeral = async ({ serverSecretEphemeral, email }) => {
         );
     });
     session.close();
+};
+
+exports.retrieveSRPCredentials = async ({ email }) => {
+    const session = driver.session();
+    const { records = [] } = await session.readTransaction(tx => {
+        return tx.run('MATCH (u: User { email: $emailParam, isVerified: true })-->(auth) RETURN auth', {
+            emailParam: email,
+        });
+    });
+    session.close();
+    const { salt, verifier, accountId, serverSecretEphemeral } = records.length && records[0].get('auth').properties;
+    return { salt, verifier, accountId, serverSecretEphemeral };
 };

@@ -19,7 +19,7 @@ const renderField = ({ input, label, type, meta: { touched, error, warning } }) 
 class LoginForm extends Component {
     onSubmit = formValues => {
         const clientEphemeral = genClientEphemeral();
-        this.props.submitLoginData(formValues, clientEphemeral);
+        this.props.submitLoginData({ formValues, clientEphemeral });
     };
 
     render() {

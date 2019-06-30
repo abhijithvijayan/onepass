@@ -21,7 +21,7 @@ class MasterPasswordForm extends Component {
         // ToDo: Normalize password
         const { password } = formValues;
         const { userId, email } = this.props;
-        const { verifier, salt } = computeVerifier(userId, password);
+        const { salt, verifier } = computeVerifier(userId, password);
         this.props.submitSRPVerifierOnSignUp(verifier, salt, email, userId);
     };
 

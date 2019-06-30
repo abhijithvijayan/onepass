@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import Router from 'next/router';
 
-import { deriveSession } from '@onepass/core/auth';
+import { deriveClientSession, verifyLoginSession } from '@onepass/core/auth';
 import api from '../../../api';
 import * as types from './types';
 import * as endpoints from '../../../api/constants';
@@ -30,46 +30,6 @@ export const submitSignUpData = formValues => {
             // eslint-disable-next-line no-console
             console.log(response.data.error);
             // ToDo: Dispatch some error handler
-        }
-    };
-};
-
-export const submitLoginData = (formValues, clientEphemeral) => {
-    const { email, password, secretKey } = formValues;
-
-    const sendRequest = async data => {
-        const response = await api({
-            method: 'POST',
-            url: endpoints.LOGIN_SUBMIT_ENDPOINT,
-            data,
-        });
-        return response;
-    };
-
-    return async dispatch => {
-        try {
-            const clientSecretEphemeral = clientEphemeral.secret;
-            const {
-                data: { userId, salt, serverPublicEphemeral },
-            } = await sendRequest({ email, stage: 1 });
-            dispatch({
-                type: types.SEND_CLIENT_EPHEMERAL,
-                payload: {
-                    serverResponse: { userId, salt, serverPublicEphemeral },
-                    clientEphemeral,
-                },
-            });
-            // Derive the shared strong session key, and a proof
-            const clientSession = deriveSession(salt, userId, password, clientSecretEphemeral, serverPublicEphemeral);
-            const clientPublicEphemeral = clientEphemeral.public;
-            const clientSessionProof = clientSession.proof;
-            // Send `clientSessionProof` & `clientPublicEphemeral` to the server
-            await sendRequest({ email, userId, clientPublicEphemeral, clientSessionProof, stage: 2 });
-            // ToDo: get `serverSession.proof` from server
-            // Verify & complete auth
-        } catch ({ response }) {
-            // eslint-disable-next-line no-console
-            console.log(response.data.error);
         }
     };
 };
@@ -121,6 +81,65 @@ export const submitSRPVerifierOnSignUp = (verifier, salt, email, userId) => {
             // eslint-disable-next-line no-console
             console.log(response.data.error);
             // ToDo: report invalid token
+        }
+    };
+};
+
+export const submitLoginData = ({ formValues, clientEphemeral }) => {
+    const { email, password, secretKey } = formValues;
+
+    const sendRequest = async data => {
+        const response = await api({
+            method: 'POST',
+            url: endpoints.LOGIN_SUBMIT_ENDPOINT,
+            data,
+        });
+        return response;
+    };
+
+    return async dispatch => {
+        try {
+            // get `salt` and `serverEphemeral.public` from server
+            const {
+                data: { userId, salt, serverPublicEphemeral },
+            } = await sendRequest({ email, stage: 1 });
+            dispatch({
+                type: types.GET_SERVER_EPHEMERAL,
+                payload: {
+                    serverResponse: { userId, salt, serverPublicEphemeral },
+                    clientEphemeral,
+                },
+            });
+            // Derive the shared strong session key, and a proof
+            const clientSecretEphemeral = clientEphemeral.secret;
+            const clientSession = deriveClientSession(
+                salt,
+                userId,
+                password,
+                clientSecretEphemeral,
+                serverPublicEphemeral
+            );
+            const clientPublicEphemeral = clientEphemeral.public;
+            const clientSessionProof = clientSession.proof;
+            // Send `clientSessionProof` & `clientPublicEphemeral` to the server
+            const {
+                data: { serverSessionProof },
+            } = await sendRequest({
+                email,
+                clientPublicEphemeral,
+                clientSessionProof,
+                stage: 2,
+            });
+
+            // verify that the server has derived the correct strong session key
+            verifyLoginSession(clientPublicEphemeral, clientSession, serverSessionProof);
+
+            dispatch({
+                type: types.LOGIN,
+            });
+        } catch (err) {
+            // eslint-disable-next-line no-console
+            console.log(err);
         }
     };
 };

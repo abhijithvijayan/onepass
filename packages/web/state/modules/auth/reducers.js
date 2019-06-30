@@ -14,7 +14,8 @@ const initialSignUpState = {
 };
 
 const loginReducer = createReducer(initialLoginState)({
-    [types.SEND_CLIENT_EPHEMERAL]: saveClientEphemeral,
+    [types.GET_SERVER_EPHEMERAL]: saveClientEphemeral,
+    [types.LOGIN]: onSuccessfulLogin,
 });
 
 const signUpReducer = createReducer(initialSignUpState)({
@@ -39,6 +40,10 @@ function saveClientEphemeral(state, action) {
     console.log('payload:', action.payload);
     const { serverResponse, clientEphemeral } = action.payload;
     return { ...state, serverResponse, clientEphemeral };
+}
+
+function onSuccessfulLogin(state) {
+    return { ...state, isAuthenticated: true };
 }
 
 export default combineReducers({

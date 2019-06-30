@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import BodyWrapper from '../components/BodyWrapper';
@@ -22,4 +21,4 @@ class IndexPage extends Component {
     }
 }
 
-export default connect()(IndexPage);
+export default IndexPage;
