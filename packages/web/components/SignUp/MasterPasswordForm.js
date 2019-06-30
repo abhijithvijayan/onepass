@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { Form, Button } from 'react-bootstrap';
 
-import computeVerifier from '@onepass/core/auth';
+import { computeVerifier } from '@onepass/core/auth';
 import { submitSRPVerifierOnSignUp } from '../../state/modules/auth/operations';
 
 const renderField = ({ input, label, type, meta: { touched, error, warning } }) => {

@@ -8,6 +8,7 @@ class MasterPasswordPage extends Component {
     render() {
         return (
             <BodyWrapper>
+                {/* ToDo: Disable direct access */}
                 <MasterPassword />
             </BodyWrapper>
         );

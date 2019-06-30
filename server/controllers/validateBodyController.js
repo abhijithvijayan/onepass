@@ -15,16 +15,6 @@ exports.signUpValidationCriterias = [
         .body('name')
         .exists()
         .withMessage('You must provide your name.'),
-    // validator
-    //   .body('password', 'Master Password must be at least 8 chars long.')
-    //   .exists()
-    //   .withMessage('You must supply a secure Master Password.')
-    //   .isLength({ min: 8 }),
-    // validator
-    //   .body('confirmPassword', 'Passwords do not match')
-    //   .exists()
-    //   .withMessage('You must confirm the Master Password')
-    //   .custom((value, { req }) => (value === req.body.password)),
 ];
 
 exports.signUpValidationBody = (req, res, next) => {
@@ -33,8 +23,6 @@ exports.signUpValidationBody = (req, res, next) => {
         const errorsObj = errors.mapped();
         const emailError = errorsObj.email && errorsObj.email.msg;
         const nameError = errorsObj.name && errorsObj.name.msg;
-        // const passwordError = errorsObj.password && errorsObj.password.msg;
-        // const confirmPasswordError = errorsObj.confirmPassword && errorsObj.confirmPassword.msg;
         return res.status(400).json({ error: emailError || nameError });
     }
     return next();
@@ -50,11 +38,6 @@ exports.loginValidationCriterias = [
         .withMessage('Email address you entered is not valid.')
         .trim()
         .normalizeEmail(),
-    validator
-        .body('secretKey', 'Secret Key is at least 5 chars long.')
-        .exists()
-        .withMessage('You must supply your OnePass Secret Account Key.')
-        .isLength({ min: 5 }),
 ];
 
 exports.loginValidationBody = (req, res, next) => {
@@ -62,8 +45,7 @@ exports.loginValidationBody = (req, res, next) => {
     if (!errors.isEmpty()) {
         const errorsObj = errors.mapped();
         const emailError = errorsObj.email && errorsObj.email.msg;
-        const passwordError = errorsObj.password && errorsObj.password.msg;
-        return res.status(400).json({ error: emailError || passwordError });
+        return res.status(400).json({ error: emailError });
     }
     return next();
 };

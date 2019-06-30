@@ -1,10 +1,11 @@
 const fs = require('fs');
 const path = require('path');
+const nanoid = require('nanoid');
 const JWT = require('jsonwebtoken');
-const passport = require('passport');
+const srp = require('secure-remote-password/server');
 
 const { createUser, getUserDetails, verifyUser, requestResetPassword, validatePasswordRequest } = require('../db/user');
-const { saveVerifier } = require('../db/auth');
+const { saveVerifier, retrieveSRPVerifier, saveServerEphemeral } = require('../db/auth');
 
 /* Email Template and Options */
 const transporter = require('../mail/mail');
@@ -80,29 +81,35 @@ exports.saveSRPVerifier = async (req, res) => {
 };
 
 // ToDo: Refactor
-exports.login = (req, res) => {
-    passport.authenticate('local', { session: false }, (err, user, info) => {
-        if (err || !user) {
-            return res.status(400).json({
-                user,
-                error: info ? info.message : 'Login failed',
-            });
-        }
-        if (user && !user.isVerified) {
-            return res.status(400).json({
-                error:
-                    'Your email address is not verified. Please check you mailbox or Sign Up again to get the verification link',
-            });
-        }
-        req.login(user, { session: false }, err => {
-            if (err) {
-                res.send(err);
+exports.login = async (req, res) => {
+    const { stage } = req.body;
+    switch (stage) {
+        case 1: {
+            const { email } = req.body;
+            const { verifier, salt } = await retrieveSRPVerifier({ email });
+            if (salt && verifier) {
+                // Compute serverEphemeral
+                const serverEphemeral = srp.generateEphemeral(verifier);
+                // Store `serverEphemeral.secret`
+                await saveServerEphemeral({ serverSecretEphemeral: serverEphemeral.secret, email });
+                // Send `salt` and `serverEphemeral.public` to the client
+                return res.status(201).json({ email, salt, serverPublicEphemeral: serverEphemeral.public });
             }
-            // generate token and return it
-            const token = genToken(user);
-            return res.status(200).json({ token });
-        });
-    })(req, res);
+            const sampleSalt = nanoid();
+            const sampleEphemeral = srp.generateEphemeral(sampleSalt);
+            // Send a bogus salt and ephemeral value to avoid leaking which users have signed up
+            return res.status(201).json({ email, salt: sampleSalt, serverPublicEphemeral: sampleEphemeral.public });
+        }
+        default: {
+            return res.status(403).json({ error: 'Invalid Request' });
+        }
+    }
+    // if (user && !user.isVerified) {
+    //     return res.status(400).json({
+    //         error:
+    //             'Your email address is not verified. Please check you mailbox or Sign Up again to get the verification link',
+    //     });
+    // }
 };
 
 // ToDo: Refactor

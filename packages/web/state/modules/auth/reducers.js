@@ -14,7 +14,7 @@ const initialSignUpState = {
 };
 
 const loginReducer = createReducer(initialLoginState)({
-    [types.SUBMIT_LOGIN_DATA]: onLoginRequest,
+    [types.SEND_CLIENT_EPHEMERAL]: saveClientEphemeral,
 });
 
 const signUpReducer = createReducer(initialSignUpState)({
@@ -34,10 +34,11 @@ function onTokenSubmission(state, action) {
     return { ...state, response: action.payload, isVerified: true };
 }
 
-function onLoginRequest(state, action) {
+function saveClientEphemeral(state, action) {
     // eslint-disable-next-line no-console
     console.log('payload:', action.payload);
-    return { ...state, response: action.payload };
+    const { response, clientEphemeral } = action.payload;
+    return { ...state, response, clientEphemeral };
 }
 
 export default combineReducers({

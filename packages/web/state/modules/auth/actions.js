@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import Router from 'next/router';
 
 import api from '../../../api';
@@ -32,24 +33,36 @@ export const submitSignUpData = formValues => {
     };
 };
 
-export const submitLoginData = formValues => {
-    const { email, secretKey } = formValues;
+export const submitLoginData = (formValues, clientEphemeral) => {
+    const { email } = formValues;
+
+    const sendRequest = async data => {
+        const response = await api({
+            method: 'POST',
+            url: endpoints.LOGIN_SUBMIT_ENDPOINT,
+            data,
+        });
+        return response;
+    };
+
     return async dispatch => {
         try {
-            const response = await api({
-                method: 'POST',
-                url: endpoints.LOGIN_SUBMIT_ENDPOINT,
-                data: {
-                    email,
-                    secretKey,
+            const clientPublicEphemeral = clientEphemeral.public;
+            // ToDo: Get `salt` and `serverEphemeral.public` from server
+            const serverInitialResponse = await sendRequest({ email, clientPublicEphemeral, stage: 1 });
+            dispatch({
+                type: types.SEND_CLIENT_EPHEMERAL,
+                payload: {
+                    response: serverInitialResponse.data,
+                    clientEphemeral,
                 },
             });
-            // eslint-disable-next-line no-console
-            console.log('response', response);
-            dispatch({
-                type: types.SUBMIT_LOGIN_DATA,
-                payload: response,
-            });
+            console.log(serverInitialResponse.data);
+            // ToDo: derive the shared strong session key, and a proof
+            // Send it to server
+
+            // ToDo: get `serverSession.proof` from server
+            // Verify & complete auth
         } catch ({ response }) {
             // eslint-disable-next-line no-console
             console.log(response.data.error);
@@ -96,7 +109,7 @@ export const submitSRPVerifierOnSignUp = (verifier, salt, email, userId) => {
                 },
             });
             dispatch({
-                type: types.SUBMIT_SRP_VERIFIER,
+                type: types.SEND_SRP_VERIFIER,
                 payload: response.data,
             });
             Router.push('/home');

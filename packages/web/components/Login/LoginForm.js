@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { Form, Button } from 'react-bootstrap';
 
+import { genClientEphemeral } from '@onepass/core/auth';
 import { submitLoginData } from '../../state/modules/auth/operations';
 
 const renderField = ({ input, label, type, meta: { touched, error, warning } }) => {
@@ -17,9 +18,8 @@ const renderField = ({ input, label, type, meta: { touched, error, warning } }) 
 
 class LoginForm extends Component {
     onSubmit = formValues => {
-        // eslint-disable-next-line no-console
-        console.log(formValues);
-        this.props.submitLoginData(formValues);
+        const clientEphemeral = genClientEphemeral();
+        this.props.submitLoginData(formValues, clientEphemeral);
     };
 
     render() {
@@ -28,7 +28,7 @@ class LoginForm extends Component {
             <Form onSubmit={handleSubmit(this.onSubmit)}>
                 <Field name="email" type="email" component={renderField} label="Email" />
                 <Field name="secretKey" type="text" component={renderField} label="Secret Key" />
-                <Field name="masterPassword" type="password" component={renderField} label="Master Password" />
+                <Field name="password" type="password" component={renderField} label="Master Password" />
                 <Button variant="primary" type="submit">
                     Submit
                 </Button>
@@ -49,10 +49,10 @@ const validate = values => {
     } else if (values.secretKey.length > 34) {
         errors.secretKey = 'Must be 34 characters or less';
     }
-    if (!values.masterPassword) {
-        errors.masterPassword = 'Required';
-    } else if (values.masterPassword.length > 64) {
-        errors.masterPassword = 'Must be 64 characters or less';
+    if (!values.password) {
+        errors.password = 'Required';
+    } else if (values.password.length > 64) {
+        errors.password = 'Must be 64 characters or less';
     }
     return errors;
 };

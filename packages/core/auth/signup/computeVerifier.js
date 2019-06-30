@@ -6,12 +6,10 @@ import srpClient from 'secure-remote-password/client';
  * @param {String} masterPassword
  */
 
-const computeVerifier = (userId, masterPassword) => {
+export const computeVerifier = (userId, masterPassword) => {
     const salt = srpClient.generateSalt();
     // ToDo: use PBKDF2
     const privateKey = srpClient.derivePrivateKey(salt, userId, masterPassword);
     const verifier = srpClient.deriveVerifier(privateKey);
     return { salt, verifier };
 };
-
-export default computeVerifier;
