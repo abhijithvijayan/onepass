@@ -131,9 +131,9 @@ export const submitLoginData = ({ formValues, clientEphemeral }) => {
                 stage: 2,
             });
 
+            /** Optional step */
             // verify that the server has derived the correct strong session key
             verifyLoginSession(clientPublicEphemeral, clientSession, serverSessionProof);
-
             dispatch({
                 type: types.LOGIN,
             });

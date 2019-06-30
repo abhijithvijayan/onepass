@@ -18,11 +18,11 @@ const resetEmailTemplatePath = path.join(__dirname, '../mail/template-reset.html
 const resetEmailTemplate = fs.readFileSync(resetEmailTemplatePath, { encoding: 'utf-8' });
 
 /* Function to generate JWT Token */
-const genToken = user => {
+const genToken = email => {
     return JWT.sign(
         {
             iss: 'ApiAuth',
-            id: user.email,
+            id: email,
             iat: new Date().getTime(),
         },
         process.env.JWT_SECRET,
@@ -63,9 +63,6 @@ exports.verify = async (req, res) => {
     const { verificationToken = '', email = '' } = req.body;
     const user = await verifyUser({ email, verificationToken });
     if (user) {
-        // generate some new token for other api request after this
-        // const token = genToken(user);
-        // req.user = { token };
         return res.status(201).json({ userId: user.accountId, email: user.email, version: user.versionCode });
     }
     return res.status(403).json({ error: 'Invalid email id or verification code' });
@@ -119,7 +116,8 @@ exports.login = async (req, res) => {
                         clientSessionProof
                     );
                     const serverSessionProof = serverSession.proof;
-                    return res.status(201).json({ serverSessionProof });
+                    const token = genToken(email);
+                    return res.status(201).json({ serverSessionProof, token });
                 } catch (err) {
                     return res.status(403).json({ error: 'Invalid client session proof' });
                 }
