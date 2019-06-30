@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Router from 'next/router';
+import decodeJwt from 'jwt-decode';
 
 import Login from '../components/Login';
 import BodyWrapper from '../components/BodyWrapper';
@@ -28,7 +29,7 @@ LoginPage.getInitialProps = ({ req, store }) => {
     const token = req && req.cookies && req.cookies.token;
     if (token && store) {
         // ToDo: Pass in token for jwt-decode(for email)
-        store.dispatch(authUser());
+        store.dispatch(authUser(decodeJwt(token)));
     }
     return {};
 };

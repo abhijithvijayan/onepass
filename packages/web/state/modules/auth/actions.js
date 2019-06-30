@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import Router from 'next/router';
 import cookie from 'js-cookie';
+import decodeJwt from 'jwt-decode';
 
 import { deriveClientSession, verifyLoginSession } from '@onepass/core/auth';
 import api from '../../../api';
@@ -142,6 +143,7 @@ export const submitLoginData = ({ formValues, clientEphemeral }) => {
 
             dispatch({
                 type: types.AUTH_USER,
+                payload: decodeJwt(token),
             });
 
             Router.push('/home');
@@ -152,11 +154,11 @@ export const submitLoginData = ({ formValues, clientEphemeral }) => {
     };
 };
 
-// ToDo: use jwt-decode to get email
-export const authUser = () => {
+export const authUser = payload => {
     return dispatch => {
         dispatch({
             type: types.AUTH_USER,
+            payload,
         });
     };
 };
