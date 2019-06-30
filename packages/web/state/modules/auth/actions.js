@@ -141,11 +141,22 @@ export const submitLoginData = ({ formValues, clientEphemeral }) => {
             cookie.set('token', token, { expires: in1Hour });
 
             dispatch({
-                type: types.LOGIN,
+                type: types.AUTH_USER,
             });
         } catch (err) {
             // eslint-disable-next-line no-console
             console.log(err);
         }
+    };
+};
+
+export const logoutUser = () => {
+    return dispatch => {
+        cookie.remove('token');
+        // ToDo: Dispatch de-authentication(reset to initial state)
+        dispatch({
+            type: types.DE_AUTH_USER,
+        });
+        Router.push('/login');
     };
 };
