@@ -32,8 +32,8 @@ exports.retrieveSRPVerifier = async ({ email }) => {
         });
     });
     session.close();
-    const { salt, verifier } = records.length && records[0].get('auth').properties;
-    return { salt, verifier };
+    const { salt, verifier, accountId } = records.length && records[0].get('auth').properties;
+    return { salt, verifier, accountId };
 };
 
 exports.saveServerEphemeral = async ({ serverSecretEphemeral, email }) => {

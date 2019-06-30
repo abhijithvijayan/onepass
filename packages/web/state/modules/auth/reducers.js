@@ -37,8 +37,8 @@ function onTokenSubmission(state, action) {
 function saveClientEphemeral(state, action) {
     // eslint-disable-next-line no-console
     console.log('payload:', action.payload);
-    const { response, clientEphemeral } = action.payload;
-    return { ...state, response, clientEphemeral };
+    const { serverResponse, clientEphemeral } = action.payload;
+    return { ...state, serverResponse, clientEphemeral };
 }
 
 export default combineReducers({

@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import Router from 'next/router';
 
+import { deriveSession } from '@onepass/core/auth';
 import api from '../../../api';
 import * as types from './types';
 import * as endpoints from '../../../api/constants';
@@ -34,7 +35,7 @@ export const submitSignUpData = formValues => {
 };
 
 export const submitLoginData = (formValues, clientEphemeral) => {
-    const { email } = formValues;
+    const { email, password, secretKey } = formValues;
 
     const sendRequest = async data => {
         const response = await api({
@@ -47,20 +48,23 @@ export const submitLoginData = (formValues, clientEphemeral) => {
 
     return async dispatch => {
         try {
-            const clientPublicEphemeral = clientEphemeral.public;
-            // ToDo: Get `salt` and `serverEphemeral.public` from server
-            const serverInitialResponse = await sendRequest({ email, clientPublicEphemeral, stage: 1 });
+            const clientSecretEphemeral = clientEphemeral.secret;
+            const {
+                data: { userId, salt, serverPublicEphemeral },
+            } = await sendRequest({ email, stage: 1 });
             dispatch({
                 type: types.SEND_CLIENT_EPHEMERAL,
                 payload: {
-                    response: serverInitialResponse.data,
+                    serverResponse: { userId, salt, serverPublicEphemeral },
                     clientEphemeral,
                 },
             });
-            console.log(serverInitialResponse.data);
-            // ToDo: derive the shared strong session key, and a proof
-            // Send it to server
-
+            // Derive the shared strong session key, and a proof
+            const clientSession = deriveSession(salt, userId, password, clientSecretEphemeral, serverPublicEphemeral);
+            const clientPublicEphemeral = clientEphemeral.public;
+            const clientSessionProof = clientSession.proof;
+            // Send `clientSessionProof` & `clientPublicEphemeral` to the server
+            await sendRequest({ email, userId, clientPublicEphemeral, clientSessionProof, stage: 2 });
             // ToDo: get `serverSession.proof` from server
             // Verify & complete auth
         } catch ({ response }) {

@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const nanoid = require('nanoid');
 const JWT = require('jsonwebtoken');
+const generate = require('nanoid/generate');
 const srp = require('secure-remote-password/server');
 
 const { createUser, getUserDetails, verifyUser, requestResetPassword, validatePasswordRequest } = require('../db/user');
@@ -86,19 +87,24 @@ exports.login = async (req, res) => {
     switch (stage) {
         case 1: {
             const { email } = req.body;
-            const { verifier, salt } = await retrieveSRPVerifier({ email });
+            const { verifier, salt, accountId } = await retrieveSRPVerifier({ email });
             if (salt && verifier) {
                 // Compute serverEphemeral
                 const serverEphemeral = srp.generateEphemeral(verifier);
                 // Store `serverEphemeral.secret`
                 await saveServerEphemeral({ serverSecretEphemeral: serverEphemeral.secret, email });
                 // Send `salt` and `serverEphemeral.public` to the client
-                return res.status(201).json({ email, salt, serverPublicEphemeral: serverEphemeral.public });
+                return res.status(201).json({ userId: accountId, salt, serverPublicEphemeral: serverEphemeral.public });
             }
+            // Send a bogus salt, userId & ephemeral value to avoid leaking which users have signed up
             const sampleSalt = nanoid();
+            const endSuffix = generate('1234567890', 2);
+            const userRandomPrefix = generate('1245689abefklprtvxz', 6);
+            const sampleUserId = `user_${userRandomPrefix}_${endSuffix}`;
             const sampleEphemeral = srp.generateEphemeral(sampleSalt);
-            // Send a bogus salt and ephemeral value to avoid leaking which users have signed up
-            return res.status(201).json({ email, salt: sampleSalt, serverPublicEphemeral: sampleEphemeral.public });
+            return res
+                .status(201)
+                .json({ userId: sampleUserId, salt: sampleSalt, serverPublicEphemeral: sampleEphemeral.public });
         }
         default: {
             return res.status(403).json({ error: 'Invalid Request' });
