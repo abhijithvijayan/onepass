@@ -43,6 +43,7 @@ function saveClientEphemeral(state, action) {
     return { ...state, serverResponse, clientEphemeral };
 }
 
+// ToDo: save email
 function onSuccessfulLogin(state) {
     return { ...state, isAuthenticated: true };
 }

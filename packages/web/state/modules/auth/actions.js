@@ -143,6 +143,8 @@ export const submitLoginData = ({ formValues, clientEphemeral }) => {
             dispatch({
                 type: types.AUTH_USER,
             });
+
+            Router.push('/home');
         } catch (err) {
             // eslint-disable-next-line no-console
             console.log(err);
@@ -150,10 +152,18 @@ export const submitLoginData = ({ formValues, clientEphemeral }) => {
     };
 };
 
+// ToDo: use jwt-decode to get email
+export const authUser = () => {
+    return dispatch => {
+        dispatch({
+            type: types.AUTH_USER,
+        });
+    };
+};
+
 export const logoutUser = () => {
     return dispatch => {
         cookie.remove('token');
-        // ToDo: Dispatch de-authentication(reset to initial state)
         dispatch({
             type: types.DE_AUTH_USER,
         });
