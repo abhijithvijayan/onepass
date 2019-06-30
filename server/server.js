@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const express = require('express');
 const passport = require('passport');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 
 require('./handlers/passport');
 
@@ -43,7 +44,7 @@ nextApp.prepare().then(() => {
     if (dev) {
         server.use(morgan('dev'));
     }
-    // Takes the raw requests and turns them into usable properties on req.body
+    server.use(cookieParser());
     server.use(bodyParser.json());
     server.use(
         bodyParser.urlencoded({

@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import Router from 'next/router';
+import cookie from 'js-cookie';
 
 import { deriveClientSession, verifyLoginSession } from '@onepass/core/auth';
 import api from '../../../api';
@@ -123,17 +124,22 @@ export const submitLoginData = ({ formValues, clientEphemeral }) => {
             const clientSessionProof = clientSession.proof;
             // Send `clientSessionProof` & `clientPublicEphemeral` to the server
             const {
-                data: { serverSessionProof },
+                data: { serverSessionProof, token },
             } = await sendRequest({
                 email,
                 clientPublicEphemeral,
                 clientSessionProof,
                 stage: 2,
             });
-
-            /** Optional step */
-            // verify that the server has derived the correct strong session key
+            /**
+             * Optional:
+             * Verify that the server has derived the correct strong session key
+             */
             verifyLoginSession(clientPublicEphemeral, clientSession, serverSessionProof);
+
+            const in1Hour = 1 / 24;
+            cookie.set('token', token, { expires: in1Hour });
+
             dispatch({
                 type: types.LOGIN,
             });
