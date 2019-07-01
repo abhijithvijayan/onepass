@@ -1,6 +1,5 @@
 const nanoid = require('nanoid');
 const generate = require('nanoid/generate');
-const bcrypt = require('bcryptjs');
 
 const driver = require('./neo4j');
 

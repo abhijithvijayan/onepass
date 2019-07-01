@@ -172,3 +172,25 @@ export const logoutUser = () => {
         Router.push('/login');
     };
 };
+
+export const renewAuthUser = () => {
+    return async (dispatch, getState) => {
+        // ToDo: Check if renew is needed from state
+        try {
+            const {
+                data: { token },
+            } = await api({
+                method: 'POST',
+                headers: { Authorization: cookie.get('token') },
+                url: endpoints.TOKEN_RENEWAL_ENDPOINT,
+            });
+            const in1Hour = 1 / 24;
+            cookie.set('token', token, { expires: in1Hour });
+            // ToDo: Dispatch renew action
+            dispatch(authUser(decodeJwt(token)));
+        } catch (error) {
+            cookie.remove('token');
+            // ToDo: Dispatch action to de-auth user
+        }
+    };
+};

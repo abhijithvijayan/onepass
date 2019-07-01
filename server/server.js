@@ -57,7 +57,7 @@ nextApp.prepare().then(() => {
     /* -------------- View routes ------------- */
     /* ---------------------------------------- */
 
-    server.get('/api/v1/', api.sendStatus);
+    server.get('/api/v1/', auth.authWithJWT, api.sendStatus);
 
     server.get('/', (req, res) => {
         return nextApp.render(req, res, '/');
@@ -100,8 +100,14 @@ nextApp.prepare().then(() => {
     server.post('/api/v1/auth/signup.saveVerifier', auth.saveSRPVerifier);
 
     /* User Login */
-    // ToDo Route
+    // ToDo: add verificationcriterias to body
     server.post('/api/v1/auth/login', loginValidationCriterias, loginValidationBody, auth.login);
+
+    server.post('/api/v1/auth/renew.token', auth.renewToken);
+
+    /* ---------------------------------------- */
+    /* ------------ REFACTOR ROUTES ----------- */
+    /* ---------------------------------------- */
 
     /* Forget Password Form submission */
     // ToDo Route

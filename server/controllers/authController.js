@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const nanoid = require('nanoid');
 const JWT = require('jsonwebtoken');
+const passport = require('passport');
 const generate = require('nanoid/generate');
 const srp = require('secure-remote-password/server');
 
@@ -18,7 +19,7 @@ const resetEmailTemplatePath = path.join(__dirname, '../mail/template-reset.html
 const resetEmailTemplate = fs.readFileSync(resetEmailTemplatePath, { encoding: 'utf-8' });
 
 /* Function to generate JWT Token */
-const genToken = email => {
+const genJWTtoken = email => {
     return JWT.sign(
         {
             iss: 'ApiAuth',
@@ -28,6 +29,25 @@ const genToken = email => {
         process.env.JWT_SECRET,
         { expiresIn: '1h' }
     );
+};
+
+exports.authWithJWT = (req, res, next) => {
+    return passport.authenticate('jwt', { session: false }, (err, user, info) => {
+        if (err || !user) {
+            return res.status(400).json({
+                user,
+                message: info ? info.message : 'Login failed',
+            });
+        }
+        if (user && !user.isVerified) {
+            return res.status(400).json({
+                error:
+                    'Your email address is not verified. Please check you mailbox or Sign Up again to get the verification link',
+            });
+        }
+        // console.log(user);
+        return next();
+    })(req, res, next);
 };
 
 /* Done */
@@ -116,7 +136,7 @@ exports.login = async (req, res) => {
                         clientSessionProof
                     );
                     const serverSessionProof = serverSession.proof;
-                    const token = genToken(email);
+                    const token = genJWTtoken(email);
                     return res.status(201).json({ serverSessionProof, token });
                 } catch (err) {
                     return res.status(403).json({ error: 'Invalid client session proof' });
@@ -136,7 +156,12 @@ exports.login = async (req, res) => {
     // }
 };
 
-// ToDo: Refactor
+exports.renewToken = async (req, res) => {
+    const token = genJWTtoken(req.user);
+    return res.status(200).json({ token });
+};
+
+// ToDo: Refactor later
 exports.requestPasswordReset = async (req, res) => {
     const { email } = req.body;
     const user = await requestResetPassword({ email });
@@ -164,7 +189,7 @@ exports.resetPasswordValidation = async (req, res, next) => {
     const user = await validatePasswordRequest({ email, passwordResetToken });
     if (user) {
         // generate some new token for other api after this middleware
-        const token = genToken(user);
+        const token = genJWTtoken(user);
         req.user = { token };
         return next();
     }
