@@ -1,19 +1,21 @@
 const driver = require('./neo4j');
 
+/**
+ * SIGNUP Functions
+ */
+
 exports.saveVerifier = async ({ verifier, salt, email, userId }) => {
     const session = driver.session();
     const { records = [] } = await session.writeTransaction(tx => {
         return tx.run(
             'MATCH (u: User { email: $emailParam, userId : $userIdParam, isVerified: true }) ' +
                 'MERGE (a: auth { userId : $userIdParam })<-[:SRP]-(u) ' +
-                'ON CREATE SET a.createdAt = $createdAtParam, a.verifier = $verifierParam, a.salt = $saltParam ' +
-                'ON MATCH SET a.updatedAt = $updatedAtParam, a.verifier = $verifierParam, a.salt = $saltParam ' +
+                'SET u.hasCompletedSignUp = true, a.createdAt = $createdAtParam, a.verifier = $verifierParam, a.salt = $saltParam ' +
                 'RETURN a',
             {
                 emailParam: email,
                 userIdParam: userId,
                 createdAtParam: new Date().toJSON(),
-                updatedAtParam: new Date().toJSON(),
                 verifierParam: verifier,
                 saltParam: salt,
             }
@@ -23,6 +25,10 @@ exports.saveVerifier = async ({ verifier, salt, email, userId }) => {
     const userAuth = records.length && records[0].get('a').properties;
     return userAuth;
 };
+
+/**
+ * LOGIN Functions
+ */
 
 exports.retrieveSRPVerifier = async ({ email }) => {
     const session = driver.session();

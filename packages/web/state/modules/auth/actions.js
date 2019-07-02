@@ -15,7 +15,7 @@ export const submitSignUpData = ({ email, name }) => {
     const lowerCaseEmail = email.toLowerCase();
     return async dispatch => {
         try {
-            const response = await api({
+            const { data } = await api({
                 method: 'POST',
                 url: endpoints.SIGNUP_SUBMIT_ENDPOINT,
                 data: {
@@ -23,11 +23,20 @@ export const submitSignUpData = ({ email, name }) => {
                     name,
                 },
             });
-            dispatch({
-                type: types.SUBMIT_SIGNUP_DATA,
-                payload: response.data,
-            });
-            Router.push('/verify', '/signup/verify');
+            const { hasCompletedSignUp, isVerified } = data;
+            if (isVerified && !hasCompletedSignUp) {
+                dispatch({
+                    type: types.COMPLETE_SIGNUP,
+                    payload: data,
+                });
+                Router.push('/masterpassword', '/signup/masterpassword');
+            } else {
+                dispatch({
+                    type: types.SUBMIT_SIGNUP_DATA,
+                    payload: data,
+                });
+                Router.push('/verify', '/signup/verify');
+            }
         } catch ({ response }) {
             // eslint-disable-next-line no-console
             console.log(response.data.error);
@@ -66,7 +75,7 @@ export const submitSRPVerifierOnSignUp = ({ email, userId, password }) => {
 
     return async dispatch => {
         try {
-            const response = await api({
+            await api({
                 method: 'POST',
                 url: endpoints.VERIFIER_SUBMIT_ENDPOINT,
                 data: {
@@ -77,8 +86,7 @@ export const submitSRPVerifierOnSignUp = ({ email, userId, password }) => {
                 },
             });
             dispatch({
-                type: types.SEND_SRP_VERIFIER,
-                payload: response.data,
+                type: types.FINISH_SIGNUP,
             });
             Router.push('/login');
         } catch ({ response }) {

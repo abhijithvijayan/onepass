@@ -8,10 +8,7 @@ const initialLoginState = {
     isAuthenticated: false,
 };
 
-const initialSignUpState = {
-    isVerificationSent: false,
-    isVerified: false,
-};
+const initialSignUpState = {};
 
 const loginReducer = createReducer(initialLoginState)({
     [types.GET_SERVER_EPHEMERAL]: saveClientEphemeral,
@@ -19,10 +16,16 @@ const loginReducer = createReducer(initialLoginState)({
     [types.DE_AUTH_USER]: onLogoutRequest,
 });
 
-const signUpReducer = createReducer(initialSignUpState)({
+const signUpReducer = createReducer({})({
     [types.SUBMIT_SIGNUP_DATA]: onSignUpRequest,
     [types.SUBMIT_VERIFICATION_TOKEN]: onVerifyTokenSubmission,
+    [types.COMPLETE_SIGNUP]: completeSignUp,
+    [types.FINISH_SIGNUP]: finishSignUp,
 });
+
+/**
+ * SIGNUP reducer functions
+ */
 
 function onSignUpRequest(state, action) {
     return { ...state, response: action.payload, isVerificationSent: true };
@@ -31,6 +34,18 @@ function onSignUpRequest(state, action) {
 function onVerifyTokenSubmission(state, action) {
     return { ...state, response: action.payload, isVerified: true };
 }
+
+function completeSignUp(state, action) {
+    return { ...state, response: action.payload };
+}
+
+function finishSignUp() {
+    return initialSignUpState;
+}
+
+/**
+ * LOGIN / LOGOUT reducer functions
+ */
 
 function saveClientEphemeral(state, action) {
     const { serverResponse, clientEphemeral } = action.payload;
@@ -44,6 +59,8 @@ function onSuccessfulLogin(state, action) {
 function onLogoutRequest() {
     return initialLoginState;
 }
+
+/* ------------------------------------- */
 
 export default combineReducers({
     login: loginReducer,
