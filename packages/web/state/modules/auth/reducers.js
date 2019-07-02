@@ -19,8 +19,7 @@ const loginReducer = createReducer(initialLoginState)({
 const signUpReducer = createReducer({})({
     [types.SUBMIT_SIGNUP_DATA]: onSignUpRequest,
     [types.SUBMIT_VERIFICATION_TOKEN]: onVerifyTokenSubmission,
-    [types.COMPLETE_SIGNUP]: completeSignUp,
-    [types.FINISH_SIGNUP]: finishSignUp,
+    [types.COMPLETE_SIGNUP]: finishSignUp,
 });
 
 /**
@@ -33,10 +32,6 @@ function onSignUpRequest(state, action) {
 
 function onVerifyTokenSubmission(state, action) {
     return { ...state, response: action.payload, isVerified: true };
-}
-
-function completeSignUp(state, action) {
-    return { ...state, response: action.payload };
 }
 
 function finishSignUp() {

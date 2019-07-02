@@ -23,20 +23,11 @@ export const submitSignUpData = ({ email, name }) => {
                     name,
                 },
             });
-            const { hasCompletedSignUp, isVerified } = data;
-            if (isVerified && !hasCompletedSignUp) {
-                dispatch({
-                    type: types.COMPLETE_SIGNUP,
-                    payload: data,
-                });
-                Router.push('/masterpassword', '/signup/masterpassword');
-            } else {
-                dispatch({
-                    type: types.SUBMIT_SIGNUP_DATA,
-                    payload: data,
-                });
-                Router.push('/verify', '/signup/verify');
-            }
+            dispatch({
+                type: types.SUBMIT_SIGNUP_DATA,
+                payload: data,
+            });
+            Router.push('/verify', '/signup/verify');
         } catch ({ response }) {
             // eslint-disable-next-line no-console
             console.log(response.data.error);
@@ -86,7 +77,7 @@ export const submitSRPVerifierOnSignUp = ({ email, userId, password }) => {
                 },
             });
             dispatch({
-                type: types.FINISH_SIGNUP,
+                type: types.COMPLETE_SIGNUP,
             });
             Router.push('/login');
         } catch ({ response }) {

@@ -66,16 +66,6 @@ exports.signup = async (req, res) => {
     if (user && user.isVerified && user.hasCompletedSignUp) {
         return res.status(403).json({ error: 'This email is already registered' });
     }
-    if (user && user.isVerified && !user.hasCompletedSignUp) {
-        return res.status(200).json({
-            isVerified: user.isVerified,
-            hasCompletedSignUp: user.hasCompletedSignUp,
-            userId: user.userId,
-            email: user.email,
-            version: user.versionCode,
-            message: "Account signup hasn't completed",
-        });
-    }
     const newUser = await createUser({ email, name });
     /* Handle Verification email */
     const mail = await transporter.sendMail({
