@@ -86,7 +86,7 @@ exports.verify = async (req, res) => {
     const { verificationToken = '', email = '' } = req.body;
     const user = await verifyUser({ email, verificationToken });
     if (user) {
-        return res.status(201).json({ userId: user.accountId, email: user.email, version: user.versionCode });
+        return res.status(201).json({ userId: user.userId, email: user.email, version: user.versionCode });
     }
     return res.status(403).json({ error: 'Invalid email id or verification code' });
 };
@@ -106,14 +106,14 @@ exports.login = async (req, res) => {
     const { stage, email } = req.body;
     switch (stage) {
         case 'init': {
-            const { verifier, salt, accountId } = await retrieveSRPVerifier({ email });
-            if (salt && verifier && accountId) {
+            const { verifier, salt, userId } = await retrieveSRPVerifier({ email });
+            if (salt && verifier && userId) {
                 // Compute serverEphemeral
                 const serverEphemeral = srp.generateEphemeral(verifier);
                 // Store `serverEphemeral.secret`
                 await saveServerEphemeral({ serverSecretEphemeral: serverEphemeral.secret, email });
                 // Send `salt` and `serverEphemeral.public` to the client
-                return res.status(201).json({ userId: accountId, salt, serverPublicEphemeral: serverEphemeral.public });
+                return res.status(201).json({ userId, salt, serverPublicEphemeral: serverEphemeral.public });
             }
             // Send a bogus salt, userId & ephemeral value to avoid leaking which users have signed up
             const sampleSalt = nanoid();
@@ -127,14 +127,14 @@ exports.login = async (req, res) => {
         }
         case 'login': {
             const { clientPublicEphemeral, clientSessionProof } = req.body;
-            const { verifier, salt, accountId, serverSecretEphemeral } = await retrieveSRPCredentials({ email });
-            if (verifier && salt && accountId && serverSecretEphemeral) {
+            const { verifier, salt, userId, serverSecretEphemeral } = await retrieveSRPCredentials({ email });
+            if (verifier && salt && userId && serverSecretEphemeral) {
                 try {
                     const serverSession = srp.deriveSession(
                         serverSecretEphemeral,
                         clientPublicEphemeral,
                         salt,
-                        accountId,
+                        userId,
                         verifier,
                         clientSessionProof
                     );
@@ -145,7 +145,7 @@ exports.login = async (req, res) => {
                     return res.status(403).json({ error: 'Invalid client session proof' });
                 }
             }
-            return res.status(201).json({ status: 'Send some dummy content' });
+            return res.status(201).json({ status: 'Account signup was left incomplete.' });
         }
         default: {
             return res.status(403).json({ error: 'Invalid Request' });

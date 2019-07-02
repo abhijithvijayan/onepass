@@ -4,14 +4,14 @@ exports.saveVerifier = async ({ verifier, salt, email, userId }) => {
     const session = driver.session();
     const { records = [] } = await session.writeTransaction(tx => {
         return tx.run(
-            'MATCH (u: User { email: $emailParam, accountId : $accountIdParam, isVerified: true }) ' +
-                'MERGE (a: auth { accountId : $accountIdParam })<-[:SRP]-(u) ' +
+            'MATCH (u: User { email: $emailParam, userId : $userIdParam, isVerified: true }) ' +
+                'MERGE (a: auth { userId : $userIdParam })<-[:SRP]-(u) ' +
                 'ON CREATE SET a.createdAt = $createdAtParam, a.verifier = $verifierParam, a.salt = $saltParam ' +
                 'ON MATCH SET a.updatedAt = $updatedAtParam, a.verifier = $verifierParam, a.salt = $saltParam ' +
                 'RETURN a',
             {
                 emailParam: email,
-                accountIdParam: userId,
+                userIdParam: userId,
                 createdAtParam: new Date().toJSON(),
                 updatedAtParam: new Date().toJSON(),
                 verifierParam: verifier,
@@ -32,8 +32,8 @@ exports.retrieveSRPVerifier = async ({ email }) => {
         });
     });
     session.close();
-    const { salt, verifier, accountId } = records.length && records[0].get('auth').properties;
-    return { salt, verifier, accountId };
+    const { salt, verifier, userId } = records.length && records[0].get('auth').properties;
+    return { salt, verifier, userId };
 };
 
 exports.saveServerEphemeral = async ({ serverSecretEphemeral, email }) => {
@@ -60,6 +60,6 @@ exports.retrieveSRPCredentials = async ({ email }) => {
         });
     });
     session.close();
-    const { salt, verifier, accountId, serverSecretEphemeral } = records.length && records[0].get('auth').properties;
-    return { salt, verifier, accountId, serverSecretEphemeral };
+    const { salt, verifier, userId, serverSecretEphemeral } = records.length && records[0].get('auth').properties;
+    return { salt, verifier, userId, serverSecretEphemeral };
 };
