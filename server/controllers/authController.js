@@ -33,17 +33,20 @@ const genJWTtoken = email => {
 
 exports.authWithJWT = (req, res, next) => {
     return passport.authenticate('jwt', { session: false }, (err, user, info) => {
-        if (err || !user) {
-            return res.status(400).json({
-                user,
-                message: info ? info.message : 'Login failed',
-            });
+        if (err) {
+            return res.status(400);
+        }
+        if (!user) {
+            return res.status(401).json({ user, message: info ? info.message : 'Authentication failed' });
         }
         if (user && !user.isVerified) {
             return res.status(400).json({
                 error:
                     'Your email address is not verified. Please check you mailbox or Sign Up again to get the verification link',
             });
+        }
+        if (user) {
+            req.user = user;
         }
         // console.log(user);
         return next();
@@ -148,16 +151,11 @@ exports.login = async (req, res) => {
             return res.status(403).json({ error: 'Invalid Request' });
         }
     }
-    // if (user && !user.isVerified) {
-    //     return res.status(400).json({
-    //         error:
-    //             'Your email address is not verified. Please check you mailbox or Sign Up again to get the verification link',
-    //     });
-    // }
 };
 
 exports.renewToken = async (req, res) => {
-    const token = genJWTtoken(req.user);
+    const { email } = req.user;
+    const token = genJWTtoken(email);
     return res.status(200).json({ token });
 };
 

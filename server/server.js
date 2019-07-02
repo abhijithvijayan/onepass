@@ -103,7 +103,7 @@ nextApp.prepare().then(() => {
     // ToDo: add verificationcriterias to body
     server.post('/api/v1/auth/login', loginValidationCriterias, loginValidationBody, auth.login);
 
-    server.post('/api/v1/auth/renew.token', auth.renewToken);
+    server.post('/api/v1/auth/renew.token', auth.authWithJWT, auth.renewToken);
 
     /* ---------------------------------------- */
     /* ------------ REFACTOR ROUTES ----------- */
