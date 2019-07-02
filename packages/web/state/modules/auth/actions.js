@@ -3,20 +3,23 @@ import Router from 'next/router';
 import cookie from 'js-cookie';
 import decodeJwt from 'jwt-decode';
 
-import { deriveClientSession, verifyLoginSession } from '@onepass/core/auth';
+// Core Libraries
+import { deriveClientSession, verifyLoginSession, genClientEphemeral, computeVerifier } from '@onepass/core/auth';
+import { normalizeMasterPassword } from '@onepass/core/nkdf';
+
 import api from '../../../api';
 import * as types from './types';
 import * as endpoints from '../../../api/constants';
 
-export const submitSignUpData = formValues => {
-    const { email, name } = formValues;
+export const submitSignUpData = ({ email, name }) => {
+    const lowerCaseEmail = email.toLowerCase();
     return async dispatch => {
         try {
             const response = await api({
                 method: 'POST',
                 url: endpoints.SIGNUP_SUBMIT_ENDPOINT,
                 data: {
-                    email,
+                    email: lowerCaseEmail,
                     name,
                 },
             });
@@ -24,7 +27,6 @@ export const submitSignUpData = formValues => {
                 type: types.SUBMIT_SIGNUP_DATA,
                 payload: response.data,
             });
-            // route to verify page
             Router.push('/verify', '/signup/verify');
         } catch ({ response }) {
             // eslint-disable-next-line no-console
@@ -34,7 +36,7 @@ export const submitSignUpData = formValues => {
     };
 };
 
-export const submitVerificationToken = (verificationToken, email) => {
+export const submitVerificationToken = ({ email, verificationToken }) => {
     return async dispatch => {
         try {
             const response = await api({
@@ -49,7 +51,6 @@ export const submitVerificationToken = (verificationToken, email) => {
                 type: types.SUBMIT_VERIFICATION_TOKEN,
                 payload: response.data,
             });
-            // route after verification
             Router.push('/masterpassword', '/signup/masterpassword');
         } catch ({ response }) {
             // eslint-disable-next-line no-console
@@ -59,7 +60,10 @@ export const submitVerificationToken = (verificationToken, email) => {
     };
 };
 
-export const submitSRPVerifierOnSignUp = (verifier, salt, email, userId) => {
+export const submitSRPVerifierOnSignUp = ({ email, userId, password }) => {
+    const normPassword = normalizeMasterPassword(password);
+    const { salt, verifier } = computeVerifier(userId, normPassword);
+
     return async dispatch => {
         try {
             const response = await api({
@@ -85,9 +89,7 @@ export const submitSRPVerifierOnSignUp = (verifier, salt, email, userId) => {
     };
 };
 
-export const submitLoginData = ({ formValues, clientEphemeral }) => {
-    const { email, password, secretKey } = formValues;
-
+export const submitLoginData = ({ email, password, secretKey }) => {
     const sendRequest = async data => {
         const response = await api({
             method: 'POST',
@@ -103,6 +105,8 @@ export const submitLoginData = ({ formValues, clientEphemeral }) => {
             const {
                 data: { userId, salt, serverPublicEphemeral },
             } = await sendRequest({ email, stage: 'init' });
+            // Derive `clientEphemeral` pair
+            const clientEphemeral = genClientEphemeral();
             dispatch({
                 type: types.GET_SERVER_EPHEMERAL,
                 payload: {
@@ -131,7 +135,6 @@ export const submitLoginData = ({ formValues, clientEphemeral }) => {
                 stage: 'login',
             });
             /**
-             * Optional:
              * Verify that the server has derived the correct strong session key
              */
             verifyLoginSession(clientPublicEphemeral, clientSession, serverSessionProof);

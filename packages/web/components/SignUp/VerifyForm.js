@@ -15,17 +15,16 @@ const renderField = ({ input, label, type, meta: { touched, error, warning } }) 
 };
 
 class VerifyForm extends Component {
-    onSubmit = formValues => {
-        const { verifyToken } = formValues;
+    onSubmit = ({ verificationToken }) => {
         const { email } = this.props;
-        this.props.submitVerificationToken(verifyToken, email);
+        this.props.submitVerificationToken({ email, verificationToken });
     };
 
     render() {
         const { handleSubmit } = this.props;
         return (
             <Form onSubmit={handleSubmit(this.onSubmit)}>
-                <Field name="verifyToken" type="text" component={renderField} label="Token" />
+                <Field name="verificationToken" type="text" component={renderField} label="Token" />
                 <Button variant="primary" type="submit">
                     Verify
                 </Button>
@@ -36,13 +35,13 @@ class VerifyForm extends Component {
 
 const validate = values => {
     const errors = {};
-    if (!values.verifyToken) {
-        errors.verifyToken = 'Required';
+    if (!values.verificationToken) {
+        errors.verificationToken = 'Required';
         // eslint-disable-next-line no-restricted-globals
-    } else if (isNaN(Number(values.verifyToken))) {
-        errors.verifyToken = 'Must be a number';
-    } else if (values.verifyToken.length > 6) {
-        errors.verifyToken = 'Token Code too long';
+    } else if (isNaN(Number(values.verificationToken))) {
+        errors.verificationToken = 'Must be a number';
+    } else if (values.verificationToken.length > 6) {
+        errors.verificationToken = 'Token Code too long';
     }
     return errors;
 };

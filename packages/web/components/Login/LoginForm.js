@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { Form, Button } from 'react-bootstrap';
 
-import { genClientEphemeral } from '@onepass/core/auth';
 import { submitLoginData } from '../../state/modules/auth/operations';
 
 const renderField = ({ input, label, type, meta: { touched, error, warning } }) => {
@@ -17,9 +16,8 @@ const renderField = ({ input, label, type, meta: { touched, error, warning } }) 
 };
 
 class LoginForm extends Component {
-    onSubmit = formValues => {
-        const clientEphemeral = genClientEphemeral();
-        this.props.submitLoginData({ formValues, clientEphemeral });
+    onSubmit = ({ email, password, secretKey }) => {
+        this.props.submitLoginData({ email, password, secretKey });
     };
 
     render() {

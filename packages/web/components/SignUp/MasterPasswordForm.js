@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { Form, Button } from 'react-bootstrap';
 
-import { computeVerifier } from '@onepass/core/auth';
 import { submitSRPVerifierOnSignUp } from '../../state/modules/auth/operations';
 
 const renderField = ({ input, label, type, meta: { touched, error, warning } }) => {
@@ -17,12 +16,9 @@ const renderField = ({ input, label, type, meta: { touched, error, warning } }) 
 };
 
 class MasterPasswordForm extends Component {
-    onSubmit = formValues => {
-        // ToDo: Normalize password
-        const { password } = formValues;
+    onSubmit = ({ password }) => {
         const { userId, email } = this.props;
-        const { salt, verifier } = computeVerifier(userId, password);
-        this.props.submitSRPVerifierOnSignUp(verifier, salt, email, userId);
+        this.props.submitSRPVerifierOnSignUp({ email, userId, password });
     };
 
     render() {
@@ -57,7 +53,6 @@ const validate = values => {
 const mapStateToProps = state => {
     const { signup } = state.auth;
     return {
-        isVerified: signup.isVerified,
         email: signup.response && signup.response.email,
         userId: signup.response && signup.response.userId,
     };

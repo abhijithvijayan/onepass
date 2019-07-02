@@ -16,8 +16,8 @@ const renderField = ({ input, label, type, meta: { touched, error, warning } }) 
 };
 
 class SignUpForm extends Component {
-    onSubmit = formValues => {
-        this.props.submitSignUpData(formValues);
+    onSubmit = ({ email, name }) => {
+        this.props.submitSignUpData({ email, name });
     };
 
     render() {
