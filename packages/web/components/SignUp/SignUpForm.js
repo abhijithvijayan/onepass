@@ -17,8 +17,6 @@ const renderField = ({ input, label, type, meta: { touched, error, warning } }) 
 
 class SignUpForm extends Component {
     onSubmit = formValues => {
-        // eslint-disable-next-line no-console
-        console.log(formValues);
         this.props.submitSignUpData(formValues);
     };
 

@@ -21,24 +21,18 @@ const loginReducer = createReducer(initialLoginState)({
 
 const signUpReducer = createReducer(initialSignUpState)({
     [types.SUBMIT_SIGNUP_DATA]: onSignUpRequest,
-    [types.SUBMIT_VERIFICATION_TOKEN]: onTokenSubmission,
+    [types.SUBMIT_VERIFICATION_TOKEN]: onVerifyTokenSubmission,
 });
 
 function onSignUpRequest(state, action) {
-    // eslint-disable-next-line no-console
-    console.log('payload:', action.payload);
     return { ...state, response: action.payload, isVerificationSent: true };
 }
 
-function onTokenSubmission(state, action) {
-    // eslint-disable-next-line no-console
-    console.log('payload:', action.payload);
+function onVerifyTokenSubmission(state, action) {
     return { ...state, response: action.payload, isVerified: true };
 }
 
 function saveClientEphemeral(state, action) {
-    // eslint-disable-next-line no-console
-    console.log('payload:', action.payload);
     const { serverResponse, clientEphemeral } = action.payload;
     return { ...state, serverResponse, clientEphemeral };
 }

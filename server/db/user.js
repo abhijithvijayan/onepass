@@ -103,7 +103,5 @@ exports.validatePasswordRequest = async ({ email, passwordResetToken }) => {
     });
     session.close();
     const user = records.length && records[0].get('u').properties;
-    // eslint-disable-next-line no-console
-    console.log(user);
     return user;
 };

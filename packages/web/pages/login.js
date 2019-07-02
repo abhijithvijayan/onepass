@@ -10,7 +10,7 @@ import { authUser } from '../state/modules/auth/actions';
 class LoginPage extends Component {
     componentDidMount() {
         if (this.props.isAuthenticated) {
-            Router.push('/home');
+            Router.push('/vault');
         }
     }
 

@@ -2,15 +2,16 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import BodyWrapper from '../components/BodyWrapper';
+import Vault from '../components/Vault';
 
-class HomePage extends Component {
+class VaultPage extends Component {
     render() {
         return (
             <BodyWrapper>
-                <div>Vault Home Page</div>
+                <Vault />
             </BodyWrapper>
         );
     }
 }
 
-export default connect()(HomePage);
+export default connect()(VaultPage);

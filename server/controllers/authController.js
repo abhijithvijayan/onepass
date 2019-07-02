@@ -93,7 +93,7 @@ exports.saveSRPVerifier = async (req, res) => {
     const { verifier, salt, email, userId } = req.body;
     const userAuth = await saveVerifier({ verifier, salt, email, userId });
     if (userAuth) {
-        return res.status(201).json({ status: 'ok' });
+        return res.status(201).json({ status: 'SRP Verifier saved.' });
     }
     return res.status(403).json({ error: 'SRP Verifier not saved.' });
 };
@@ -102,7 +102,7 @@ exports.saveSRPVerifier = async (req, res) => {
 exports.login = async (req, res) => {
     const { stage, email } = req.body;
     switch (stage) {
-        case 1: {
+        case 'init': {
             const { verifier, salt, accountId } = await retrieveSRPVerifier({ email });
             if (salt && verifier && accountId) {
                 // Compute serverEphemeral
@@ -122,7 +122,7 @@ exports.login = async (req, res) => {
                 .status(201)
                 .json({ userId: sampleUserId, salt: sampleSalt, serverPublicEphemeral: sampleEphemeral.public });
         }
-        case 2: {
+        case 'login': {
             const { clientPublicEphemeral, clientSessionProof } = req.body;
             const { verifier, salt, accountId, serverSecretEphemeral } = await retrieveSRPCredentials({ email });
             if (verifier && salt && accountId && serverSecretEphemeral) {

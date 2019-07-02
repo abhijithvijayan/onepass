@@ -20,8 +20,6 @@ export const submitSignUpData = formValues => {
                     name,
                 },
             });
-            // eslint-disable-next-line no-console
-            console.log('response', response);
             dispatch({
                 type: types.SUBMIT_SIGNUP_DATA,
                 payload: response.data,
@@ -78,7 +76,7 @@ export const submitSRPVerifierOnSignUp = (verifier, salt, email, userId) => {
                 type: types.SEND_SRP_VERIFIER,
                 payload: response.data,
             });
-            Router.push('/home');
+            Router.push('/login');
         } catch ({ response }) {
             // eslint-disable-next-line no-console
             console.log(response.data.error);
@@ -104,7 +102,7 @@ export const submitLoginData = ({ formValues, clientEphemeral }) => {
             // get `salt` and `serverEphemeral.public` from server
             const {
                 data: { userId, salt, serverPublicEphemeral },
-            } = await sendRequest({ email, stage: 1 });
+            } = await sendRequest({ email, stage: 'init' });
             dispatch({
                 type: types.GET_SERVER_EPHEMERAL,
                 payload: {
@@ -130,7 +128,7 @@ export const submitLoginData = ({ formValues, clientEphemeral }) => {
                 email,
                 clientPublicEphemeral,
                 clientSessionProof,
-                stage: 2,
+                stage: 'login',
             });
             /**
              * Optional:
@@ -146,7 +144,7 @@ export const submitLoginData = ({ formValues, clientEphemeral }) => {
                 payload: decodeJwt(token),
             });
 
-            Router.push('/home');
+            Router.push('/vault');
         } catch (err) {
             // eslint-disable-next-line no-console
             console.log(err);

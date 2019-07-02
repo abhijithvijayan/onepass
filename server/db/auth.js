@@ -4,7 +4,7 @@ exports.saveVerifier = async ({ verifier, salt, email, userId }) => {
     const session = driver.session();
     const { records = [] } = await session.writeTransaction(tx => {
         return tx.run(
-            'MATCH (u: User { email: $emailParam, isVerified: true }) ' +
+            'MATCH (u: User { email: $emailParam, accountId : $accountIdParam, isVerified: true }) ' +
                 'MERGE (a: auth { accountId : $accountIdParam })<-[:SRP]-(u) ' +
                 'ON CREATE SET a.createdAt = $createdAtParam, a.verifier = $verifierParam, a.salt = $saltParam ' +
                 'ON MATCH SET a.updatedAt = $updatedAtParam, a.verifier = $verifierParam, a.salt = $saltParam ' +
@@ -38,7 +38,7 @@ exports.retrieveSRPVerifier = async ({ email }) => {
 
 exports.saveServerEphemeral = async ({ serverSecretEphemeral, email }) => {
     const session = driver.session();
-    const { records = [] } = await session.writeTransaction(tx => {
+    await session.writeTransaction(tx => {
         return tx.run(
             'MATCH (u: User { email: $emailParam, isVerified: true })-->(auth) ' +
                 'SET auth.serverSecretEphemeral = $serverSecretEphemeralParam ' +

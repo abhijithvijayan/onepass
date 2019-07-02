@@ -18,8 +18,6 @@ class VerifyForm extends Component {
     onSubmit = formValues => {
         const { verifyToken } = formValues;
         const { email } = this.props;
-        // eslint-disable-next-line no-console
-        console.log(verifyToken, email);
         this.props.submitVerificationToken(verifyToken, email);
     };
 
