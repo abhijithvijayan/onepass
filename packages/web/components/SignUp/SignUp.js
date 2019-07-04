@@ -1,5 +1,5 @@
 import React from 'react';
-import { Col, Row } from 'react-bootstrap';
+import { Row, Col } from 'antd';
 import styled from 'styled-components';
 
 import '../../styles/base/_variables.scss';
@@ -17,7 +17,7 @@ const SignUp = () => {
     return (
         <SignUpContentsHolder>
             <Row className="d-center" style={{ height: '80%' }}>
-                <Col md={4} className="pt-20">
+                <Col md={{ span: 10, offset: 8 }} className="pt-20">
                     <h2 className="text-center">SignUp</h2>
                     <SignUpForm />
                     <BottomButtonHolder route="/login" buttonText="LOGIN NOW" text="Already have an account?" />

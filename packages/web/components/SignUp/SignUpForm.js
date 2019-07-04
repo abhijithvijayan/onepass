@@ -1,17 +1,34 @@
+/* eslint-disable jsx-a11y/label-has-for */
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
-import { Form, Button } from 'react-bootstrap';
+
+import { Form, Icon, Input, Button } from 'antd';
 
 import { submitSignUpData } from '../../state/modules/auth/operations';
 
-const renderField = ({ input, label, type, meta: { touched, error, warning } }) => {
+const formItemLayout = {
+    labelCol: {
+        xs: { span: 2 },
+        sm: { span: 2 },
+    },
+    wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 24 },
+    },
+};
+
+const renderInputField = ({ input, type, icon, label, meta: { touched, invalid, error } }) => {
+    const isInvalid = touched && invalid;
     return (
-        <Form.Group controlId={label}>
-            <Form.Label>{label}</Form.Label>
-            <Form.Control {...input} type={type} />
-            {touched && ((error && <span>{error}</span>) || (warning && <span>{warning}</span>))}
-        </Form.Group>
+        <Form.Item
+            {...formItemLayout}
+            label={label}
+            validateStatus={isInvalid ? 'error' : 'success'}
+            help={isInvalid && error}
+        >
+            <Input {...input} type={type} prefix={<Icon type={icon} />} />
+        </Form.Item>
     );
 };
 
@@ -23,10 +40,10 @@ class SignUpForm extends Component {
     render() {
         const { handleSubmit } = this.props;
         return (
-            <Form onSubmit={handleSubmit(this.onSubmit)}>
-                <Field name="name" type="text" component={renderField} label="Name" />
-                <Field name="email" type="email" component={renderField} label="Email" />
-                <Button variant="primary" type="submit">
+            <Form onSubmit={handleSubmit(this.onSubmit)} className="login-form">
+                <Field name="name" type="text" icon="user" component={renderInputField} label="Name" />
+                <Field name="email" type="email" icon="mail" component={renderInputField} label="Email" />
+                <Button type="primary" htmlType="submit">
                     Submit
                 </Button>
             </Form>
