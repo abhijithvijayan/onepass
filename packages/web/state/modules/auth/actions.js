@@ -8,6 +8,7 @@ import { deriveClientSession, verifyLoginSession, genClientEphemeral, computeVer
 import { normalizeMasterPassword } from '@onepass/core/nkdf';
 import { stringToUint8Array } from '@onepass/core/jseu';
 import { genRandom16Salt } from '@onepass/core/forge';
+import { computeHash } from '@onepass/core/pbkdf2';
 import { computeHKDF } from '@onepass/core/hkdf';
 
 import api from '../../../api';
@@ -73,6 +74,12 @@ const deriveEncryptionKeySalt = ({ email, randomSalt }) => {
     return computeHKDF({ uint8MasterSecret, uint8Salt });
 };
 
+// password key
+const generateHashedKey = ({ normPassword, encryptionKeySalt }) => {
+    const uint8MasterPassword = stringToUint8Array(normPassword);
+    return computeHash({ uint8MasterPassword, encryptionKeySalt });
+};
+
 export const completeSignUp = ({ email, userId, password }) => {
     /**
      * SRP variables
@@ -96,6 +103,7 @@ export const completeSignUp = ({ email, userId, password }) => {
              */
             const randomSalt = genRandom16Salt();
             const encryptionKeySalt = await deriveEncryptionKeySalt({ email, randomSalt });
+            const hashedKey = await generateHashedKey({ normPassword, encryptionKeySalt });
 
             await sendRequest({
                 verifier,
