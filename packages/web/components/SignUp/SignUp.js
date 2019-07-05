@@ -16,7 +16,7 @@ const SignUpContentsHolder = styled.div`
 const SignUp = () => {
     return (
         <SignUpContentsHolder>
-            <Row className="d-center" style={{ height: '80%' }}>
+            <Row>
                 <Col md={{ span: 10, offset: 8 }} className="pt-20">
                     <h2 className="text-center">SignUp</h2>
                     <SignUpForm />
