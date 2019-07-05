@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
+import { Button } from 'antd';
 import Router from 'next/router';
 import styled from 'styled-components';
 

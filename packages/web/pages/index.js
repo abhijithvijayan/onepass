@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 
 import BodyWrapper from '../components/BodyWrapper';
+import Antd from '../components/AntdTest';
 
 const ImageHolder = styled.div`
     height: 100vh;
@@ -15,7 +16,8 @@ class IndexPage extends Component {
     render() {
         return (
             <BodyWrapper>
-                <ImageHolder />
+                {/* <ImageHolder /> */}
+                <Antd />
             </BodyWrapper>
         );
     }

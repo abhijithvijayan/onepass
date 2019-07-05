@@ -1,16 +1,16 @@
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Icon, Input, Button } from 'antd';
 
 import { submitVerificationToken } from '../../state/modules/auth/operations';
 
-const renderField = ({ input, label, type, meta: { touched, error, warning } }) => {
+const renderInputField = ({ input, type, icon, label, meta: { touched, invalid, error } }) => {
+    const isInvalid = touched && invalid;
     return (
-        <Form.Group controlId={label}>
-            <Form.Control {...input} type={type} placeholder={label} />
-            {touched && ((error && <span>{error}</span>) || (warning && <span>{warning}</span>))}
-        </Form.Group>
+        <Form.Item label={label} validateStatus={isInvalid ? 'error' : 'success'} help={isInvalid && error}>
+            <Input {...input} type={type} prefix={<Icon type={icon} />} />
+        </Form.Item>
     );
 };
 
@@ -24,9 +24,15 @@ class VerifyForm extends Component {
         const { handleSubmit } = this.props;
         return (
             <Form onSubmit={handleSubmit(this.onSubmit)}>
-                <Field name="verificationToken" type="text" component={renderField} label="Token" />
-                <Button variant="primary" type="submit">
-                    Verify
+                <Field
+                    name="verificationToken"
+                    type="number"
+                    icon="number"
+                    component={renderInputField}
+                    label="Token"
+                />
+                <Button type="primary" htmlType="submit">
+                    Submit
                 </Button>
             </Form>
         );

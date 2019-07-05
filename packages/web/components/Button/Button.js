@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button as ButtonElement } from 'react-bootstrap';
+import { Button as ButtonElement } from 'antd';
 
 const Button = props => {
     return <ButtonElement {...props}>{props.text}</ButtonElement>;

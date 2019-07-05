@@ -1,17 +1,16 @@
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Icon, Input, Button } from 'antd';
 
 import { submitLoginData } from '../../state/modules/auth/operations';
 
-const renderField = ({ input, label, type, meta: { touched, error, warning } }) => {
+const renderInputField = ({ input, type, icon, label, meta: { touched, invalid, error } }) => {
+    const isInvalid = touched && invalid;
     return (
-        <Form.Group controlId={label}>
-            <Form.Label>{label}</Form.Label>
-            <Form.Control {...input} type={type} />
-            {touched && ((error && <span>{error}</span>) || (warning && <span>{warning}</span>))}
-        </Form.Group>
+        <Form.Item label={label} validateStatus={isInvalid ? 'error' : 'success'} help={isInvalid && error}>
+            <Input {...input} type={type} prefix={<Icon type={icon} />} />
+        </Form.Item>
     );
 };
 
@@ -24,11 +23,17 @@ class LoginForm extends Component {
         const { handleSubmit } = this.props;
         return (
             <Form onSubmit={handleSubmit(this.onSubmit)}>
-                <Field name="email" type="email" component={renderField} label="Email" />
-                <Field name="secretKey" type="text" component={renderField} label="Secret Key" />
-                <Field name="password" type="password" component={renderField} label="Master Password" />
-                <Button variant="primary" type="submit">
-                    Submit
+                <Field name="email" type="email" icon="mail" component={renderInputField} label="Email" />
+                <Field name="secretKey" type="text" icon="key" component={renderInputField} label="Secret Key" />
+                <Field
+                    name="password"
+                    type="password"
+                    icon="lock"
+                    component={renderInputField}
+                    label="Master Password"
+                />
+                <Button type="primary" htmlType="submit">
+                    Login
                 </Button>
             </Form>
         );

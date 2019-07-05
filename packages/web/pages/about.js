@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container } from 'react-bootstrap';
+import { Layout } from 'antd';
 
 import BodyWrapper from '../components/BodyWrapper';
 
@@ -7,9 +7,9 @@ class AboutPage extends Component {
     render() {
         return (
             <BodyWrapper>
-                <Container>
+                <Layout className="layout">
                     <div>About Page</div>
-                </Container>
+                </Layout>
             </BodyWrapper>
         );
     }
