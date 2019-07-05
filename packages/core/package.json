@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
+    "js-crypto-hkdf": "^0.6.0",
+    "js-encoding-utils": "^0.5.1",
+    "node-forge": "^0.8.5",
     "secure-remote-password": "^0.3.1",
     "trim-left": "^1.0.1",
     "trim-right": "^1.0.1",
