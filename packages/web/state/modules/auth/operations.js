@@ -1,3 +1,3 @@
-import { submitLoginData, submitSignUpData, submitVerificationToken, submitSRPVerifierOnSignUp } from './actions';
+import { submitLoginData, submitSignUpData, submitVerificationToken, completeSignUp } from './actions';
 
-export { submitLoginData, submitSignUpData, submitVerificationToken, submitSRPVerifierOnSignUp };
+export { submitLoginData, submitSignUpData, submitVerificationToken, completeSignUp };

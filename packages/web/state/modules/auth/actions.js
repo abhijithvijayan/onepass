@@ -6,6 +6,9 @@ import decodeJwt from 'jwt-decode';
 // Core Libraries
 import { deriveClientSession, verifyLoginSession, genClientEphemeral, computeVerifier } from '@onepass/core/srp';
 import { normalizeMasterPassword } from '@onepass/core/nkdf';
+import { stringToUint8Array } from '@onepass/core/jseu';
+import { genRandom16Salt } from '@onepass/core/forge';
+import { computeHKDF } from '@onepass/core/hkdf';
 
 import api from '../../../api';
 import * as types from './types';
@@ -60,21 +63,45 @@ export const submitVerificationToken = ({ email, verificationToken }) => {
     };
 };
 
-export const submitSRPVerifierOnSignUp = ({ email, userId, password }) => {
+/**
+ * Encryption Util funtions
+ */
+
+const deriveEncryptionKeySalt = ({ email, randomSalt }) => {
+    const uint8Salt = stringToUint8Array(email);
+    const uint8MasterSecret = stringToUint8Array(randomSalt);
+    return computeHKDF({ uint8MasterSecret, uint8Salt });
+};
+
+export const completeSignUp = ({ email, userId, password }) => {
+    /**
+     * SRP variables
+     */
     const normPassword = normalizeMasterPassword(password);
     const { salt, verifier } = computeVerifier(userId, normPassword);
 
+    const sendRequest = async data => {
+        await api({
+            method: 'POST',
+            url: endpoints.VERIFIER_SUBMIT_ENDPOINT,
+            data,
+        });
+    };
+
+    // ToDo: all the pre-encryption computation
     return async dispatch => {
         try {
-            await api({
-                method: 'POST',
-                url: endpoints.VERIFIER_SUBMIT_ENDPOINT,
-                data: {
-                    verifier,
-                    salt,
-                    email,
-                    userId,
-                },
+            /**
+             * Encryption Variables
+             */
+            const randomSalt = genRandom16Salt();
+            const encryptionKeySalt = await deriveEncryptionKeySalt({ email, randomSalt });
+
+            await sendRequest({
+                verifier,
+                salt,
+                email,
+                userId,
             });
             dispatch({
                 type: types.COMPLETE_SIGNUP,

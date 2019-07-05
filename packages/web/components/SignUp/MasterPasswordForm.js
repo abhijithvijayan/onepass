@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { Form, Icon, Input, Button } from 'antd';
 
-import { submitSRPVerifierOnSignUp } from '../../state/modules/auth/operations';
+import { completeSignUp } from '../../state/modules/auth/operations';
 
 const renderInputField = ({ input, type, icon, label, meta: { touched, invalid, error } }) => {
     const isInvalid = touched && invalid;
@@ -17,7 +17,7 @@ const renderInputField = ({ input, type, icon, label, meta: { touched, invalid, 
 class MasterPasswordForm extends Component {
     onSubmit = ({ password }) => {
         const { userId, email } = this.props;
-        this.props.submitSRPVerifierOnSignUp({ email, userId, password });
+        this.props.completeSignUp({ email, userId, password });
     };
 
     render() {
@@ -72,7 +72,7 @@ const mapStateToProps = state => {
 const MasterPasswordWrapper = connect(
     mapStateToProps,
     {
-        submitSRPVerifierOnSignUp,
+        completeSignUp,
     }
 )(MasterPasswordForm);
 
