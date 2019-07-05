@@ -6,13 +6,17 @@ import MasterPassword from '../components/SignUp/MasterPassword';
 
 class MasterPasswordPage extends Component {
     render() {
-        return (
-            <BodyWrapper>
-                {/* ToDo: Disable direct access */}
-                <MasterPassword />
-            </BodyWrapper>
-        );
+        const { isVerified, isAuthenticated } = this.props;
+        return <BodyWrapper>{isVerified && !isAuthenticated ? <MasterPassword /> : null}</BodyWrapper>;
     }
 }
 
-export default connect()(MasterPasswordPage);
+const mapStateToProps = state => {
+    const { signup, login } = state.auth;
+    return {
+        isAuthenticated: login.isAuthenticated,
+        isVerified: signup.isVerified === undefined ? false : signup.isVerified,
+    };
+};
+
+export default connect(mapStateToProps)(MasterPasswordPage);
