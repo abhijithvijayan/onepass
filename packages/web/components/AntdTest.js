@@ -6,7 +6,7 @@ const { Option } = Select;
 const antd = () => {
     return (
         <div style={{ marginTop: 100 }}>
-            <h2 style={{ textAlign: 'center', paddingBottom: '1.5em' }}>Antd migration test page</h2>
+            <h2 style={{ textAlign: 'center', paddingBottom: '1.5em' }}>Ant-design migration test page</h2>
             <Form layout="horizontal">
                 <FormItem label="Input Number" labelCol={{ span: 8 }} wrapperCol={{ span: 8 }}>
                     <InputNumber
@@ -17,7 +17,7 @@ const antd = () => {
                         defaultValue={3}
                         name="inputNumber"
                     />
-                    <a href="/">Link</a>
+                    <a href="/signup">SignUp</a>
                 </FormItem>
 
                 <FormItem label="Switch" labelCol={{ span: 8 }} wrapperCol={{ span: 8 }}>

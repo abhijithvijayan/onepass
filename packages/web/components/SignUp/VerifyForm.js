@@ -1,31 +1,15 @@
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
-import { Form, Icon, InputNumber, Button } from 'antd';
+import { Form, Icon, Input, Button } from 'antd';
 
 import { submitVerificationToken } from '../../state/modules/auth/operations';
-
-const formItemLayout = {
-    labelCol: {
-        xs: { span: 2 },
-        sm: { span: 2 },
-    },
-    wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 24 },
-    },
-};
 
 const renderInputField = ({ input, type, icon, label, meta: { touched, invalid, error } }) => {
     const isInvalid = touched && invalid;
     return (
-        <Form.Item
-            {...formItemLayout}
-            label={label}
-            validateStatus={isInvalid ? 'error' : 'success'}
-            help={isInvalid && error}
-        >
-            <InputNumber min={6} max={6} {...input} type={type} prefix={<Icon type={icon} />} />
+        <Form.Item label={label} validateStatus={isInvalid ? 'error' : 'success'} help={isInvalid && error}>
+            <Input {...input} type={type} prefix={<Icon type={icon} />} />
         </Form.Item>
     );
 };
