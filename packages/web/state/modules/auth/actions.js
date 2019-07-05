@@ -5,9 +5,9 @@ import decodeJwt from 'jwt-decode';
 
 // Core Libraries
 import { deriveClientSession, verifyLoginSession, genClientEphemeral, computeVerifier } from '@onepass/core/srp';
+import { genRandomSalt, generateKeypair, encryptVaultKey } from '@onepass/core/forge';
 import { genCryptoRandomString, genMasterUnlockKey } from '@onepass/core/common';
 import { stringToUint8Array, keyTobase64uri } from '@onepass/core/jseu';
-import { genRandom16Salt, generateKeypair } from '@onepass/core/forge';
 import { normalizeMasterPassword } from '@onepass/core/nkdf';
 import { computeHash } from '@onepass/core/pbkdf2';
 import { computeHKDF } from '@onepass/core/hkdf';
@@ -97,9 +97,15 @@ const deriveIntermediateKey = ({ secretKey, userId }) => {
     return computeHKDF({ uint8MasterSecret, uint8Salt });
 };
 
+const generateSymmetricKey = () => {
+    const key = genRandomSalt(32);
+    const encodedSymmetricKey = stringToUint8Array(key);
+    return keyTobase64uri(encodedSymmetricKey);
+};
+
 export const completeSignUp = ({ email, userId, version, password }) => {
     /**
-     * SRP variables
+     * SRP variables computing functions
      */
     const normPassword = normalizeMasterPassword(password);
     const { salt, verifier } = computeVerifier(userId, normPassword);
@@ -122,7 +128,7 @@ export const completeSignUp = ({ email, userId, version, password }) => {
             // 1. Generate Secret Key
             const secretKey = generateSecretKey({ version, userId });
             // 2. Compute MUK
-            const randomSalt = genRandom16Salt();
+            const randomSalt = genRandomSalt(16);
             const encryptionKeySalt = await deriveEncryptionKeySalt({ email, randomSalt });
             const hashedKey = await generateHashedKey({ normPassword, encryptionKeySalt });
             const intermediateKey = await deriveIntermediateKey({ secretKey, userId });
@@ -130,7 +136,10 @@ export const completeSignUp = ({ email, userId, version, password }) => {
             // ToDo: Return as JWK object
             const base64uriMasterUnlockKey = keyTobase64uri(masterUnlockKey);
             // 3. Create Encrypted Key Set
-            const { publicKey, privateKey } = await generateKeypair(); // send to server
+            const base64uriSymmetricKey = generateSymmetricKey();
+            const vaultKey = genCryptoRandomString(32);
+            const { publicKey, privateKey } = await generateKeypair();
+            const encryptedVaultKey = encryptVaultKey({ vaultKey, publicKey });
 
             await sendRequest({
                 verifier,

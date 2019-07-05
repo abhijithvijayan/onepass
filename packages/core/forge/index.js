@@ -1,4 +1,5 @@
-import { genRandom16Salt } from './genRandon16Salt';
+import { genRandomSalt } from './genRandonSalt';
 import { generateKeypair } from './generateKeypair';
+import { encryptVaultKey } from './encryptVaultKey';
 
-export { genRandom16Salt, generateKeypair };
+export { genRandomSalt, generateKeypair, encryptVaultKey };
