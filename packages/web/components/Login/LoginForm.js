@@ -33,7 +33,7 @@ class LoginForm extends Component {
                     label="Master Password"
                 />
                 <Button type="primary" htmlType="submit">
-                    Submit
+                    Login
                 </Button>
             </Form>
         );
