@@ -5,7 +5,7 @@ import decodeJwt from 'jwt-decode';
 
 // Core Libraries
 import { deriveClientSession, verifyLoginSession, genClientEphemeral, computeVerifier } from '@onepass/core/srp';
-import { genRandomSalt, generateKeypair, encryptVaultKey } from '@onepass/core/forge';
+import { genRandomSalt, generateKeypair, encryptVaultKey, encryptPrivateKey } from '@onepass/core/forge';
 import { genCryptoRandomString, genMasterUnlockKey } from '@onepass/core/common';
 import { stringToUint8Array, keyTobase64uri } from '@onepass/core/jseu';
 import { normalizeMasterPassword } from '@onepass/core/nkdf';
@@ -136,10 +136,11 @@ export const completeSignUp = ({ email, userId, version, password }) => {
             // ToDo: Return as JWK object
             const base64uriMasterUnlockKey = keyTobase64uri(masterUnlockKey);
             // 3. Create Encrypted Key Set
-            const base64uriSymmetricKey = generateSymmetricKey();
+            const symmetricKey = generateSymmetricKey();
             const vaultKey = genCryptoRandomString(32);
             const { publicKey, privateKey } = await generateKeypair();
             const encryptedVaultKey = encryptVaultKey({ vaultKey, publicKey });
+            const encryptedPrivateKeyInfo = encryptPrivateKey({ privateKey, symmetricKey });
 
             await sendRequest({
                 verifier,
