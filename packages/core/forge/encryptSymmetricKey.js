@@ -2,6 +2,11 @@ import forge from 'node-forge';
 
 import { genRandomSalt } from './genRandonSalt';
 
+/**
+ * Encrypt Symmetric Key with Master Unlock Key
+ * @param {Object}
+ */
+
 export const encryptSymmetricKey = ({ symmetricKey, masterUnlockKey }) => {
     const iv = genRandomSalt(12);
     const key = forge.util.createBuffer(masterUnlockKey);

@@ -81,7 +81,7 @@ const deriveEncryptionKeySalt = ({ email, randomSalt }) => {
     return computeHKDF({ uint8MasterSecret, uint8Salt });
 };
 
-// password key
+// Password Key
 const generateHashedKey = ({ normPassword, encryptionKeySalt }) => {
     const uint8MasterPassword = stringToUint8Array(normPassword);
     return computeHash({ uint8MasterPassword, encryptionKeySalt });

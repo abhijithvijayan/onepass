@@ -1,7 +1,8 @@
 import forge from 'node-forge';
 
 /**
- * Return 16 byte random crypto salt
+ * Return random byte crypto salt
+ * @param {Integer} size
  */
 
 export const genRandomSalt = size => {

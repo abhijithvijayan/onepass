@@ -1,6 +1,7 @@
 import forge from 'node-forge';
 
 const { pki } = forge;
+
 /**
  * Encrypt Private Key With Symmetric Key
  * @param {RSA key} privateKey

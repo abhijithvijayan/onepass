@@ -2,6 +2,10 @@ import unorm from 'unorm';
 import trimLeft from 'trim-left';
 import trimRight from 'trim-right';
 
+/**
+ * Normalize using nkdf algorithm
+ */
+
 export const normalizeMasterPassword = password => {
     /* Trim white-spaces from master password */
     const leftTrimmed = trimLeft(password);
