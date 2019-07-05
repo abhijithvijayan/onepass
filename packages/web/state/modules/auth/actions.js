@@ -5,7 +5,7 @@ import decodeJwt from 'jwt-decode';
 
 // Core Libraries
 import { deriveClientSession, verifyLoginSession, genClientEphemeral, computeVerifier } from '@onepass/core/srp';
-import { genCryptoRandomString } from '@onepass/core/common';
+import { genCryptoRandomString, genMasterUnlockKey } from '@onepass/core/common';
 import { normalizeMasterPassword } from '@onepass/core/nkdf';
 import { stringToUint8Array } from '@onepass/core/jseu';
 import { genRandom16Salt } from '@onepass/core/forge';
@@ -123,6 +123,7 @@ export const completeSignUp = ({ email, userId, version, password }) => {
             const encryptionKeySalt = await deriveEncryptionKeySalt({ email, randomSalt });
             const hashedKey = await generateHashedKey({ normPassword, encryptionKeySalt });
             const intermediateKey = await deriveIntermediateKey({ secretKey, userId });
+            const masterUnlockKey = genMasterUnlockKey({ hashedKey, intermediateKey });
 
             await sendRequest({
                 verifier,
