@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
+    "crypto-random-string": "^3.0.1",
     "fast-sha256": "^1.1.0",
     "js-crypto-hkdf": "^0.6.0",
     "js-encoding-utils": "^0.5.1",

@@ -5,6 +5,7 @@ import decodeJwt from 'jwt-decode';
 
 // Core Libraries
 import { deriveClientSession, verifyLoginSession, genClientEphemeral, computeVerifier } from '@onepass/core/srp';
+import { genCryptoRandomString } from '@onepass/core/common';
 import { normalizeMasterPassword } from '@onepass/core/nkdf';
 import { stringToUint8Array } from '@onepass/core/jseu';
 import { genRandom16Salt } from '@onepass/core/forge';
@@ -80,7 +81,17 @@ const generateHashedKey = ({ normPassword, encryptionKeySalt }) => {
     return computeHash({ uint8MasterPassword, encryptionKeySalt });
 };
 
-export const completeSignUp = ({ email, userId, password }) => {
+const generateSecretKey = ({ version, userId }) => {
+    // get string after `user_`
+    const trimmedUserId = userId.slice(5);
+    const length = 34 - (version.length + trimmedUserId.length);
+    const randomString = genCryptoRandomString(length);
+    // generate 34 char secret key
+    const secretKey = version.concat(trimmedUserId, randomString);
+    return secretKey;
+};
+
+export const completeSignUp = ({ email, userId, version, password }) => {
     /**
      * SRP variables
      */
@@ -102,6 +113,7 @@ export const completeSignUp = ({ email, userId, password }) => {
              * Encryption Variables
              */
             const randomSalt = genRandom16Salt();
+            const secretKey = generateSecretKey({ version, userId });
             const encryptionKeySalt = await deriveEncryptionKeySalt({ email, randomSalt });
             const hashedKey = await generateHashedKey({ normPassword, encryptionKeySalt });
 

@@ -16,8 +16,8 @@ const renderInputField = ({ input, type, icon, label, meta: { touched, invalid, 
 
 class MasterPasswordForm extends Component {
     onSubmit = ({ password }) => {
-        const { userId, email } = this.props;
-        this.props.completeSignUp({ email, userId, password });
+        const { userId, version, email } = this.props;
+        this.props.completeSignUp({ email, userId, version, password });
     };
 
     render() {
@@ -65,6 +65,7 @@ const mapStateToProps = state => {
     const { signup } = state.auth;
     return {
         email: signup.response && signup.response.email,
+        version: signup.response && signup.response.version,
         userId: signup.response && signup.response.userId,
     };
 };
