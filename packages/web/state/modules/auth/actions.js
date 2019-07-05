@@ -1,11 +1,17 @@
 /* eslint-disable no-console */
+import decodeJwt from 'jwt-decode';
 import Router from 'next/router';
 import cookie from 'js-cookie';
-import decodeJwt from 'jwt-decode';
 
 // Core Libraries
+import {
+    genRandomSalt,
+    generateKeypair,
+    encryptVaultKey,
+    encryptPrivateKey,
+    encryptSymmetricKey,
+} from '@onepass/core/forge';
 import { deriveClientSession, verifyLoginSession, genClientEphemeral, computeVerifier } from '@onepass/core/srp';
-import { genRandomSalt, generateKeypair, encryptVaultKey, encryptPrivateKey } from '@onepass/core/forge';
 import { genCryptoRandomString, genMasterUnlockKey } from '@onepass/core/common';
 import { stringToUint8Array, keyTobase64uri } from '@onepass/core/jseu';
 import { normalizeMasterPassword } from '@onepass/core/nkdf';
@@ -141,6 +147,7 @@ export const completeSignUp = ({ email, userId, version, password }) => {
             const { publicKey, privateKey } = await generateKeypair();
             const encryptedVaultKey = encryptVaultKey({ vaultKey, publicKey });
             const encryptedPrivateKeyInfo = encryptPrivateKey({ privateKey, symmetricKey });
+            const { encryptedSymmetricKey, tag, iv } = encryptSymmetricKey({ symmetricKey, masterUnlockKey });
 
             await sendRequest({
                 verifier,
