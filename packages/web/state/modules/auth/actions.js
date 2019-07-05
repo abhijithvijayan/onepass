@@ -4,7 +4,7 @@ import cookie from 'js-cookie';
 import decodeJwt from 'jwt-decode';
 
 // Core Libraries
-import { deriveClientSession, verifyLoginSession, genClientEphemeral, computeVerifier } from '@onepass/core/auth';
+import { deriveClientSession, verifyLoginSession, genClientEphemeral, computeVerifier } from '@onepass/core/srp';
 import { normalizeMasterPassword } from '@onepass/core/nkdf';
 
 import api from '../../../api';
