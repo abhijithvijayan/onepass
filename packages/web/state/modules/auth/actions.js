@@ -91,6 +91,12 @@ const generateSecretKey = ({ version, userId }) => {
     return secretKey;
 };
 
+const deriveIntermediateKey = ({ secretKey, userId }) => {
+    const uint8Salt = stringToUint8Array(userId);
+    const uint8MasterSecret = stringToUint8Array(secretKey);
+    return computeHKDF({ uint8MasterSecret, uint8Salt });
+};
+
 export const completeSignUp = ({ email, userId, version, password }) => {
     /**
      * SRP variables
@@ -116,6 +122,7 @@ export const completeSignUp = ({ email, userId, version, password }) => {
             const secretKey = generateSecretKey({ version, userId });
             const encryptionKeySalt = await deriveEncryptionKeySalt({ email, randomSalt });
             const hashedKey = await generateHashedKey({ normPassword, encryptionKeySalt });
+            const intermediateKey = await deriveIntermediateKey({ secretKey, userId });
 
             await sendRequest({
                 verifier,
