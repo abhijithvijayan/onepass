@@ -93,7 +93,8 @@ exports.verify = async (req, res) => {
 
 /* Done */
 exports.saveSRPVerifier = async (req, res) => {
-    const { verifier, salt, email, userId } = req.body;
+    const { verifier, salt, email, userId, encryptionData } = req.body;
+
     const userAuth = await saveVerifier({ verifier, salt, email, userId });
     if (userAuth) {
         return res.status(201).json({ status: 'SRP Verifier saved.' });

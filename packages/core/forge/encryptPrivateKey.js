@@ -6,6 +6,12 @@ const { pki } = forge;
  * Encrypt Private Key With Symmetric Key
  * @param {RSA key} privateKey
  * @param {base64uri key} symmetricKey
+ *
+ * Output
+ * {
+ *      enc: ,
+ *      key: ,
+ * }
  */
 
 export const encryptPrivateKey = ({ privateKey, symmetricKey }) => {
@@ -17,5 +23,9 @@ export const encryptPrivateKey = ({ privateKey, symmetricKey }) => {
     const encryptedPrivateKey = pki.encryptPrivateKeyInfo(privateKeyInfo, symmetricKey, {
         algorithm: 'aes256',
     });
-    return encryptedPrivateKey;
+    const encPriKey = {
+        enc: 'A256GCM',
+        key: encryptedPrivateKey,
+    };
+    return encPriKey;
 };

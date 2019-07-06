@@ -83,8 +83,13 @@ const deriveEncryptionKeySalt = ({ email, randomSalt }) => {
 
 // Password Key
 const generateHashedKey = ({ normPassword, encryptionKeySalt }) => {
+    const iterations = 100000;
     const uint8MasterPassword = stringToUint8Array(normPassword);
-    return computeHash({ uint8MasterPassword, encryptionKeySalt });
+    const hashedKey = computeHash({ uint8MasterPassword, encryptionKeySalt, iterations });
+    return {
+        iterations,
+        key: hashedKey,
+    };
 };
 
 const generateSecretKey = ({ versionCode, userId }) => {
@@ -136,24 +141,43 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
             // 2. Compute MUK
             const randomSalt = genRandomSalt(16);
             const encryptionKeySalt = await deriveEncryptionKeySalt({ email, randomSalt });
+            // output: Object
             const hashedKey = await generateHashedKey({ normPassword, encryptionKeySalt });
             const intermediateKey = await deriveIntermediateKey({ secretKey, userId });
-            const masterUnlockKey = genMasterUnlockKey({ hashedKey, intermediateKey });
+            const masterUnlockKey = genMasterUnlockKey({ hashedKey: hashedKey.key, intermediateKey });
             // ToDo: Return as JWK object
             const base64uriMasterUnlockKey = keyTobase64uri(masterUnlockKey);
             // 3. Create Encrypted Key Set
             const symmetricKey = generateSymmetricKey();
             const vaultKey = genCryptoRandomString(32);
             const { publicKey, privateKey } = await generateKeypair();
+            // output: Object
             const encryptedVaultKey = encryptVaultKey({ vaultKey, publicKey });
-            const encryptedPrivateKeyInfo = encryptPrivateKey({ privateKey, symmetricKey });
-            const { encryptedSymmetricKey, tag, iv } = encryptSymmetricKey({ symmetricKey, masterUnlockKey });
+            // output: Object
+            const encryptedPrivateKey = encryptPrivateKey({ privateKey, symmetricKey });
+            // output: Object
+            const encryptedSymmetricKey = encryptSymmetricKey({
+                symmetricKey,
+                masterUnlockKey,
+                iterations: hashedKey.iterations,
+                salt: encryptionKeySalt,
+            });
+
+            const encryptionData = {
+                pubKey: {
+                    key: publicKey,
+                },
+                encPriKey: encryptedPrivateKey,
+                encSymKey: encryptedSymmetricKey,
+                encVaultKey: encryptedVaultKey,
+            };
 
             await sendRequest({
                 verifier,
                 salt,
                 email,
                 userId,
+                encryptionData,
             });
             dispatch({
                 type: types.COMPLETE_SIGNUP,
