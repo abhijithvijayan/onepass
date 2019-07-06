@@ -28,54 +28,7 @@ import api from '../../../api';
 import * as types from './types';
 import * as endpoints from '../../../api/constants';
 
-export const submitSignUpData = ({ email, name }) => {
-    const lowerCaseEmail = email.toLowerCase();
-    return async dispatch => {
-        try {
-            const { data } = await api({
-                method: 'POST',
-                url: endpoints.SIGNUP_SUBMIT_ENDPOINT,
-                data: {
-                    email: lowerCaseEmail,
-                    name,
-                },
-            });
-            dispatch({
-                type: types.SUBMIT_SIGNUP_DATA,
-                payload: data,
-            });
-            Router.push('/verify', '/signup/verify');
-        } catch ({ response }) {
-            // eslint-disable-next-line no-console
-            console.log(response.data.error);
-            // ToDo: Dispatch some error handler
-        }
-    };
-};
-
-export const submitVerificationToken = ({ email, verificationToken }) => {
-    return async dispatch => {
-        try {
-            const response = await api({
-                method: 'POST',
-                url: endpoints.TOKEN_VERIFICATION_ENDPOINT,
-                data: {
-                    verificationToken,
-                    email,
-                },
-            });
-            dispatch({
-                type: types.SUBMIT_VERIFICATION_TOKEN,
-                payload: response.data,
-            });
-            Router.push('/masterpassword', '/signup/masterpassword');
-        } catch ({ response }) {
-            // eslint-disable-next-line no-console
-            console.log(response.data.error);
-            // ToDo: report invalid token
-        }
-    };
-};
+/** ------------------------------------------------------ */
 
 /**
  * Encryption Util funtions
@@ -87,8 +40,8 @@ const deriveEncryptionKeySalt = ({ salted, randomSalt }) => {
     return computeHKDF({ uint8MasterSecret, uint8Salt });
 };
 
-// Password Key
-const generateHashedKey = ({ normPassword, encryptionKeySalt }) => {
+// Password Key Generation
+const generateHashedKeySet = ({ normPassword, encryptionKeySalt }) => {
     const iterations = 100000;
     const uint8MasterPassword = stringToUint8Array(normPassword);
     const hashedKey = computeHash({ uint8MasterPassword, encryptionKeySalt, iterations });
@@ -120,6 +73,73 @@ const generateSymmetricKey = () => {
     return keyTobase64uri(encodedSymmetricKey);
 };
 
+/** ------------------------------------------------------ */
+
+/**
+ * Initial signup step
+ * @param {String} email
+ * @param {String} name
+ */
+
+export const submitSignUpData = ({ email, name }) => {
+    const lowerCaseEmail = email.toLowerCase();
+    return async dispatch => {
+        try {
+            const { data } = await api({
+                method: 'POST',
+                url: endpoints.SIGNUP_SUBMIT_ENDPOINT,
+                data: {
+                    email: lowerCaseEmail,
+                    name,
+                },
+            });
+            dispatch({
+                type: types.SUBMIT_SIGNUP_DATA,
+                payload: data,
+            });
+            Router.push('/verify', '/signup/verify');
+        } catch ({ response }) {
+            // eslint-disable-next-line no-console
+            console.log(response.data.error);
+            // ToDo: Dispatch some error handler
+        }
+    };
+};
+
+/**
+ * Token Verification step
+ * @param {String} email
+ * @param {Number} verificationToken
+ */
+
+export const submitVerificationToken = ({ email, verificationToken }) => {
+    return async dispatch => {
+        try {
+            const response = await api({
+                method: 'POST',
+                url: endpoints.TOKEN_VERIFICATION_ENDPOINT,
+                data: {
+                    verificationToken,
+                    email,
+                },
+            });
+            dispatch({
+                type: types.SUBMIT_VERIFICATION_TOKEN,
+                payload: response.data,
+            });
+            Router.push('/masterpassword', '/signup/masterpassword');
+        } catch ({ response }) {
+            // eslint-disable-next-line no-console
+            console.log(response.data.error);
+            // ToDo: report invalid token
+        }
+    };
+};
+
+/**
+ * Account signup completion step
+ */
+
 export const completeSignUp = ({ email, userId, versionCode, password }) => {
     const sendRequest = async data => {
         await api({
@@ -129,18 +149,19 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
         });
     };
 
-    // ToDo: all the pre-encryption computation
     return async dispatch => {
         try {
             const normPassword = normalizeMasterPassword(password);
+
             /**
              * SRP variables computing functions
+             *
+             * `pbkdf2` for key derivation
              */
-
             const randomSaltForSRP = generateSaltForSRP();
             const keySaltForSRP = await deriveEncryptionKeySalt({ salted: userId, randomSalt: randomSaltForSRP });
-            const privateKeyForSRP = await generateHashedKey({ normPassword, encryptionKeySalt: keySaltForSRP });
-            const verifier = computeVerifier({ privateKey: privateKeyForSRP.key });
+            const privateKeySetForSRP = await generateHashedKeySet({ normPassword, encryptionKeySalt: keySaltForSRP });
+            const verifier = computeVerifier({ privateKey: privateKeySetForSRP.key });
 
             /**
              * Encryption Variables
@@ -148,38 +169,36 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
 
             // 1. Generate Secret Key
             const secretKey = generateSecretKey({ versionCode, userId });
-            // 2. Compute MUK
+            // 2. Compute Master Unlock Key (MUK)
             const randomSalt = genRandomSalt(16);
             const encryptionKeySalt = await deriveEncryptionKeySalt({ salted: email, randomSalt });
-            // output: Object
-            const hashedKey = await generateHashedKey({ normPassword, encryptionKeySalt });
+            // Returns: Object
+            const hashedKeySet = await generateHashedKeySet({ normPassword, encryptionKeySalt });
             const intermediateKey = await deriveIntermediateKey({ secretKey, userId });
-            const masterUnlockKey = genMasterUnlockKey({ hashedKey: hashedKey.key, intermediateKey });
-            // ToDo: Return as JWK object (& Store)
-            const base64uriMasterUnlockKey = keyTobase64uri(masterUnlockKey);
+            const masterUnlockKey = genMasterUnlockKey({ hashedKey: hashedKeySet.key, intermediateKey });
             // 3. Create Encrypted Key Set
             const symmetricKey = generateSymmetricKey();
             const vaultKey = genCryptoRandomString(32);
             const { publicKey, privateKey } = await generateKeypair();
-            // output: Object
-            const encryptedVaultKey = encryptVaultKey({ vaultKey, publicKey });
-            // output: Object
-            const encryptedPrivateKey = encryptPrivateKey({ privateKey, symmetricKey });
-            // output: Object
-            const encryptedSymmetricKey = encryptSymmetricKey({
+            // Returns: Object
+            const encryptedVaultKeySet = encryptVaultKey({ vaultKey, publicKey });
+            // Returns: Object
+            const encryptedPrivateKeySet = encryptPrivateKey({ privateKey, symmetricKey });
+            // Returns: Object
+            const encryptedSymmetricKeySet = encryptSymmetricKey({
                 symmetricKey,
                 masterUnlockKey,
-                iterations: hashedKey.iterations,
+                iterations: hashedKeySet.iterations,
                 salt: encryptionKeySalt,
             });
 
-            const encryptionData = {
+            const encryptionKeys = {
                 pubKey: {
                     key: publicKey,
                 },
-                encPriKey: encryptedPrivateKey,
-                encSymKey: encryptedSymmetricKey,
-                encVaultKey: encryptedVaultKey,
+                encPriKey: encryptedPrivateKeySet,
+                encSymKey: encryptedSymmetricKeySet,
+                encVaultKey: encryptedVaultKeySet,
             };
 
             await sendRequest({
@@ -187,11 +206,12 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
                 salt: randomSaltForSRP,
                 email,
                 userId,
-                encryptionData,
+                encryptionKeys,
             });
             dispatch({
                 type: types.COMPLETE_SIGNUP,
             });
+
             Router.push('/login');
         } catch (err) {
             // eslint-disable-next-line no-console
@@ -213,10 +233,13 @@ export const submitLoginData = ({ email, password, secretKey }) => {
 
     return async dispatch => {
         try {
+            const normPassword = normalizeMasterPassword(password);
+
             // get `salt` and `serverEphemeral.public` from server
             const {
                 data: { userId, salt, serverPublicEphemeral },
             } = await sendRequest({ email, stage: 'init' });
+
             // Derive `clientEphemeral` pair
             const clientEphemeral = genClientEphemeral();
             dispatch({
@@ -226,26 +249,28 @@ export const submitLoginData = ({ email, password, secretKey }) => {
                     clientEphemeral,
                 },
             });
+
             // Derive the shared strong session key, and a proof
             const clientSecretEphemeral = clientEphemeral.secret;
-            const normPassword = normalizeMasterPassword(password);
+            // use `pbkdf2` key derivation
             const keySaltForSRPLogin = await deriveEncryptionKeySalt({
                 salted: userId,
                 randomSalt: salt,
             });
-            const privateKeyForSRPLogin = await generateHashedKey({
+            const privateKeySetForSRPLogin = await generateHashedKeySet({
                 normPassword,
                 encryptionKeySalt: keySaltForSRPLogin,
             });
             const clientSession = deriveClientSession({
                 salt,
-                privateKey: privateKeyForSRPLogin.key,
+                privateKey: privateKeySetForSRPLogin.key,
                 userId,
                 clientSecretEphemeral,
                 serverPublicEphemeral,
             });
             const clientPublicEphemeral = clientEphemeral.public;
             const clientSessionProof = clientSession.proof;
+
             // Send `clientSessionProof` & `clientPublicEphemeral` to the server
             const {
                 data: { serverSessionProof, token },
@@ -255,6 +280,7 @@ export const submitLoginData = ({ email, password, secretKey }) => {
                 clientSessionProof,
                 stage: 'login',
             });
+
             /**
              * Verify that the server has derived the correct strong session key
              */

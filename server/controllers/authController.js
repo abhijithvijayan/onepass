@@ -98,8 +98,8 @@ exports.verify = async (req, res) => {
 
 // ToDo: Refactor
 exports.finalizeAccount = async (req, res) => {
-    const { verifier, salt, email, userId, encryptionData } = req.body;
-    const userAuth = await saveAccountCredentials({ verifier, salt, email, userId, encryptionData });
+    const { verifier, salt, email, userId, encryptionKeys } = req.body;
+    const userAuth = await saveAccountCredentials({ verifier, salt, email, userId, encryptionKeys });
     if (userAuth) {
         return res.status(201).json({ status: 'Account completion successful.' });
     }

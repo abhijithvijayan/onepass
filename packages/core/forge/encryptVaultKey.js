@@ -19,10 +19,10 @@ export const encryptVaultKey = ({ vaultKey, publicKey }) => {
     const encryptedVaultKey = publicKey.encrypt(data, 'RSA-OAEP', {
         md: forge.md.sha256.create(),
     });
-    const encVaultKey = {
+    const encVaultKeySet = {
         alg: 'RSA-OAEP-256',
         kty: 'RSA',
         key: encryptedVaultKey,
     };
-    return encVaultKey;
+    return encVaultKeySet;
 };
