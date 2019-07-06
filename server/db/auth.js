@@ -5,16 +5,25 @@ const driver = require('./neo4j');
  */
 
 exports.saveAccountCredentials = async ({ verifier, salt, email, userId, encryptionData }) => {
+    const { pubKey, encPriKey, encSymKey, encVaultKey } = encryptionData;
     const session = driver.session();
     const { records = [] } = await session.writeTransaction(tx => {
         return tx.run(
             'MATCH (u: User { email: $emailParam, userId : $userIdParam, isVerified: true }) ' +
                 'MERGE (a: auth { userId : $userIdParam })<-[:SRP]-(u) ' +
-                'SET u.hasCompletedSignUp = true, a.createdAt = $createdAtParam, a.verifier = $verifierParam, a.salt = $saltParam ' +
+                'SET u.hasCompletedSignUp = true, u.pubKey = $pubKeyParam, a.createdAt = $createdAtParam, a.verifier = $verifierParam, a.salt = $saltParam ' +
+                'MERGE (v: vault { userId : $userIdParam })<-[:VAULT]-(u) ' +
+                'SET v.encVaultKey = $encVaultKeyParam, v.createdAt = $createdAtParam ' +
+                'MERGE (k: keySet { userId : $userIdParam })<-[:KEYSET]-(u) ' +
+                'SET k.encPriKey = $encPriKeyParam, k.encSymKey = $encSymKeyParam, k.createdAt = $createdAtParam ' +
                 'RETURN a',
             {
                 emailParam: email,
                 userIdParam: userId,
+                pubKeyParam: JSON.stringify(pubKey),
+                encPriKeyParam: JSON.stringify(encPriKey),
+                encSymKeyParam: JSON.stringify(encSymKey),
+                encVaultKeyParam: JSON.stringify(encVaultKey),
                 createdAtParam: new Date().toJSON(),
                 verifierParam: verifier,
                 saltParam: salt,

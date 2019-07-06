@@ -183,9 +183,9 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
                 type: types.COMPLETE_SIGNUP,
             });
             Router.push('/login');
-        } catch ({ response }) {
+        } catch (err) {
             // eslint-disable-next-line no-console
-            console.log(response.data.error);
+            console.log(err);
             // ToDo: report invalid token
         }
     };
