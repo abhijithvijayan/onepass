@@ -75,8 +75,8 @@ export const submitVerificationToken = ({ email, verificationToken }) => {
  * Encryption Util funtions
  */
 
-const deriveEncryptionKeySalt = ({ email, randomSalt }) => {
-    const uint8Salt = stringToUint8Array(email);
+const deriveEncryptionKeySalt = ({ salted, randomSalt }) => {
+    const uint8Salt = stringToUint8Array(salted);
     const uint8MasterSecret = stringToUint8Array(randomSalt);
     return computeHKDF({ uint8MasterSecret, uint8Salt });
 };
@@ -115,12 +115,6 @@ const generateSymmetricKey = () => {
 };
 
 export const completeSignUp = ({ email, userId, versionCode, password }) => {
-    /**
-     * SRP variables computing functions
-     */
-    const normPassword = normalizeMasterPassword(password);
-    const { salt, verifier } = computeVerifier(userId, normPassword);
-
     const sendRequest = async data => {
         await api({
             method: 'POST',
@@ -132,6 +126,16 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
     // ToDo: all the pre-encryption computation
     return async dispatch => {
         try {
+            const normPassword = normalizeMasterPassword(password);
+            /**
+             * SRP variables computing functions
+             */
+
+            const randomSaltForSRP = genRandomSalt(16);
+            const keySaltForSRP = await deriveEncryptionKeySalt({ salted: userId, randomSalt: randomSaltForSRP });
+            const privateKeyForSRP = await generateHashedKey({ normPassword, encryptionKeySalt: keySaltForSRP });
+            const verifier = computeVerifier({ privateKey: privateKeyForSRP.key });
+
             /**
              * Encryption Variables
              */
@@ -140,7 +144,7 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
             const secretKey = generateSecretKey({ versionCode, userId });
             // 2. Compute MUK
             const randomSalt = genRandomSalt(16);
-            const encryptionKeySalt = await deriveEncryptionKeySalt({ email, randomSalt });
+            const encryptionKeySalt = await deriveEncryptionKeySalt({ salted: email, randomSalt });
             // output: Object
             const hashedKey = await generateHashedKey({ normPassword, encryptionKeySalt });
             const intermediateKey = await deriveIntermediateKey({ secretKey, userId });
@@ -174,7 +178,7 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
 
             await sendRequest({
                 verifier,
-                salt,
+                salt: randomSaltForSRP,
                 email,
                 userId,
                 encryptionData,
