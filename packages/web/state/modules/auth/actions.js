@@ -87,13 +87,13 @@ const generateHashedKey = ({ normPassword, encryptionKeySalt }) => {
     return computeHash({ uint8MasterPassword, encryptionKeySalt });
 };
 
-const generateSecretKey = ({ version, userId }) => {
+const generateSecretKey = ({ versionCode, userId }) => {
     // get string after `user_`
     const trimmedUserId = userId.slice(5);
-    const length = 34 - (version.length + trimmedUserId.length);
+    const length = 34 - (versionCode.length + trimmedUserId.length);
     const randomString = genCryptoRandomString(length);
     // generate 34 char secret key
-    const secretKey = version.concat(trimmedUserId, randomString);
+    const secretKey = versionCode.concat(trimmedUserId, randomString);
     return secretKey;
 };
 
@@ -109,7 +109,7 @@ const generateSymmetricKey = () => {
     return keyTobase64uri(encodedSymmetricKey);
 };
 
-export const completeSignUp = ({ email, userId, version, password }) => {
+export const completeSignUp = ({ email, userId, versionCode, password }) => {
     /**
      * SRP variables computing functions
      */
@@ -132,7 +132,7 @@ export const completeSignUp = ({ email, userId, version, password }) => {
              */
 
             // 1. Generate Secret Key
-            const secretKey = generateSecretKey({ version, userId });
+            const secretKey = generateSecretKey({ versionCode, userId });
             // 2. Compute MUK
             const randomSalt = genRandomSalt(16);
             const encryptionKeySalt = await deriveEncryptionKeySalt({ email, randomSalt });

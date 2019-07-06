@@ -86,7 +86,7 @@ exports.verify = async (req, res) => {
     const { verificationToken = '', email = '' } = req.body;
     const user = await verifyUser({ email, verificationToken });
     if (user) {
-        return res.status(201).json({ userId: user.userId, email: user.email, version: user.versionCode });
+        return res.status(201).json({ userId: user.userId, email: user.email, versionCode: user.versionCode });
     }
     return res.status(403).json({ error: 'Invalid email id or verification code' });
 };
