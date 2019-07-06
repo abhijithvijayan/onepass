@@ -124,7 +124,7 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
     const sendRequest = async data => {
         await api({
             method: 'POST',
-            url: endpoints.VERIFIER_SUBMIT_ENDPOINT,
+            url: endpoints.FINALIZE_ACCOUNT_ENDPOINT,
             data,
         });
     };

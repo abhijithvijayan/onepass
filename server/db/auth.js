@@ -4,7 +4,7 @@ const driver = require('./neo4j');
  * SIGNUP Functions
  */
 
-exports.saveVerifier = async ({ verifier, salt, email, userId }) => {
+exports.saveAccountCredentials = async ({ verifier, salt, email, userId, encryptionData }) => {
     const session = driver.session();
     const { records = [] } = await session.writeTransaction(tx => {
         return tx.run(

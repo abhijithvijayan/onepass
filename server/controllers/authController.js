@@ -7,7 +7,12 @@ const generate = require('nanoid/generate');
 const srp = require('secure-remote-password/server');
 
 const { createUser, getUserDetails, verifyUser, requestResetPassword, validatePasswordRequest } = require('../db/user');
-const { saveVerifier, retrieveSRPVerifier, saveServerEphemeral, retrieveSRPCredentials } = require('../db/auth');
+const {
+    saveAccountCredentials,
+    retrieveSRPVerifier,
+    saveServerEphemeral,
+    retrieveSRPCredentials,
+} = require('../db/auth');
 
 /* Email Template and Options */
 const transporter = require('../mail/mail');
@@ -91,15 +96,14 @@ exports.verify = async (req, res) => {
     return res.status(403).json({ error: 'Invalid email id or verification code' });
 };
 
-/* Done */
-exports.saveSRPVerifier = async (req, res) => {
+// ToDo: Refactor
+exports.finalizeAccount = async (req, res) => {
     const { verifier, salt, email, userId, encryptionData } = req.body;
-
-    const userAuth = await saveVerifier({ verifier, salt, email, userId });
+    const userAuth = await saveAccountCredentials({ verifier, salt, email, userId, encryptionData });
     if (userAuth) {
-        return res.status(201).json({ status: 'SRP Verifier saved.' });
+        return res.status(201).json({ status: 'Account completion successful.' });
     }
-    return res.status(403).json({ error: 'SRP Verifier not saved.' });
+    return res.status(403).json({ error: 'Account completion failed.' });
 };
 
 // ToDo: Refactor

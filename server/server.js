@@ -97,7 +97,7 @@ nextApp.prepare().then(() => {
 
     /* Save SRP Verifier and Salt */
     // ToDo: add verificationcriterias to body
-    server.post('/api/v1/auth/signup.saveVerifier', auth.saveSRPVerifier);
+    server.post('/api/v1/auth/signup.finalizeAccount', auth.finalizeAccount);
 
     /* User Login */
     // ToDo: add verificationcriterias to body
