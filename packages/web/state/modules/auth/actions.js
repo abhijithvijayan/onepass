@@ -11,7 +11,13 @@ import {
     encryptPrivateKey,
     encryptSymmetricKey,
 } from '@onepass/core/forge';
-import { deriveClientSession, verifyLoginSession, genClientEphemeral, computeVerifier } from '@onepass/core/srp';
+import {
+    deriveClientSession,
+    verifyLoginSession,
+    genClientEphemeral,
+    computeVerifier,
+    generateSaltForSRP,
+} from '@onepass/core/srp';
 import { genCryptoRandomString, genMasterUnlockKey } from '@onepass/core/common';
 import { stringToUint8Array, keyTobase64uri } from '@onepass/core/jseu';
 import { normalizeMasterPassword } from '@onepass/core/nkdf';
@@ -131,7 +137,7 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
              * SRP variables computing functions
              */
 
-            const randomSaltForSRP = genRandomSalt(16);
+            const randomSaltForSRP = generateSaltForSRP();
             const keySaltForSRP = await deriveEncryptionKeySalt({ salted: userId, randomSalt: randomSaltForSRP });
             const privateKeyForSRP = await generateHashedKey({ normPassword, encryptionKeySalt: keySaltForSRP });
             const verifier = computeVerifier({ privateKey: privateKeyForSRP.key });
@@ -149,7 +155,7 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
             const hashedKey = await generateHashedKey({ normPassword, encryptionKeySalt });
             const intermediateKey = await deriveIntermediateKey({ secretKey, userId });
             const masterUnlockKey = genMasterUnlockKey({ hashedKey: hashedKey.key, intermediateKey });
-            // ToDo: Return as JWK object
+            // ToDo: Return as JWK object (& Store)
             const base64uriMasterUnlockKey = keyTobase64uri(masterUnlockKey);
             // 3. Create Encrypted Key Set
             const symmetricKey = generateSymmetricKey();
@@ -222,13 +228,22 @@ export const submitLoginData = ({ email, password, secretKey }) => {
             });
             // Derive the shared strong session key, and a proof
             const clientSecretEphemeral = clientEphemeral.secret;
-            const clientSession = deriveClientSession(
+            const normPassword = normalizeMasterPassword(password);
+            const keySaltForSRPLogin = await deriveEncryptionKeySalt({
+                salted: userId,
+                randomSalt: salt,
+            });
+            const privateKeyForSRPLogin = await generateHashedKey({
+                normPassword,
+                encryptionKeySalt: keySaltForSRPLogin,
+            });
+            const clientSession = deriveClientSession({
                 salt,
+                privateKey: privateKeyForSRPLogin.key,
                 userId,
-                password,
                 clientSecretEphemeral,
-                serverPublicEphemeral
-            );
+                serverPublicEphemeral,
+            });
             const clientPublicEphemeral = clientEphemeral.public;
             const clientSessionProof = clientSession.proof;
             // Send `clientSessionProof` & `clientPublicEphemeral` to the server

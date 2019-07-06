@@ -11,3 +11,8 @@ export const computeVerifier = ({ privateKey }) => {
     const verifier = srpClient.deriveVerifier(privateKeyForSRP);
     return verifier;
 };
+
+export const generateSaltForSRP = () => {
+    const salt = srpClient.generateSalt();
+    return salt;
+};

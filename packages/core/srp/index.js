@@ -1,5 +1,5 @@
-import { computeVerifier } from './computeVerifier';
+import { computeVerifier, generateSaltForSRP } from './computeVerifier';
 import { genClientEphemeral } from './genClientEphemeral';
 import { deriveClientSession, verifyLoginSession } from './deriveClientSession';
 
-export { computeVerifier, genClientEphemeral, deriveClientSession, verifyLoginSession };
+export { computeVerifier, generateSaltForSRP, genClientEphemeral, deriveClientSession, verifyLoginSession };
