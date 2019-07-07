@@ -4,8 +4,8 @@ const driver = require('./neo4j');
  * SIGNUP Functions
  */
 
-exports.saveAccountCredentials = async ({ verifier, salt, email, userId, encryptionData }) => {
-    const { pubKey, encPriKey, encSymKey, encVaultKey } = encryptionData;
+exports.saveAccountCredentials = async ({ verifier, salt, email, userId, encryptionKeys }) => {
+    const { pubKey, encPriKey, encSymKey, encVaultKey } = encryptionKeys;
     const session = driver.session();
     const { records = [] } = await session.writeTransaction(tx => {
         return tx.run(
@@ -42,7 +42,7 @@ exports.saveAccountCredentials = async ({ verifier, salt, email, userId, encrypt
 exports.retrieveSRPVerifier = async ({ email }) => {
     const session = driver.session();
     const { records = [] } = await session.readTransaction(tx => {
-        return tx.run('MATCH (u: User { email: $emailParam, isVerified: true })-->(auth) RETURN auth', {
+        return tx.run('MATCH (u: User { email: $emailParam, isVerified: true })-[:SRP]->(auth) RETURN auth', {
             emailParam: email,
         });
     });
@@ -55,7 +55,7 @@ exports.saveServerEphemeral = async ({ serverSecretEphemeral, email }) => {
     const session = driver.session();
     await session.writeTransaction(tx => {
         return tx.run(
-            'MATCH (u: User { email: $emailParam, isVerified: true })-->(auth) ' +
+            'MATCH (u: User { email: $emailParam, isVerified: true })-[:SRP]->(auth) ' +
                 'SET auth.serverSecretEphemeral = $serverSecretEphemeralParam ' +
                 'RETURN auth',
             {
@@ -70,7 +70,7 @@ exports.saveServerEphemeral = async ({ serverSecretEphemeral, email }) => {
 exports.retrieveSRPCredentials = async ({ email }) => {
     const session = driver.session();
     const { records = [] } = await session.readTransaction(tx => {
-        return tx.run('MATCH (u: User { email: $emailParam, isVerified: true })-->(auth) RETURN auth', {
+        return tx.run('MATCH (u: User { email: $emailParam, isVerified: true })-[:SRP]->(auth) RETURN auth', {
             emailParam: email,
         });
     });

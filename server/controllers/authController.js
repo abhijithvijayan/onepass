@@ -98,8 +98,8 @@ exports.verify = async (req, res) => {
 
 // ToDo: Refactor
 exports.finalizeAccount = async (req, res) => {
-    const { verifier, salt, email, userId, encryptionData } = req.body;
-    const userAuth = await saveAccountCredentials({ verifier, salt, email, userId, encryptionData });
+    const { verifier, salt, email, userId, encryptionKeys } = req.body;
+    const userAuth = await saveAccountCredentials({ verifier, salt, email, userId, encryptionKeys });
     if (userAuth) {
         return res.status(201).json({ status: 'Account completion successful.' });
     }
@@ -120,7 +120,11 @@ exports.login = async (req, res) => {
                 // Send `salt` and `serverEphemeral.public` to the client
                 return res.status(201).json({ userId, salt, serverPublicEphemeral: serverEphemeral.public });
             }
-            // Send a bogus salt, userId & ephemeral value to avoid leaking which users have signed up
+            /**
+             * Send a bogus salt, userId & ephemeral value to avoid leaking which users have signed up
+             * ToDo: Handle the error when done so
+             * (https://github.com/LinusU/secure-remote-password/issues/1#issuecomment-508971375)
+             */
             const sampleSalt = nanoid();
             const endSuffix = generate('1234567890', 2);
             const userRandomPrefix = generate('1245689abefklprtvxz', 6);
