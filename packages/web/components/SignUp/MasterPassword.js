@@ -2,7 +2,6 @@ import React from 'react';
 import { Col, Row } from 'antd';
 import styled from 'styled-components';
 
-import '../../styles/base/_variables.scss';
 import MasterPasswordForm from './MasterPasswordForm';
 
 const MasterPasswordContentsHolder = styled.div`

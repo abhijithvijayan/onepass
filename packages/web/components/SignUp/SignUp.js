@@ -2,7 +2,6 @@ import React from 'react';
 import { Row, Col } from 'antd';
 import styled from 'styled-components';
 
-import '../../styles/base/_variables.scss';
 import SignUpForm from './SignUpForm';
 import BottomButtonHolder from '../common/BottomButtonHolder';
 
