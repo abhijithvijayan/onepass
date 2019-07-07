@@ -97,7 +97,6 @@ export const submitSignUpData = ({ email, name }) => {
             });
             Router.push('/verify', '/signup/verify');
         } catch ({ response }) {
-            // eslint-disable-next-line no-console
             console.log(response.data.error);
             dispatch({
                 type: uiTypes.HIDE_PAGE_LOADER,
@@ -133,7 +132,6 @@ export const submitVerificationToken = ({ email, verificationToken }) => {
             });
             Router.push('/masterpassword', '/signup/masterpassword');
         } catch ({ response }) {
-            // eslint-disable-next-line no-console
             console.log(response.data.error);
             dispatch({
                 type: uiTypes.HIDE_PAGE_LOADER,
@@ -191,11 +189,8 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
             const symmetricKey = generateSymmetricKey();
             const vaultKey = genCryptoRandomString(32);
             const { publicKey, privateKey } = await generateKeypair();
-            // Returns: Object
             const encryptedVaultKeySet = encryptVaultKey({ vaultKey, publicKey });
-            // Returns: Object
             const encryptedPrivateKeySet = encryptPrivateKey({ privateKey, symmetricKey });
-            // Returns: Object
             const encryptedSymmetricKeySet = encryptSymmetricKey({
                 symmetricKey,
                 masterUnlockKey,
@@ -203,6 +198,7 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
                 salt: encryptionKeySalt,
             });
 
+            // Data to be send to server
             const encryptionKeys = {
                 pubKey: {
                     key: publicKey,
@@ -223,9 +219,11 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
                 type: types.COMPLETE_SIGNUP,
             });
 
-            Router.push('/login');
+            // ToDo: Auto-Login on completion and autodownload the secretkey for user(PDF)
+
+            // eslint-disable-next-line no-use-before-define
+            dispatch(submitLoginData({ email, password, secretKey }));
         } catch (err) {
-            // eslint-disable-next-line no-console
             console.log(err);
             dispatch({
                 type: uiTypes.HIDE_PAGE_LOADER,
@@ -314,7 +312,6 @@ export const submitLoginData = ({ email, password, secretKey }) => {
 
             Router.push('/vault');
         } catch (err) {
-            // eslint-disable-next-line no-console
             console.log(err);
             dispatch({
                 type: uiTypes.HIDE_PAGE_LOADER,
