@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Router from 'next/router';
+import { bindActionCreators } from 'redux';
 import { Breadcrumb, Layout, Menu } from 'antd';
 
 import Button from '../Button';
@@ -60,7 +61,13 @@ const mapStateToProps = state => {
     };
 };
 
+const mapDispatchToProps = dispatch => {
+    return {
+        logoutUser: bindActionCreators(logoutUser, dispatch),
+    };
+};
+
 export default connect(
     mapStateToProps,
-    { logoutUser }
+    mapDispatchToProps
 )(VaultHeader);

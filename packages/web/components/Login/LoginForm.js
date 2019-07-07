@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
 import { Field, reduxForm } from 'redux-form';
 import { Button, Form, Icon, Input } from 'antd';
 
@@ -60,11 +61,15 @@ const validate = values => {
     return errors;
 };
 
+const mapDispatchToProps = dispatch => {
+    return {
+        submitLoginData: bindActionCreators(submitLoginData, dispatch),
+    };
+};
+
 const LoginFormWrapper = connect(
     null,
-    {
-        submitLoginData,
-    }
+    mapDispatchToProps
 )(LoginForm);
 
 export default reduxForm({

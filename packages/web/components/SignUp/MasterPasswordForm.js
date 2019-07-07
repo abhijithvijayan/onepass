@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
 import { Field, reduxForm } from 'redux-form';
 import { Button, Form, Icon, Input } from 'antd';
 
@@ -70,11 +71,15 @@ const mapStateToProps = state => {
     };
 };
 
+const mapDispatchToProps = dispatch => {
+    return {
+        completeSignUp: bindActionCreators(completeSignUp, dispatch),
+    };
+};
+
 const MasterPasswordWrapper = connect(
     mapStateToProps,
-    {
-        completeSignUp,
-    }
+    mapDispatchToProps
 )(MasterPasswordForm);
 
 export default reduxForm({

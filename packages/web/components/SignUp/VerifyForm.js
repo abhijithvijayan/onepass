@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
 import { Field, reduxForm } from 'redux-form';
 import { Button, Form, Icon, Input } from 'antd';
 
@@ -59,11 +60,15 @@ const mapStateToProps = state => {
     };
 };
 
+const mapDispatchToProps = dispatch => {
+    return {
+        submitVerificationToken: bindActionCreators(submitVerificationToken, dispatch),
+    };
+};
+
 const VerifyFormWrapper = connect(
     mapStateToProps,
-    {
-        submitVerificationToken,
-    }
+    mapDispatchToProps
 )(VerifyForm);
 
 export default reduxForm({

@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-for */
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
 import { Field, reduxForm } from 'redux-form';
 import { Button, Form, Icon, Input } from 'antd';
 
@@ -47,11 +48,15 @@ const validate = values => {
     return errors;
 };
 
+const mapDispatchToProps = dispatch => {
+    return {
+        submitSignUpData: bindActionCreators(submitSignUpData, dispatch),
+    };
+};
+
 const SignUpFormWrapper = connect(
     null,
-    {
-        submitSignUpData,
-    }
+    mapDispatchToProps
 )(SignUpForm);
 
 export default reduxForm({
