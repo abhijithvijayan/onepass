@@ -1,9 +1,0 @@
-.pt-20 {
-  padding-top: 20px;
-}
-
-.d-center {
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
