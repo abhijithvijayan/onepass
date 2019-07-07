@@ -1,4 +1,4 @@
-import { Form, Select, InputNumber, DatePicker, Switch, Slider, Button } from 'antd';
+import { Button, DatePicker, Form, InputNumber, Select, Slider, Switch } from 'antd';
 
 const FormItem = Form.Item;
 const { Option } = Select;

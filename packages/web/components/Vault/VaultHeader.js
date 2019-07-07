@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Router from 'next/router';
-import { Layout, Menu, Breadcrumb } from 'antd';
+import { Breadcrumb, Layout, Menu } from 'antd';
 
 import Button from '../Button';
 import { logoutUser } from '../../state/modules/auth/actions';

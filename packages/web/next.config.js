@@ -22,6 +22,12 @@ module.exports = withPlugins(
     ],
     {
         webpack(config, { isServer }) {
+            // to ignore [mini-css-extract-plugin] Conflicting order between warning
+            config.stats = {};
+            config.stats.warnings = false;
+            config.stats.warningsFilter = warning => {
+                return /Conflicting order between/gm.test(warning);
+            };
             // local env variables
             config.plugins.push(new webpack.EnvironmentPlugin(localEnv));
             // antdesign css config

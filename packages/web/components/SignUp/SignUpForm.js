@@ -2,7 +2,7 @@
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
-import { Form, Icon, Input, Button } from 'antd';
+import { Button, Form, Icon, Input } from 'antd';
 
 import { submitSignUpData } from '../../state/modules/auth/operations';
 
