@@ -25,25 +25,23 @@
     transform: rotate(3deg) translate(0px, -4px);
   }
   /* Remove these to get rid of the spinner */
-  .spinner {
-    display: block;
-    position: fixed;
-    z-index: 1031;
-    top: 15px;
-    right: 15px;
-  }
-  .spinner-icon {
-    width: 18px;
-    height: 18px;
-    box-sizing: border-box;
-    border: solid 2px transparent;
-    border-top-color: red;
-    border-left-color: red;
-    border-radius: 50%;
-
-    -webkit-animation: nprogress-spinner 400ms linear infinite;
-    animation: nprogress-spinner 400ms linear infinite;
-  }
+  // .spinner {
+  //   display: block;
+  //   position: fixed;
+  //   z-index: 1031;
+  //   top: 15px;
+  //   right: 15px;
+  // }
+  // .spinner-icon {
+  //   width: 18px;
+  //   height: 18px;
+  //   box-sizing: border-box;
+  //   border: solid 2px transparent;
+  //   border-top-color: red;
+  //   border-left-color: red;
+  //   border-radius: 50%;
+  //   animation: nprogress-spinner 400ms linear infinite;
+  // }
 }
 
 .nprogress-custom-parent {
@@ -55,14 +53,6 @@
   }
 }
 
-@-webkit-keyframes nprogress-spinner {
-  0% {
-    -webkit-transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-  }
-}
 @keyframes nprogress-spinner {
   0% {
     transform: rotate(0deg);

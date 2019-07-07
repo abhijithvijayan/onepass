@@ -2,16 +2,16 @@ import React from 'react';
 import styled from 'styled-components';
 
 const LoadingWrapper = styled.div`
-    flex: 1 1 auto;
-    flex-basis: 250px;
+    height: 100vh;
     display: flex;
-    align-self: center;
-    align-items: center;
+    text-align: center;
     justify-content: center;
+    vertical-align: middle;
+    align-items: center;
 `;
 
 const Loader = () => {
-    return <LoadingWrapper>Loading</LoadingWrapper>;
+    return <LoadingWrapper>Loading...</LoadingWrapper>;
 };
 
 export default Loader;
