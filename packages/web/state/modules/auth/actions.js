@@ -20,6 +20,7 @@ import { computeHKDF } from '@onepass/core/hkdf';
 
 import api from '../../../api';
 import * as types from './types';
+import * as uiTypes from '../common/ui/types';
 import * as endpoints from '../../../api/constants';
 
 /** ------------------------------------------------------ */
@@ -79,6 +80,9 @@ export const submitSignUpData = ({ email, name }) => {
     const lowerCaseEmail = email.toLowerCase();
     return async dispatch => {
         try {
+            dispatch({
+                type: uiTypes.SHOW_PAGE_LOADER,
+            });
             const { data } = await api({
                 method: 'POST',
                 url: endpoints.SIGNUP_SUBMIT_ENDPOINT,
@@ -92,6 +96,9 @@ export const submitSignUpData = ({ email, name }) => {
                 payload: data,
             });
             Router.push('/verify', '/signup/verify');
+            dispatch({
+                type: uiTypes.HIDE_PAGE_LOADER,
+            });
         } catch ({ response }) {
             // eslint-disable-next-line no-console
             console.log(response.data.error);
@@ -109,6 +116,9 @@ export const submitSignUpData = ({ email, name }) => {
 export const submitVerificationToken = ({ email, verificationToken }) => {
     return async dispatch => {
         try {
+            dispatch({
+                type: uiTypes.SHOW_PAGE_LOADER,
+            });
             const response = await api({
                 method: 'POST',
                 url: endpoints.TOKEN_VERIFICATION_ENDPOINT,
@@ -122,6 +132,9 @@ export const submitVerificationToken = ({ email, verificationToken }) => {
                 payload: response.data,
             });
             Router.push('/masterpassword', '/signup/masterpassword');
+            dispatch({
+                type: uiTypes.HIDE_PAGE_LOADER,
+            });
         } catch ({ response }) {
             // eslint-disable-next-line no-console
             console.log(response.data.error);
@@ -145,6 +158,10 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
 
     return async dispatch => {
         try {
+            dispatch({
+                type: uiTypes.SHOW_PAGE_LOADER,
+            });
+
             const normPassword = normalizeMasterPassword(password);
 
             /**
@@ -207,6 +224,10 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
             });
 
             Router.push('/login');
+
+            dispatch({
+                type: uiTypes.HIDE_PAGE_LOADER,
+            });
         } catch (err) {
             // eslint-disable-next-line no-console
             console.log(err);
@@ -227,6 +248,10 @@ export const submitLoginData = ({ email, password, secretKey }) => {
 
     return async dispatch => {
         try {
+            dispatch({
+                type: uiTypes.SHOW_PAGE_LOADER,
+            });
+
             const normPassword = normalizeMasterPassword(password);
 
             // get `salt` and `serverEphemeral.public` from server
@@ -289,9 +314,16 @@ export const submitLoginData = ({ email, password, secretKey }) => {
             });
 
             Router.push('/vault');
+
+            dispatch({
+                type: uiTypes.HIDE_PAGE_LOADER,
+            });
         } catch (err) {
             // eslint-disable-next-line no-console
             console.log(err);
+            dispatch({
+                type: uiTypes.HIDE_PAGE_LOADER,
+            });
         }
     };
 };

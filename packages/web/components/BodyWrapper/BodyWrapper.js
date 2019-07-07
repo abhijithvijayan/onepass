@@ -1,10 +1,19 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import Loader from '../Loader';
 
 class BodyWrapper extends Component {
     render() {
-        const { children } = this.props;
-        return <main>{children}</main>;
+        const { children, isPageLoading } = this.props;
+        const renderContent = isPageLoading ? <Loader /> : children;
+        return <main>{renderContent}</main>;
     }
 }
 
-export default BodyWrapper;
+const mapStateToProps = ({ ui }) => {
+    return {
+        isPageLoading: ui.isPageLoading,
+    };
+};
+
+export default connect(mapStateToProps)(BodyWrapper);
