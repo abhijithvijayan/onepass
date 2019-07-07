@@ -96,12 +96,12 @@ export const submitSignUpData = ({ email, name }) => {
                 payload: data,
             });
             Router.push('/verify', '/signup/verify');
-            dispatch({
-                type: uiTypes.HIDE_PAGE_LOADER,
-            });
         } catch ({ response }) {
             // eslint-disable-next-line no-console
             console.log(response.data.error);
+            dispatch({
+                type: uiTypes.HIDE_PAGE_LOADER,
+            });
             // ToDo: Dispatch some error handler
         }
     };
@@ -132,12 +132,12 @@ export const submitVerificationToken = ({ email, verificationToken }) => {
                 payload: response.data,
             });
             Router.push('/masterpassword', '/signup/masterpassword');
-            dispatch({
-                type: uiTypes.HIDE_PAGE_LOADER,
-            });
         } catch ({ response }) {
             // eslint-disable-next-line no-console
             console.log(response.data.error);
+            dispatch({
+                type: uiTypes.HIDE_PAGE_LOADER,
+            });
             // ToDo: report invalid token
         }
     };
@@ -224,13 +224,12 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
             });
 
             Router.push('/login');
-
-            dispatch({
-                type: uiTypes.HIDE_PAGE_LOADER,
-            });
         } catch (err) {
             // eslint-disable-next-line no-console
             console.log(err);
+            dispatch({
+                type: uiTypes.HIDE_PAGE_LOADER,
+            });
             // ToDo: report invalid token
         }
     };
@@ -314,10 +313,6 @@ export const submitLoginData = ({ email, password, secretKey }) => {
             });
 
             Router.push('/vault');
-
-            dispatch({
-                type: uiTypes.HIDE_PAGE_LOADER,
-            });
         } catch (err) {
             // eslint-disable-next-line no-console
             console.log(err);
