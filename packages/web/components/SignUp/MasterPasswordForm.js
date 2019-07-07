@@ -51,8 +51,8 @@ const validate = values => {
     const errors = {};
     if (!values.password) {
         errors.password = 'Required';
-    } else if (values.password.length < 8) {
-        errors.password = 'Master password must be atleast 8 characters.';
+    } else if (values.password.length < 10) {
+        errors.password = 'Master password must be atleast 10 characters.';
     }
     if (!values.confirmpassword) {
         errors.confirmpassword = 'Required';
