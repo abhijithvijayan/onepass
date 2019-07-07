@@ -28,7 +28,6 @@ class LoginPage extends Component {
 LoginPage.getInitialProps = ({ req, store }) => {
     const token = req && req.cookies && req.cookies.token;
     if (token && store) {
-        // ToDo: Pass in token for jwt-decode(for email)
         store.dispatch(authUser(decodeJwt(token)));
     }
     return {};
