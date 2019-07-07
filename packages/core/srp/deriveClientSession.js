@@ -1,8 +1,9 @@
-const srp = require('secure-remote-password/client');
+import srpClient from 'secure-remote-password/client';
+import { array2hex } from './keyConversion';
 
 export const deriveClientSession = ({ salt, privateKey, userId, clientSecretEphemeral, serverPublicEphemeral }) => {
-    const privateKeyForSRP = privateKey.toString('hex');
-    const clientSession = srp.deriveSession(
+    const privateKeyForSRP = array2hex(privateKey);
+    const clientSession = srpClient.deriveSession(
         clientSecretEphemeral,
         serverPublicEphemeral,
         salt,
@@ -13,5 +14,5 @@ export const deriveClientSession = ({ salt, privateKey, userId, clientSecretEphe
 };
 
 export const verifyLoginSession = (clientPublicEphemeral, clientSession, serverSessionProof) => {
-    srp.verifySession(clientPublicEphemeral, clientSession, serverSessionProof);
+    srpClient.verifySession(clientPublicEphemeral, clientSession, serverSessionProof);
 };

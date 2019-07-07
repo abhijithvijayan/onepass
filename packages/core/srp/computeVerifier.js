@@ -1,4 +1,5 @@
 import srpClient from 'secure-remote-password/client';
+import { array2hex } from './keyConversion';
 
 /**
  *  Derive verifier from userId, masterpassword & salt
@@ -6,15 +7,8 @@ import srpClient from 'secure-remote-password/client';
  * @param {String} masterPassword
  */
 
-export const array2hex = array => {
-    return Array.from(array)
-        .map(b => {
-            return b.toString(16).padStart(2, '0');
-        })
-        .join('');
-};
-
 export const computeVerifier = ({ privateKey }) => {
-    const verifier = srpClient.deriveVerifier(privateKey);
+    const privateKeyForSRP = array2hex(privateKey);
+    const verifier = srpClient.deriveVerifier(privateKeyForSRP);
     return verifier;
 };

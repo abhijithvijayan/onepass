@@ -11,13 +11,7 @@ import {
     encryptPrivateKey,
     encryptSymmetricKey,
 } from '@onepass/core/forge';
-import {
-    deriveClientSession,
-    verifyLoginSession,
-    genClientEphemeral,
-    computeVerifier,
-    array2hex,
-} from '@onepass/core/srp';
+import { deriveClientSession, verifyLoginSession, genClientEphemeral, computeVerifier } from '@onepass/core/srp';
 import { genCryptoRandomString, genMasterUnlockKey } from '@onepass/core/common';
 import { stringToUint8Array, keyTobase64uri } from '@onepass/core/jseu';
 import { normalizeMasterPassword } from '@onepass/core/nkdf';
@@ -161,9 +155,7 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
             const randomSaltForSRP = genRandomSalt(16);
             const keySaltForSRP = await deriveEncryptionKeySalt({ salted: userId, randomSalt: randomSaltForSRP });
             const privateKeySetForSRP = await generateHashedKeySet({ normPassword, encryptionKeySalt: keySaltForSRP });
-            // convert Uint8Array to `hex`
-            const array2HexKey = array2hex(privateKeySetForSRP.key);
-            const verifier = computeVerifier({ privateKey: array2HexKey });
+            const verifier = computeVerifier({ privateKey: privateKeySetForSRP.key });
 
             /**
              * Encryption Variables
@@ -263,11 +255,9 @@ export const submitLoginData = ({ email, password, secretKey }) => {
                 normPassword,
                 encryptionKeySalt: keySaltForSRPLogin,
             });
-            // convert Uint8Array to `hex`
-            const array2HexPrivateKey = array2hex(privateKeySetForSRPLogin.key);
             const clientSession = deriveClientSession({
                 salt,
-                privateKey: array2HexPrivateKey,
+                privateKey: privateKeySetForSRPLogin.key,
                 userId,
                 clientSecretEphemeral,
                 serverPublicEphemeral,
