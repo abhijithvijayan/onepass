@@ -120,7 +120,11 @@ exports.login = async (req, res) => {
                 // Send `salt` and `serverEphemeral.public` to the client
                 return res.status(201).json({ userId, salt, serverPublicEphemeral: serverEphemeral.public });
             }
-            // Send a bogus salt, userId & ephemeral value to avoid leaking which users have signed up
+            /**
+             * Send a bogus salt, userId & ephemeral value to avoid leaking which users have signed up
+             * ToDo: Handle the error when done so
+             * (https://github.com/LinusU/secure-remote-password/issues/1#issuecomment-508971375)
+             */
             const sampleSalt = nanoid();
             const endSuffix = generate('1234567890', 2);
             const userRandomPrefix = generate('1245689abefklprtvxz', 6);
