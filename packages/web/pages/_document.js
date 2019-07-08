@@ -2,6 +2,11 @@ import React from 'react';
 import Document, { Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
 
+const style = {
+    fontFamily: '"Nunito", sans-serif',
+    backgroundColor: '#f3f3f3',
+};
+
 class OnePassDocument extends Document {
     static getInitialProps({ renderPage }) {
         const sheet = new ServerStyleSheet();
@@ -27,7 +32,7 @@ class OnePassDocument extends Document {
                     {/* for styled-components */}
                     {this.props.styleTags}
                 </Head>
-                <body>
+                <body style={style}>
                     <Main />
                     <NextScript />
                 </body>

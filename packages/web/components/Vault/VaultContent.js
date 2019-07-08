@@ -1,12 +1,41 @@
 import React from 'react';
-import { Layout } from 'antd';
+import styled from 'styled-components';
+import { Empty } from 'antd';
 
-const { Content } = Layout;
+import VaultItemCard from './VaultItemCard';
+
+const ContentHolder = styled.div`
+    min-height: 85vh;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 30px;
+    position: relative;
+    background: ${props => {
+        return props.theme.grayWhite;
+    }};
+`;
+
+const EmptyHolder = styled(Empty)`
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    vertical-align: middle;
+    flex-direction: column;
+`;
 
 const VaultContent = () => {
     return (
         <React.Fragment>
-            <Content style={{ margin: '0 16px' }}>Here comes the vault items</Content>
+            <ContentHolder>
+                <VaultItemCard />
+                <VaultItemCard />
+                <VaultItemCard />
+                <VaultItemCard />
+                <VaultItemCard />
+            </ContentHolder>
+            {/* <EmptyHolder /> */}
         </React.Fragment>
     );
 };
