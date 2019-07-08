@@ -1,49 +1,20 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import Router from 'next/router';
-import { bindActionCreators } from 'redux';
+import React from 'react';
 import { Layout } from 'antd';
+import styled from 'styled-components';
 
-import { logoutUser } from '../../state/modules/auth/actions';
+const { Header } = Layout;
 
-class VaultHeader extends Component {
-    handleButtonClick() {
-        const { isAuthenticated } = this.props;
-        if (isAuthenticated) {
-            this.props.logoutUser();
-        } else {
-            Router.push('/login');
-        }
-    }
+const HeaderTitle = styled.h2`
+    font-size: 2em;
+    color: #000;
+`;
 
-    renderButtonText() {
-        const { isAuthenticated } = this.props;
-        return isAuthenticated ? 'logout' : 'login';
-    }
-
-    render() {
-        const { Header, Content, Footer } = Layout;
-        return (
-            <Header>
-                <div className="logo">OnePass Logo</div>
-            </Header>
-        );
-    }
-}
-
-const mapStateToProps = state => {
-    return {
-        isAuthenticated: state.auth.login.isAuthenticated,
-    };
+const VaultHeader = () => {
+    return (
+        <Header style={{ background: '#fff', padding: 0 }}>
+            <HeaderTitle>OnePass Vault</HeaderTitle>
+        </Header>
+    );
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        logoutUser: bindActionCreators(logoutUser, dispatch),
-    };
-};
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(VaultHeader);
+export default VaultHeader;

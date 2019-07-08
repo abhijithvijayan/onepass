@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Layout } from 'antd';
 
-import HeaderLogo from './HeaderLogo';
+import SideBarHeader from './SideBarHeader';
 import SideBarMenu from './SideBarMenu';
 
 const { Sider } = Layout;
@@ -14,7 +14,7 @@ class VaultSideBar extends Component {
     render() {
         return (
             <Sider collapsible collapsed onCollapse={this.collapseSideBar}>
-                <HeaderLogo />
+                <SideBarHeader />
                 <SideBarMenu />
             </Sider>
         );
