@@ -2,19 +2,44 @@ import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { Field, reduxForm } from 'redux-form';
-import { Button, Form, Icon, Input } from 'antd';
+import { Button, Form } from 'antd';
 
 import ReactPasswordStrength from 'react-password-strength/dist/universal';
 import styled from 'styled-components';
 
 import { completeSignUp } from '../../state/modules/auth/operations';
 
-const renderInputField = ({ input, icon, label, meta: { touched, invalid, error } }) => {
+const FormInputHolder = styled.div`
+    display: flex;
+    .password__strength--input {
+        width: 100%;
+        margin-bottom: 5px;
+        input {
+            width: calc(85% - 18px);
+            padding-left: 38px;
+        }
+        span {
+            padding-right: 4px;
+            padding: 16px 8px 16px 5px;
+            font-size: 14px;
+            width: auto;
+        }
+    }
+`;
+
+const PrefixIconHolder = styled.span`
+    position: absolute;
+    z-index: 1;
+    padding: 6px 12px;
+    left: 0;
+`;
+
+const renderInputField = ({ input, label, meta: { touched, invalid, error } }) => {
     const isInvalid = touched && invalid;
     return (
         <Form.Item label={label} validateStatus={isInvalid ? 'error' : 'success'} help={isInvalid && error}>
-            <div className="d-flex">
-                <span className="ant-input-prefix custom-ant-lock">
+            <FormInputHolder>
+                <PrefixIconHolder className="ant-input-prefix">
                     <i aria-label="icon: lock" className="anticon anticon-lock">
                         <svg
                             viewBox="64 64 896 896"
@@ -29,16 +54,15 @@ const renderInputField = ({ input, icon, label, meta: { touched, invalid, error 
                             <path d="M832 464h-68V240c0-70.7-57.3-128-128-128H388c-70.7 0-128 57.3-128 128v224h-68c-17.7 0-32 14.3-32 32v384c0 17.7 14.3 32 32 32h640c17.7 0 32-14.3 32-32V496c0-17.7-14.3-32-32-32zM332 240c0-30.9 25.1-56 56-56h248c30.9 0 56 25.1 56 56v224H332V240zm460 600H232V536h560v304zM484 701v53c0 4.4 3.6 8 8 8h40c4.4 0 8-3.6 8-8v-53a48.01 48.01 0 1 0-56 0z"></path>
                         </svg>
                     </i>
-                </span>
+                </PrefixIconHolder>
                 <ReactPasswordStrength
                     inputProps={{ ...input }}
-                    prefix={<Icon type={icon} />}
-                    className="w-100 password__strength--input"
+                    className="password__strength--input"
                     minLength={10}
                     minScore={4}
                     scoreWords={['weak', 'okay', 'good', 'strong', 'stronger']}
                 />
-            </div>
+            </FormInputHolder>
         </Form.Item>
     );
 };

@@ -8,28 +8,6 @@
   flex-direction: column;
 }
 
-.custom-ant-lock {
-  position: absolute;
-  z-index: 1;
-  padding: 6px 12px;
-  left: 0;
-  top: 1px;
-}
-
-.password__strength--input {
-  margin-bottom: 5px;
-  input {
-    width: calc(85% - 18px);
-    padding-left: 38px;
-  }
-  span {
-    padding-right: 4px;
-    padding: 16px 5px;
-    font-size: 14px;
-    width: auto;
-  }
-}
-
 .d-flex {
   display: flex;
 }
