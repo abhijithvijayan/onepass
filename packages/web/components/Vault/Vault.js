@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
+import { Layout } from 'antd';
 
-import VaultHeader from './VaultHeader';
+import VaultSideBar from './VaultSideBar';
 
 class Vault extends Component {
     render() {
         return (
-            <div>
-                <VaultHeader />
-            </div>
+            <Layout style={{ minHeight: '100vh' }}>
+                <VaultSideBar />
+            </Layout>
         );
     }
 }
