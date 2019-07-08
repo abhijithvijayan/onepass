@@ -24,6 +24,7 @@ class OnePassDocument extends Document {
                         name="description"
                         content="OnePass Password Manager: A free and open source secure password manager"
                     />
+                    {/* for styled-components */}
                     {this.props.styleTags}
                 </Head>
                 <body>
