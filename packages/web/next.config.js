@@ -28,9 +28,11 @@ module.exports = withPlugins(
             config.stats.warningsFilter = warning => {
                 return /Conflicting order between/gm.test(warning);
             };
+
             // local env variables
             config.plugins.push(new webpack.EnvironmentPlugin(localEnv));
-            // antdesign css config
+
+            // antdesign css import (without LESS)
             if (isServer) {
                 const antStyles = /antd\/.*?\/style\/css.*?/;
                 const origExternals = [...config.externals];
@@ -51,6 +53,7 @@ module.exports = withPlugins(
                     use: 'null-loader',
                 });
             }
+
             return config;
         },
     }
