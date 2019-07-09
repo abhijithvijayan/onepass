@@ -1,34 +1,34 @@
 /* Device = Most of the Smartphones Mobiles (Portrait) */
-$screen-xxs-min: 320px;
-$screen-xxs-max: 480px;
+$screenXxsMin: 320px;
+$screenXxsMax: 480px;
 
 /* Device = Low Resolution Tablets, Mobiles (Landscape) */
-$screen-xs-min: 481px;
-$screen-xs-max: 767px;
+$screenXsMin: 481px;
+$screenXsMax: 767px;
 
 /* Device = Tablets, Ipads (portrait) */
-$screen-sm-min: 768px;
-$screen-sm-max: 1024px;
+$screenSmMin: 768px;
+$screenSmMax: 1024px;
 
 /* Device = Laptops, Desktops */
-$screen-md-min: 1025px;
-$screen-md-max: 1280px;
+$screenMdMin: 1025px;
+$screenMdMax: 1280px;
 
 /* Device = Desktops */
-$screen-lg-min: 1281px;
-$screen-lg-max: 1440px;
+$screen-lgMin: 1281px;
+$screen-lgMax: 1440px;
 
 /* Higher Resolution Screens */
-$screen-xlg-min: 1441px;
-$screen-xlg-max: 2560px;
+$screenXlgMin: 1441px;
+$screenXlgMax: 2560px;
 
 // other variables here
 $black: #0d0d0d;
 $white: #fff;
-$gray-white: #f3f3f3;
+$grayWhite: #f3f3f3;
 $pink: #0c101a;
-$light-pink: #3a426d;
-$light-blue: #566dfb;
+$lightPink: #3a426d;
+$lightBlue: #566dfb;
 
 // fonts
 $opensans: "Open Sans", sans-serif;
