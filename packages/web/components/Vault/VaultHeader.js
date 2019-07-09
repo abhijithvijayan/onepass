@@ -25,9 +25,9 @@ const VaultHeader = () => {
         <Header style={{ background: '#fff', padding: '0px 15px', display: 'flex', justifyContent: 'space-between' }}>
             <HeaderTitle>OnePass Vault</HeaderTitle>
             <Dropdown overlay={dropdownMenu}>
-                <a className="ant-dropdown-link" href="/">
+                <span>
                     John <Icon type="down" />
-                </a>
+                </span>
             </Dropdown>
         </Header>
     );

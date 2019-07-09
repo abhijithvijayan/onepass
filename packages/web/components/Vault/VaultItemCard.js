@@ -3,13 +3,14 @@ import styled from 'styled-components';
 import { Icon, Tooltip } from 'antd';
 
 const Card = styled.div`
+    user-select: none;
     transition: all 0.3s;
     font-family: ${props => {
         return props.theme.opensans;
     }};
     border-radius: 12px;
     height: 100px;
-    min-height: 280px;
+    min-height: 300px;
     background: #fff;
     font-size: 14px;
     line-height: 1.5;
@@ -42,7 +43,8 @@ const SiteUrl = styled.p`
     color: rgba(0, 0, 0, 0.7);
     font-size: 0.8rem;
     line-height: 1.5;
-    margin-bottom: 1.25rem;
+    margin-bottom: 0;
+    padding-bottom: 1.25rem;
     font-weight: 400;
     overflow: hidden;
 `;
@@ -76,7 +78,8 @@ const DataHolder = styled.div`
             }
             p {
                 font-size: 0.9rem;
-                margin-bottom: 0.95em;
+                margin-bottom: 0;
+                padding-bottom: 0.95em;
             }
         }
     }

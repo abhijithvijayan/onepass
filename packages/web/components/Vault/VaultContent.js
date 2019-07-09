@@ -5,6 +5,7 @@ import { Empty } from 'antd';
 import VaultItemCard from './VaultItemCard';
 
 const MainContentHolder = styled.div`
+    padding-top: 25px;
     overflow: hidden;
     z-index: 1;
     display: flex;
@@ -38,7 +39,6 @@ const FolderHead = styled.div`
 `;
 
 const FolderContents = styled.div`
-    user-select: none;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;

@@ -11,7 +11,7 @@ import { toggleSideBar } from '../../state/modules/vault/operations';
 const { Sider } = Layout;
 
 const SideBar = styled(Sider)`
-    z-index: 7;
+    z-index: 2;
     position: relative;
     @media screen and (max-width: ${props => {
             return props.theme.screenXxsMax;
