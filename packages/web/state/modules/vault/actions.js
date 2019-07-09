@@ -10,3 +10,12 @@ export const toggleSideBar = toggleStatus => {
         },
     };
 };
+
+export const toggleItemModal = toggleStatus => {
+    return {
+        type: types.TOGGLE_ITEM_MODAL,
+        payload: {
+            isItemModalOpen: toggleStatus,
+        },
+    };
+};

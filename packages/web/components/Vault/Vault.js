@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Layout } from 'antd';
 import styled from 'styled-components';
 
+import ItemModal from './ItemModal';
 import VaultFooter from './VaultFooter';
 import VaultSideBar from './VaultSideBar';
 import VaultHeader from './VaultHeader';
@@ -25,6 +26,7 @@ class Vault extends Component {
                     <VaultContent />
                     <VaultFooter />
                 </Layout>
+                <ItemModal />
             </VaultLayout>
         );
     }

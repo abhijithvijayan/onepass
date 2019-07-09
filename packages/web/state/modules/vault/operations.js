@@ -1,3 +1,3 @@
-import { toggleSideBar } from './actions';
+import { toggleSideBar, toggleItemModal } from './actions';
 
-export { toggleSideBar };
+export { toggleSideBar, toggleItemModal };

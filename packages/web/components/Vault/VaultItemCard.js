@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
+import { bindActionCreators } from 'redux';
 import { Icon, Tooltip } from 'antd';
+import { connect } from 'react-redux';
+
+import { toggleItemModal } from '../../state/modules/vault/operations';
 
 const Card = styled.div`
     user-select: none;
@@ -101,42 +105,62 @@ const IconHolder = styled.div`
     }
 `;
 
-const renderTooltipIcons = (placement, title, type) => {
-    return (
-        <Tooltip placement={placement} title={title}>
-            <Icon type={type} />
-        </Tooltip>
-    );
+class VaultItemCard extends Component {
+    render() {
+        return (
+            <Card>
+                <div>
+                    <SiteName>Google</SiteName>
+                </div>
+                <SiteUrl>https://www.google.com</SiteUrl>
+                <DataHolder>
+                    <div className="data__column">
+                        <div>
+                            <h2>Username</h2>
+                            <p>onepass</p>
+                        </div>
+                    </div>
+                    <div className="data__column">
+                        <div>
+                            <h2>Password</h2>
+                            <p>**********</p>
+                        </div>
+                    </div>
+                </DataHolder>
+                <IconHolder>
+                    <Tooltip placement="bottomLeft" title="Delete">
+                        <Icon type="delete" />
+                    </Tooltip>
+                    <Tooltip placement="bottom" title="Edit">
+                        <Icon
+                            onClick={() => {
+                                return this.props.toggleItemModal(true);
+                            }}
+                            type="edit"
+                        />
+                    </Tooltip>
+                    <Tooltip placement="bottomRight" title="Launch">
+                        <Icon type="rocket" />
+                    </Tooltip>
+                </IconHolder>
+            </Card>
+        );
+    }
+}
+
+const mapStateToProps = ({ vault }) => {
+    return {
+        isItemModalOpen: vault.isItemModalOpen,
+    };
 };
 
-const VaultItemCard = () => {
-    return (
-        <Card>
-            <div>
-                <SiteName>Google</SiteName>
-            </div>
-            <SiteUrl>https://www.google.com</SiteUrl>
-            <DataHolder>
-                <div className="data__column">
-                    <div>
-                        <h2>Username</h2>
-                        <p>onepass</p>
-                    </div>
-                </div>
-                <div className="data__column">
-                    <div>
-                        <h2>Password</h2>
-                        <p>**********</p>
-                    </div>
-                </div>
-            </DataHolder>
-            <IconHolder>
-                {renderTooltipIcons('bottomLeft', 'Delete', 'delete')}
-                {renderTooltipIcons('bottom', 'Edit', 'edit')}
-                {renderTooltipIcons('bottomRight', 'Launch', 'rocket')}
-            </IconHolder>
-        </Card>
-    );
+const mapDispatchToProps = dispatch => {
+    return {
+        toggleItemModal: bindActionCreators(toggleItemModal, dispatch),
+    };
 };
 
-export default VaultItemCard;
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(VaultItemCard);
