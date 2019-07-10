@@ -2,31 +2,17 @@
 /* eslint-disable react/display-name */
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
-import { Field, reduxForm, change } from 'redux-form';
+import { Field, reduxForm } from 'redux-form';
 import { Cascader, Col, Form, Icon, Input } from 'antd';
 
 /* eslint-disable-next-line arrow-body-style */
-const renderField = ComponentToRender => ({
-    input,
-    ignore,
-    type,
-    children,
-    icon,
-    label,
-    meta: { touched, invalid, error },
-    ...rest
-}) => {
+const renderField = ComponentToRender => ({ input, type, icon, label, meta: { touched, invalid, error }, ...rest }) => {
     const isInvalid = touched && invalid;
     const prefix = icon ? <Icon type={icon} /> : undefined;
     const catType = type || undefined;
-    // ignore providing unwanted props to cascader
-    const storeProps = ignore ? undefined : { ...input };
     return (
         <Form.Item label={label} validateStatus={isInvalid ? 'error' : 'success'} help={isInvalid && error}>
-            <ComponentToRender {...storeProps} type={catType} prefix={prefix} {...rest}>
-                {children}
-            </ComponentToRender>
+            <ComponentToRender type={catType} prefix={prefix} {...input} {...rest} />
         </Form.Item>
     );
 };
@@ -57,33 +43,29 @@ class ItemModalForm extends Component {
         console.log('modal form submitted');
     };
 
-    /* Manually update form cascader selector store value */
-    handleSelectChange = selected => {
-        this.props.changeStoreFormValue('item_modal_form.values.folder', 'selected');
-    };
-
     render() {
         const { handleSubmit } = this.props;
         return (
             <Form onSubmit={handleSubmit(this.onSubmit)}>
-                <Field name="url" type="text" icon="link" component={renderInput} label="URL" />
+                <Field label="URL" name="url" type="text" icon="link" component={renderInput} />
                 <Col md={{ span: 12 }}>
-                    <Field name="name" type="text" component={renderInput} label="Name" />
+                    <Field label="Name" name="name" type="text" component={renderInput} />
+                </Col>
+                {/* To Be Fixed - ref: https://github.com/erikras/redux-form/issues/4503 */}
+                <Col md={{ span: 12 }}>
+                    <Field
+                        options={cascaderOptions}
+                        placeholder="Please select"
+                        label="Folder"
+                        name="folder"
+                        component={renderSelect}
+                    />
                 </Col>
                 <Col md={{ span: 12 }}>
-                    <Field name="folder" ignore component={renderSelect} label="Folder">
-                        <Cascader
-                            onChange={this.handleSelectChange}
-                            options={cascaderOptions}
-                            placeholder="Please select"
-                        />
-                    </Field>
+                    <Field label="Username" name="username" type="text" icon="user" component={renderInput} />
                 </Col>
                 <Col md={{ span: 12 }}>
-                    <Field name="username" type="text" icon="user" component={renderInput} label="Username" />
-                </Col>
-                <Col md={{ span: 12 }}>
-                    <Field name="password" type="password" icon="lock" component={renderInput} label="Password" />
+                    <Field label="Password" name="password" type="password" icon="lock" component={renderInput} />
                 </Col>
             </Form>
         );
@@ -98,16 +80,7 @@ const validate = values => {
     return errors;
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        changeStoreFormValue: bindActionCreators(change, dispatch),
-    };
-};
-
-const ItemModalFormWrapper = connect(
-    null,
-    mapDispatchToProps
-)(ItemModalForm);
+const ItemModalFormWrapper = connect()(ItemModalForm);
 
 export default reduxForm({
     form: 'item_modal_form',
