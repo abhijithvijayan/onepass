@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { bindActionCreators } from 'redux';
-import { Icon, Tooltip } from 'antd';
+import { Icon, Modal, Tooltip } from 'antd';
 import { connect } from 'react-redux';
 
 import { toggleItemModal } from '../../state/modules/vault/operations';
@@ -109,8 +109,26 @@ const IconHolder = styled.div`
         }
     }
 `;
-
 class VaultItemCard extends Component {
+    showDeleteConfirm = () => {
+        return Modal.confirm({
+            title: 'Sure you want to delete this entry?',
+            content: 'SiteName',
+            okText: 'Yes',
+            okType: 'danger',
+            cancelText: 'No',
+            centered: true,
+            onOk() {
+                /* eslint-disable-next-line no-console */
+                console.log('OK');
+            },
+            onCancel() {
+                /* eslint-disable-next-line no-console */
+                console.log('Cancel');
+            },
+        });
+    };
+
     render() {
         return (
             <Card>
@@ -134,7 +152,12 @@ class VaultItemCard extends Component {
                 </DataHolder>
                 <IconHolder>
                     <Tooltip placement="bottomLeft" title="Delete">
-                        <Icon type="delete" />
+                        <Icon
+                            onClick={() => {
+                                return this.showDeleteConfirm();
+                            }}
+                            type="delete"
+                        />
                     </Tooltip>
                     <Tooltip placement="bottom" title="Edit">
                         <Icon
