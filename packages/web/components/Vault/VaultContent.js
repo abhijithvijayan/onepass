@@ -26,7 +26,7 @@ const Folder = styled.div`
     @media screen and (min-width: ${props => {
             return props.theme.screenXsMax;
         }}) {
-        margin: 0 48px 24px;
+        margin: 0 75px 24px 48px;
     }
 `;
 

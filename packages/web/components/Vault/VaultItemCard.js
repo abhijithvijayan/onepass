@@ -148,12 +148,6 @@ class VaultItemCard extends Component {
     }
 }
 
-const mapStateToProps = ({ vault }) => {
-    return {
-        isItemModalOpen: vault.isItemModalOpen,
-    };
-};
-
 const mapDispatchToProps = dispatch => {
     return {
         toggleItemModal: bindActionCreators(toggleItemModal, dispatch),
@@ -161,6 +155,6 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(
-    mapStateToProps,
+    null,
     mapDispatchToProps
 )(VaultItemCard);

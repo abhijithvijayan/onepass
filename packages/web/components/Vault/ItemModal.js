@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Modal, Button } from 'antd';
+import { Modal } from 'antd';
 
 import { toggleItemModal } from '../../state/modules/vault/operations';
 import ItemModalForm from './ItemModalForm';
@@ -12,6 +12,7 @@ class ItemModal extends Component {
         return (
             <div>
                 <Modal
+                    width={750}
                     title="Edit Item"
                     centered
                     visible={isItemModalOpen}

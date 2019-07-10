@@ -7,6 +7,7 @@ import VaultFooter from './VaultFooter';
 import VaultSideBar from './VaultSideBar';
 import VaultHeader from './VaultHeader';
 import VaultContent from './VaultContent';
+import BottomActionButtons from './BottomActionButtons';
 
 const VaultLayout = styled(Layout)`
     position: absolute;
@@ -24,7 +25,8 @@ class Vault extends Component {
                 <Layout>
                     <VaultHeader />
                     <VaultContent />
-                    <VaultFooter />
+                    <BottomActionButtons />
+                    {/* <VaultFooter /> */}
                 </Layout>
                 <ItemModal />
             </VaultLayout>
