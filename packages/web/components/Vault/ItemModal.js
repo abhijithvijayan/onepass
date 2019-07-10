@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { Modal, Button } from 'antd';
 
 import { toggleItemModal } from '../../state/modules/vault/operations';
+import ItemModalForm from './ItemModalForm';
 
 class ItemModal extends Component {
     render() {
@@ -11,7 +12,7 @@ class ItemModal extends Component {
         return (
             <div>
                 <Modal
-                    title="Vertically centered modal dialog"
+                    title="Edit Item"
                     centered
                     visible={isItemModalOpen}
                     onOk={() => {
@@ -21,9 +22,7 @@ class ItemModal extends Component {
                         return this.props.toggleItemModal(false);
                     }}
                 >
-                    <p>some contents...</p>
-                    <p>some contents...</p>
-                    <p>some contents...</p>
+                    <ItemModalForm />
                 </Modal>
             </div>
         );
