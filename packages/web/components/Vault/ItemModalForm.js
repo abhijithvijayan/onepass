@@ -2,6 +2,7 @@
 /* eslint-disable react/display-name */
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
+import styled from 'styled-components';
 import { Field, reduxForm } from 'redux-form';
 import { Cascader, Col, Form, Icon, Input } from 'antd';
 
@@ -37,6 +38,20 @@ const cascaderOptions = [
 const renderInput = renderField(Input);
 const renderSelect = renderField(Cascader);
 
+const FormHolder = styled(Form)`
+    @media screen and (min-width: ${props => {
+            return props.theme.screenSmMin;
+        }}) {
+        display: inline-block;
+        .form__split--component:nth-of-type(even) {
+            padding-right: 10px;
+        }
+        .form__split--component:nth-of-type(odd) {
+            padding-left: 10px;
+        }
+    }
+`;
+
 class ItemModalForm extends Component {
     onSubmit = ({ name }) => {
         /* eslint-disable-next-line no-console */
@@ -46,13 +61,13 @@ class ItemModalForm extends Component {
     render() {
         const { handleSubmit } = this.props;
         return (
-            <Form onSubmit={handleSubmit(this.onSubmit)}>
+            <FormHolder onSubmit={handleSubmit(this.onSubmit)}>
                 <Field label="URL" name="url" type="text" icon="link" component={renderInput} />
-                <Col md={{ span: 12 }}>
+                <Col md={{ span: 12 }} className="form__split--component">
                     <Field label="Name" name="name" type="text" component={renderInput} />
                 </Col>
                 {/* To Be Fixed - ref: https://github.com/erikras/redux-form/issues/4503 */}
-                <Col md={{ span: 12 }}>
+                <Col md={{ span: 12 }} className="form__split--component">
                     <Field
                         options={cascaderOptions}
                         placeholder="Please select"
@@ -61,13 +76,13 @@ class ItemModalForm extends Component {
                         component={renderSelect}
                     />
                 </Col>
-                <Col md={{ span: 12 }}>
+                <Col md={{ span: 12 }} className="form__split--component">
                     <Field label="Username" name="username" type="text" icon="user" component={renderInput} />
                 </Col>
-                <Col md={{ span: 12 }}>
+                <Col md={{ span: 12 }} className="form__split--component">
                     <Field label="Password" name="password" type="password" icon="lock" component={renderInput} />
                 </Col>
-            </Form>
+            </FormHolder>
         );
     }
 }

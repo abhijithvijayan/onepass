@@ -103,6 +103,11 @@ const IconHolder = styled.div`
             }};
         }
     }
+    .anticon-rocket {
+        svg {
+            transform: rotate(35deg);
+        }
+    }
 `;
 
 class VaultItemCard extends Component {

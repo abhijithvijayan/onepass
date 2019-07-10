@@ -13,7 +13,7 @@ class ItemModal extends Component {
             <div>
                 <Modal
                     width={750}
-                    title="Edit Item"
+                    title="Vault Item"
                     centered
                     visible={isItemModalOpen}
                     onOk={() => {
