@@ -1,12 +1,20 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Modal } from 'antd';
+import { Button, Modal } from 'antd';
 
 import { toggleItemModal } from '../../state/modules/vault/operations';
 import ItemModalForm from './ItemModalForm';
 
-class ItemModal extends Component {
+class ItemModalWrapper extends Component {
+    handleSubmit = () => {
+        this.props.toggleItemModal(false);
+    };
+
+    handleReturn = () => {
+        this.props.toggleItemModal(false);
+    };
+
     render() {
         const { isItemModalOpen } = this.props;
         return (
@@ -16,12 +24,16 @@ class ItemModal extends Component {
                     title="Vault Item"
                     centered
                     visible={isItemModalOpen}
-                    onOk={() => {
-                        return this.props.toggleItemModal(false);
-                    }}
-                    onCancel={() => {
-                        return this.props.toggleItemModal(false);
-                    }}
+                    onOk={this.handleSubmit}
+                    onCancel={this.handleReturn}
+                    footer={[
+                        <Button key="back" onClick={this.handleReturn}>
+                            Return
+                        </Button>,
+                        <Button key="submit" type="primary" loading={false} onClick={this.handleSubmit}>
+                            Submit
+                        </Button>,
+                    ]}
                 >
                     <ItemModalForm />
                 </Modal>
@@ -45,4 +57,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(ItemModal);
+)(ItemModalWrapper);
