@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { submit } from 'redux-form';
 import { Button, Modal } from 'antd';
 
 import { toggleItemModal } from '../../state/modules/vault/operations';
-import ItemModalForm from './ItemModalForm';
+import FormInModal from './FormInModal';
 
-class ItemModalWrapper extends Component {
+class ModalWrappedForm extends Component {
     handleSubmit = () => {
-        this.props.toggleItemModal(false);
+        // Manually submit redux-form
+        this.props.submitForm('form_in_modal');
+        // this.props.toggleItemModal(false);
     };
 
     handleReturn = () => {
@@ -28,14 +31,14 @@ class ItemModalWrapper extends Component {
                     onCancel={this.handleReturn}
                     footer={[
                         <Button key="back" onClick={this.handleReturn}>
-                            Return
+                            Cancel
                         </Button>,
                         <Button key="submit" type="primary" loading={false} onClick={this.handleSubmit}>
                             Submit
                         </Button>,
                     ]}
                 >
-                    <ItemModalForm />
+                    <FormInModal />
                 </Modal>
             </div>
         );
@@ -51,10 +54,11 @@ const mapStateToProps = ({ vault }) => {
 const mapDispatchToProps = dispatch => {
     return {
         toggleItemModal: bindActionCreators(toggleItemModal, dispatch),
+        submitForm: bindActionCreators(submit, dispatch),
     };
 };
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(ItemModalWrapper);
+)(ModalWrappedForm);

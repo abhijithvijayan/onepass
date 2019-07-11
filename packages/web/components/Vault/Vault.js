@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Layout } from 'antd';
 import styled from 'styled-components';
 
-import ItemModalWrapper from './ItemModalWrapper';
+import ModalWrappedForm from './ModalWrappedForm';
 import VaultFooter from './VaultFooter';
 import VaultSideBar from './VaultSideBar';
 import VaultHeader from './VaultHeader';
@@ -28,7 +28,7 @@ class Vault extends Component {
                     <BottomActionButtons />
                     {/* <VaultFooter /> */}
                 </Layout>
-                <ItemModalWrapper />
+                <ModalWrappedForm />
             </VaultLayout>
         );
     }
