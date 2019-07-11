@@ -3,7 +3,7 @@ export const VALID_VERIFICATION_TOKEN_SUBMISSION = '@onepass/auth/VALID_VERIFICA
 export const USER_SIGNUP_SUCCEEDED = '@onepass/auth/USER_SIGNUP_SUCCEEDED';
 export const ERROR_MESSAGE_RECEIVED = '@onepass/auth/ERROR_MESSAGE_RECEIVED';
 
-export const SET_SERVER_AUTH_RESPONSE = '@onepass/auth/SET_SERVER_AUTH_RESPONSE';
+export const GET_SERVER_AUTH_RESPONSE = '@onepass/auth/GET_SERVER_AUTH_RESPONSE';
 
 export const USER_AUTH_SUCCEEDED = '@onepass/auth/USER_AUTH_SUCCEEDED';
 export const USER_DE_AUTH_SUCCEEDED = '@onepass/auth/USER_DE_AUTH_SUCCEEDED';

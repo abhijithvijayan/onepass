@@ -12,7 +12,7 @@ const initialLoginState = {
 const initialSignUpState = {};
 
 const loginReducer = createReducer(initialLoginState)({
-    [types.SET_SERVER_AUTH_RESPONSE]: saveClientEphemeral,
+    [types.GET_SERVER_AUTH_RESPONSE]: saveClientEphemeral,
     [types.USER_AUTH_SUCCEEDED]: onSuccessfulLogin,
     [types.USER_DE_AUTH_SUCCEEDED]: onLogoutRequest,
     [types.FETCH_ENCRYPTION_KEYS]: onFetchKeys,
