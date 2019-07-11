@@ -1,5 +1,5 @@
-const validator = require('express-validator/check');
-const { validationResult } = require('express-validator/check');
+const validator = require('express-validator');
+const { validationResult } = require('express-validator');
 
 /* SignUp Form */
 exports.signUpValidationCriterias = [
