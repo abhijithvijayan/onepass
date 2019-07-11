@@ -1,10 +1,11 @@
-export const SUBMIT_SIGNUP_DATA = '@onepass/auth/signup/SUBMIT_SIGNUP_DATA';
-export const SUBMIT_VERIFICATION_TOKEN = '@onepass/auth/signup/SUBMIT_VERIFICATION_TOKEN';
-export const COMPLETE_SIGNUP = '@onepass/auth/signup/COMPLETE_SIGNUP';
+export const VALID_SIGNUP_FORM_SUBMISSION = '@onepass/auth/VALID_SIGNUP_FORM_SUBMISSION';
+export const VALID_VERIFICATION_TOKEN_SUBMISSION = '@onepass/auth/VALID_VERIFICATION_TOKEN_SUBMISSION';
+export const USER_SIGNUP_SUCCEEDED = '@onepass/auth/USER_SIGNUP_SUCCEEDED';
+export const ERROR_MESSAGE_RECEIVED = '@onepass/auth/ERROR_MESSAGE_RECEIVED';
 
-export const GET_SERVER_EPHEMERAL = '@onepass/auth/login/GET_SERVER_EPHEMERAL';
+export const SET_SERVER_AUTH_RESPONSE = '@onepass/auth/SET_SERVER_AUTH_RESPONSE';
 
-export const AUTH_USER = '@onepass/auth/login/AUTH_USER';
-export const DE_AUTH_USER = '@onepass/auth/logout/DE_AUTH_USER';
+export const USER_AUTH_SUCCEEDED = '@onepass/auth/USER_AUTH_SUCCEEDED';
+export const USER_DE_AUTH_SUCCEEDED = '@onepass/auth/USER_DE_AUTH_SUCCEEDED';
 
-export const GET_ENCRYPTION_KEYS = '@onepass/auth/login/GET_ENCRYPTION_KEYS';
+export const FETCH_ENCRYPTION_KEYS = '@onepass/auth/FETCH_ENCRYPTION_KEYS';

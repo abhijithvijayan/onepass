@@ -93,8 +93,10 @@ export const submitSignUpData = ({ email, name }) => {
                 },
             });
             dispatch({
-                type: types.SUBMIT_SIGNUP_DATA,
-                payload: data,
+                type: types.VALID_SIGNUP_FORM_SUBMISSION,
+                payload: {
+                    data,
+                },
             });
             Router.push('/verify', '/signup/verify');
         } catch ({ response }) {
@@ -128,7 +130,7 @@ export const submitVerificationToken = ({ email, verificationToken }) => {
                 },
             });
             dispatch({
-                type: types.SUBMIT_VERIFICATION_TOKEN,
+                type: types.VALID_VERIFICATION_TOKEN_SUBMISSION,
                 payload: response.data,
             });
             Router.push('/masterpassword', '/signup/masterpassword');
@@ -217,7 +219,7 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
                 encryptionKeys,
             });
             dispatch({
-                type: types.COMPLETE_SIGNUP,
+                type: types.USER_SIGNUP_SUCCEEDED,
             });
 
             // ToDo: Auto-Login on completion and autodownload the secretkey for user(PDF)
@@ -260,7 +262,7 @@ export const submitLoginData = ({ email, password, secretKey }) => {
             // Derive `clientEphemeral` pair
             const clientEphemeral = genClientEphemeral();
             dispatch({
-                type: types.GET_SERVER_EPHEMERAL,
+                type: types.SET_SERVER_AUTH_RESPONSE,
                 payload: {
                     serverSRPResponse: { userId, salt, serverPublicEphemeral },
                     clientEphemeral,
@@ -307,7 +309,7 @@ export const submitLoginData = ({ email, password, secretKey }) => {
             cookie.set('token', token, { expires: in1Hour });
 
             dispatch({
-                type: types.AUTH_USER,
+                type: types.USER_AUTH_SUCCEEDED,
                 payload: decodeJwt(token),
             });
 
@@ -315,6 +317,7 @@ export const submitLoginData = ({ email, password, secretKey }) => {
             // eslint-disable-next-line no-use-before-define
             dispatch(fetchDataAndKeys({ email, normPassword, secretKey }));
 
+            // ToDo: Only redirect if secret key is valid
             Router.push('/vault');
         } catch (err) {
             console.log(err);
@@ -361,11 +364,11 @@ export const fetchDataAndKeys = ({ email, normPassword, secretKey }) => {
             const { encKeySet } = keys.data;
             const { encVaultData } = vault.data;
             dispatch({
-                type: types.GET_ENCRYPTION_KEYS,
+                type: types.FETCH_ENCRYPTION_KEYS,
                 payload: encKeySet,
             });
             dispatch({
-                type: vaultTypes.GET_VAULT_CONTENTS,
+                type: vaultTypes.FETCH_VAULT_CONTENTS,
                 payload: encVaultData,
             });
         } catch (err) {
@@ -377,7 +380,7 @@ export const fetchDataAndKeys = ({ email, normPassword, secretKey }) => {
 export const authUser = payload => {
     return dispatch => {
         dispatch({
-            type: types.AUTH_USER,
+            type: types.USER_AUTH_SUCCEEDED,
             payload,
         });
     };
@@ -387,7 +390,7 @@ export const logoutUser = () => {
     return dispatch => {
         cookie.remove('token');
         dispatch({
-            type: types.DE_AUTH_USER,
+            type: types.USER_DE_AUTH_SUCCEEDED,
         });
         Router.push('/login');
     };

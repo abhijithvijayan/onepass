@@ -17,7 +17,7 @@ const vaultUIReducer = createReducer(initialVaultState)({
 });
 
 const encryptionReducer = createReducer({})({
-    [types.GET_VAULT_CONTENTS]: onFetchVaultContents,
+    [types.FETCH_VAULT_CONTENTS]: onFetchVaultContents,
 });
 
 /**

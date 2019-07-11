@@ -12,24 +12,24 @@ const initialLoginState = {
 const initialSignUpState = {};
 
 const loginReducer = createReducer(initialLoginState)({
-    [types.GET_SERVER_EPHEMERAL]: saveClientEphemeral,
-    [types.AUTH_USER]: onSuccessfulLogin,
-    [types.DE_AUTH_USER]: onLogoutRequest,
-    [types.GET_ENCRYPTION_KEYS]: onFetchKeys,
+    [types.SET_SERVER_AUTH_RESPONSE]: saveClientEphemeral,
+    [types.USER_AUTH_SUCCEEDED]: onSuccessfulLogin,
+    [types.USER_DE_AUTH_SUCCEEDED]: onLogoutRequest,
+    [types.FETCH_ENCRYPTION_KEYS]: onFetchKeys,
 });
 
 const signUpReducer = createReducer({})({
-    [types.SUBMIT_SIGNUP_DATA]: onSignUpRequest,
-    [types.SUBMIT_VERIFICATION_TOKEN]: onVerifyTokenSubmission,
-    [types.COMPLETE_SIGNUP]: finishSignUp,
+    [types.VALID_SIGNUP_FORM_SUBMISSION]: onSignUpRequest,
+    [types.VALID_VERIFICATION_TOKEN_SUBMISSION]: onVerifyTokenSubmission,
+    [types.USER_SIGNUP_SUCCEEDED]: finishSignUp,
 });
 
 /**
  * SIGNUP reducer functions
  */
 
-function onSignUpRequest(state, action) {
-    return { ...state, response: action.payload, isVerificationSent: true };
+function onSignUpRequest(state, { payload }) {
+    return { ...state, response: payload.data, isVerificationSent: true };
 }
 
 function onVerifyTokenSubmission(state, action) {
