@@ -110,6 +110,14 @@ nextApp.prepare().then(() => {
     server.post('/api/v1/auth/renew.token', auth.authWithJWT, auth.renewToken);
 
     /* ---------------------------------------- */
+    /* ------------- Vault routes ------------- */
+    /* ---------------------------------------- */
+
+    server.post('/api/v1/vault/getKeys', auth.authWithJWT, vault.fetchEncKeys);
+
+    server.post('/api/v1/vault/getVaultData', auth.authWithJWT, vault.fetchVaultData);
+
+    /* ---------------------------------------- */
     /* ------------ REFACTOR ROUTES ----------- */
     /* ---------------------------------------- */
 

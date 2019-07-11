@@ -310,12 +310,56 @@ export const submitLoginData = ({ email, password, secretKey }) => {
                 payload: decodeJwt(token),
             });
 
+            // Fetch keys & data using this token
+            // eslint-disable-next-line no-use-before-define
+            dispatch(fetchDataAndKeys({ email, normPassword, secretKey }));
+
             Router.push('/vault');
         } catch (err) {
             console.log(err);
             dispatch({
                 type: uiTypes.HIDE_PAGE_LOADER,
             });
+        }
+    };
+};
+
+export const fetchDataAndKeys = ({ email, normPassword, secretKey }) => {
+    const sendRequest = async (data, endpoint) => {
+        const response = await api({
+            method: 'POST',
+            url: endpoint,
+            headers: { Authorization: cookie.get('token') },
+            data,
+        });
+        return response;
+    };
+
+    function getEncKeys() {
+        return sendRequest(
+            {
+                email,
+            },
+            endpoints.FETCH_KEYS_ENDPOINT
+        );
+    }
+
+    function getVaultData() {
+        return sendRequest(
+            {
+                email,
+            },
+            endpoints.FETCH_VAULT_ENDPOINT
+        );
+    }
+
+    return async dispatch => {
+        try {
+            // ToDo: send multiple request to fetch vault items, keys concurrently
+            const [keys, vault] = await Promise.all([getEncKeys(), getVaultData()]);
+            console.log(keys, vault);
+        } catch (err) {
+            console.log(err);
         }
     };
 };

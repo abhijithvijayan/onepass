@@ -1,14 +1,19 @@
-const { addPasswordEntry } = require('../db/vault');
+const { getEncKeySet, getVaultData } = require('../db/vault');
 
-// ToDo: Authenticate with JWT and get email to attach to DB
-exports.createPasswordEntry = async (req, res) => {
-    // temporary workaround for testing | id, email
-    // ToDo: Use jwt auth and get useremail and id
-    const { uid, email, sitename, username = '', password = '', url = '' } = req.body;
-    const entry = await addPasswordEntry({ uid, email, sitename, username, password, url });
-    if (entry) {
-        // success
-        return res.status(200).json({ message: 'Site successfully added to the vault.' });
+exports.fetchEncKeys = async (req, res) => {
+    const { email } = req.body;
+    const keySet = await getEncKeySet({ email });
+    if (keySet) {
+        return res.status(200).json({ keySet });
     }
-    return res.status(400).json({ error: "Couldn't add a site. Try again." });
+    return res.status(403).json({ error: 'Invalid Request' });
+};
+
+exports.fetchVaultData = async (req, res) => {
+    const { email } = req.body;
+    const vaultData = await getVaultData({ email });
+    if (vaultData) {
+        return res.status(200).json({ vaultData });
+    }
+    return res.status(403).json({ error: 'Invalid Request' });
 };
