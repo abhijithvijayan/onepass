@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Button } from 'antd';
 
-import { toggleItemModal } from '../../state/modules/vault/operations';
+import { toggleItemModal, expandActionButtons } from '../../state/modules/vault/operations';
 
 const ActionBarHolder = styled.div`
     position: absolute;
@@ -45,13 +45,6 @@ const ActionButton = styled(Button)`
 `;
 
 class BottomActionButtons extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            hover: false,
-        };
-    }
-
     renderAddFolderButton = () => {
         return (
             <ButtonWrapper>
@@ -62,20 +55,20 @@ class BottomActionButtons extends Component {
     };
 
     showRow = () => {
-        this.setState({ hover: true });
+        this.props.expandActionButtons(true);
     };
 
     hideRow = () => {
-        this.setState({ hover: false });
+        this.props.expandActionButtons(false);
     };
 
     render() {
         return (
             <ActionBarHolder onMouseEnter={this.showRow} onMouseLeave={this.hideRow}>
                 <ul>
-                    {this.state.hover ? this.renderAddFolderButton() : null}
+                    {this.props.hoverOverActionButtons ? this.renderAddFolderButton() : null}
                     <ButtonWrapper>
-                        {this.state.hover ? <div>Add Item</div> : null}
+                        {this.props.hoverOverActionButtons ? <div>Add Item</div> : null}
                         <ActionButton
                             onClick={() => {
                                 return this.props.toggleItemModal(true);
@@ -94,12 +87,14 @@ class BottomActionButtons extends Component {
 const mapStateToProps = ({ vault: { ui } }) => {
     return {
         isItemModalOpen: ui.isItemModalOpen,
+        hoverOverActionButtons: ui.hoverOverActionButtons,
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         toggleItemModal: bindActionCreators(toggleItemModal, dispatch),
+        expandActionButtons: bindActionCreators(expandActionButtons, dispatch),
     };
 };
 

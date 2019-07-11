@@ -19,3 +19,12 @@ export const toggleItemModal = toggleStatus => {
         },
     };
 };
+
+export const expandActionButtons = hover => {
+    return {
+        type: types.ACTION_BUTTONS_HOVER,
+        payload: {
+            hover,
+        },
+    };
+};
