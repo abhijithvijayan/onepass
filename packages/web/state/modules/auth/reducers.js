@@ -22,6 +22,10 @@ const signUpReducer = createReducer({})({
     [types.COMPLETE_SIGNUP]: finishSignUp,
 });
 
+const encryptionReducer = createReducer({})({
+    [types.GET_ENCRYPTION_KEYS]: onFetchKeys,
+});
+
 /**
  * SIGNUP reducer functions
  */
@@ -43,8 +47,8 @@ function finishSignUp() {
  */
 
 function saveClientEphemeral(state, action) {
-    const { serverResponse, clientEphemeral } = action.payload;
-    return { ...state, serverResponse, clientEphemeral };
+    const { serverSRPResponse, clientEphemeral } = action.payload;
+    return { ...state, serverSRPResponse, clientSRPEphemeral: clientEphemeral };
 }
 
 function onSuccessfulLogin(state, action) {
@@ -55,9 +59,18 @@ function onLogoutRequest() {
     return initialLoginState;
 }
 
+/**
+ * Encryption Keys functions
+ */
+
+function onFetchKeys(state, action) {
+    return { ...state, keys: action.payload };
+}
+
 /* ------------------------------------- */
 
 export default combineReducers({
     login: loginReducer,
     signup: signUpReducer,
+    encrypted: encryptionReducer,
 });

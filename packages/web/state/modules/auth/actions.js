@@ -20,6 +20,7 @@ import { computeHKDF } from '@onepass/core/hkdf';
 
 import api from '../../../api';
 import * as types from './types';
+import * as vaultTypes from '../vault/types';
 import * as uiTypes from '../common/ui/types';
 import * as endpoints from '../../../api/constants';
 
@@ -261,7 +262,7 @@ export const submitLoginData = ({ email, password, secretKey }) => {
             dispatch({
                 type: types.GET_SERVER_EPHEMERAL,
                 payload: {
-                    serverResponse: { userId, salt, serverPublicEphemeral },
+                    serverSRPResponse: { userId, salt, serverPublicEphemeral },
                     clientEphemeral,
                 },
             });
@@ -357,7 +358,16 @@ export const fetchDataAndKeys = ({ email, normPassword, secretKey }) => {
         try {
             // ToDo: send multiple request to fetch vault items, keys concurrently
             const [keys, vault] = await Promise.all([getEncKeys(), getVaultData()]);
-            console.log(keys, vault);
+            const { encKeySet } = keys.data;
+            const { encVaultData } = vault.data;
+            dispatch({
+                type: types.GET_ENCRYPTION_KEYS,
+                payload: encKeySet,
+            });
+            dispatch({
+                type: vaultTypes.GET_VAULT_CONTENTS,
+                payload: encVaultData,
+            });
         } catch (err) {
             console.log(err);
         }

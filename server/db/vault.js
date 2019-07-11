@@ -10,8 +10,8 @@ exports.getEncKeySet = async ({ email }) => {
         });
     });
     session.close();
-    const { userId } = records.length && records[0].get('keySet').properties;
-    return { userId };
+    const { encPriKey, encSymKey } = records.length && records[0].get('keySet').properties;
+    return { encPriKey, encSymKey };
 };
 
 exports.getVaultData = async ({ email }) => {
@@ -22,6 +22,6 @@ exports.getVaultData = async ({ email }) => {
         });
     });
     session.close();
-    const { userId } = records.length && records[0].get('vault').properties;
-    return { userId };
+    const { encVaultKey } = records.length && records[0].get('vault').properties;
+    return { encVaultKey };
 };

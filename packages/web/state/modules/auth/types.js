@@ -7,3 +7,5 @@ export const GET_SERVER_EPHEMERAL = 'GET_SERVER_EPHEMERAL';
 
 export const AUTH_USER = 'AUTH_USER';
 export const DE_AUTH_USER = 'DE_AUTH_USER';
+
+export const GET_ENCRYPTION_KEYS = 'GET_ENCRYPTION_KEYS';
