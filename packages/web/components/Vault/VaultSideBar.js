@@ -42,9 +42,9 @@ class VaultSideBar extends Component {
     }
 }
 
-const mapStateToProps = ({ vault }) => {
+const mapStateToProps = ({ vault: { ui } }) => {
     return {
-        isSideBarOpen: vault.isSideBarOpen,
+        isSideBarOpen: ui.isSideBarOpen,
     };
 };
 

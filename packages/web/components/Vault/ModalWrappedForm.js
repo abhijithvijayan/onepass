@@ -45,9 +45,9 @@ class ModalWrappedForm extends Component {
     }
 }
 
-const mapStateToProps = ({ vault }) => {
+const mapStateToProps = ({ vault: { ui } }) => {
     return {
-        isItemModalOpen: vault.isItemModalOpen,
+        isItemModalOpen: ui.isItemModalOpen,
     };
 };
 
