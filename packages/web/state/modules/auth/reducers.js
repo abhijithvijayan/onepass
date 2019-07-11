@@ -6,6 +6,7 @@ import { createReducer } from '../../utils';
 
 const initialLoginState = {
     isAuthenticated: false,
+    encrypted: {},
 };
 
 const initialSignUpState = {};
@@ -14,16 +15,13 @@ const loginReducer = createReducer(initialLoginState)({
     [types.GET_SERVER_EPHEMERAL]: saveClientEphemeral,
     [types.AUTH_USER]: onSuccessfulLogin,
     [types.DE_AUTH_USER]: onLogoutRequest,
+    [types.GET_ENCRYPTION_KEYS]: onFetchKeys,
 });
 
 const signUpReducer = createReducer({})({
     [types.SUBMIT_SIGNUP_DATA]: onSignUpRequest,
     [types.SUBMIT_VERIFICATION_TOKEN]: onVerifyTokenSubmission,
     [types.COMPLETE_SIGNUP]: finishSignUp,
-});
-
-const encryptionReducer = createReducer({})({
-    [types.GET_ENCRYPTION_KEYS]: onFetchKeys,
 });
 
 /**
@@ -48,7 +46,7 @@ function finishSignUp() {
 
 function saveClientEphemeral(state, action) {
     const { serverSRPResponse, clientEphemeral } = action.payload;
-    return { ...state, serverSRPResponse, clientSRPEphemeral: clientEphemeral };
+    return { ...state, srp: { serverSRPResponse, clientEphemeral } };
 }
 
 function onSuccessfulLogin(state, action) {
@@ -64,7 +62,7 @@ function onLogoutRequest() {
  */
 
 function onFetchKeys(state, action) {
-    return { ...state, keys: action.payload };
+    return { ...state, encrypted: { keys: action.payload } };
 }
 
 /* ------------------------------------- */
@@ -72,5 +70,4 @@ function onFetchKeys(state, action) {
 export default combineReducers({
     login: loginReducer,
     signup: signUpReducer,
-    encrypted: encryptionReducer,
 });

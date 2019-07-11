@@ -11,7 +11,7 @@ exports.getEncKeySet = async ({ email }) => {
     });
     session.close();
     const { encPriKey, encSymKey } = records.length && records[0].get('keySet').properties;
-    return { encPriKey, encSymKey };
+    return { encPriKey: JSON.parse(encPriKey), encSymKey: JSON.parse(encSymKey) };
 };
 
 exports.getVaultData = async ({ email }) => {
@@ -23,5 +23,5 @@ exports.getVaultData = async ({ email }) => {
     });
     session.close();
     const { encVaultKey } = records.length && records[0].get('vault').properties;
-    return { encVaultKey };
+    return { encVaultKey: JSON.parse(encVaultKey) };
 };
