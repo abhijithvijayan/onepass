@@ -6,6 +6,20 @@ import styled from 'styled-components';
 import { Field, reduxForm } from 'redux-form';
 import { Cascader, Col, Form, Icon, Input } from 'antd';
 
+const FormHolder = styled(Form)`
+    @media screen and (min-width: ${props => {
+            return props.theme.screenSmMin;
+        }}) {
+        display: inline-block;
+        .form__split--component:nth-of-type(even) {
+            padding-right: 10px;
+        }
+        .form__split--component:nth-of-type(odd) {
+            padding-left: 10px;
+        }
+    }
+`;
+
 /* eslint-disable-next-line arrow-body-style */
 const renderField = ComponentToRender => ({ input, type, icon, label, meta: { touched, invalid, error }, ...rest }) => {
     const isInvalid = touched && invalid;
@@ -38,30 +52,16 @@ const cascaderOptions = [
 const renderInput = renderField(Input);
 const renderSelect = renderField(Cascader);
 
-const FormHolder = styled(Form)`
-    @media screen and (min-width: ${props => {
-            return props.theme.screenSmMin;
-        }}) {
-        display: inline-block;
-        .form__split--component:nth-of-type(even) {
-            padding-right: 10px;
-        }
-        .form__split--component:nth-of-type(odd) {
-            padding-left: 10px;
-        }
-    }
-`;
+const onFormSubmit = ({ url = '', name, folder = '', username = '', password = '' }) => {
+    /* eslint-disable-next-line no-console */
+    console.log('Received Values:', url, name, folder, username, password);
+};
 
-class ItemModalForm extends Component {
-    onSubmit = ({ name }) => {
-        /* eslint-disable-next-line no-console */
-        console.log('modal form submitted');
-    };
-
+class ModalForm extends Component {
     render() {
         const { handleSubmit } = this.props;
         return (
-            <FormHolder onSubmit={handleSubmit(this.onSubmit)}>
+            <FormHolder onSubmit={handleSubmit}>
                 <Field label="URL" name="url" type="text" icon="link" component={renderInput} />
                 <Col md={{ span: 12 }} className="form__split--component">
                     <Field label="Name" name="name" type="text" component={renderInput} />
@@ -95,9 +95,10 @@ const validate = values => {
     return errors;
 };
 
-const ItemModalFormWrapper = connect()(ItemModalForm);
+const FormInModal = connect()(ModalForm);
 
 export default reduxForm({
-    form: 'item_modal_form',
+    form: 'form_in_modal',
+    onSubmit: onFormSubmit,
     validate,
-})(ItemModalFormWrapper);
+})(FormInModal);
