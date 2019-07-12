@@ -6,5 +6,5 @@ import jseu from 'js-encoding-utils';
  */
 
 export const base64uriToArray = encoded => {
-    return jseu.encoder.decodeBase64(encoded);
+    return jseu.encoder.decodeBase64Url(encoded);
 };
