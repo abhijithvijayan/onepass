@@ -4,17 +4,16 @@ import { genRandomSalt } from './genRandonSalt';
 
 /**
  * Encrypt Symmetric Key with Master Unlock Key
- * @param {Object}
  *
- * Output
+ * @output
  * {
- *      kid: ,
- *      enc: ,
- *      tag,
+ *      kid,
+ *      enc,
+ *      tag, {Hex}
  *      iv,
  *      tagLength,
- *      key: ,
- *      iterations: ,
+ *      key, {Hex}
+ *      iterations,
  *      salt,
  * }
  */
@@ -35,10 +34,10 @@ export const encryptSymmetricKey = ({ symmetricKey, masterUnlockKey, iterations,
     const encSymKey = {
         kid: 'mp',
         enc: 'A256GCM',
-        tag,
+        tag: tag.toHex(),
         iv,
         tagLength,
-        key: encryptedSymmetricKey,
+        key: encryptedSymmetricKey.toHex(),
         iterations,
         salt,
     };

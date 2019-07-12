@@ -12,8 +12,8 @@ import {
     encryptSymmetricKey,
 } from '@onepass/core/forge';
 import { deriveClientSession, verifyLoginSession, genClientEphemeral, computeVerifier } from '@onepass/core/srp';
-import { genCryptoRandomString, genMasterUnlockKey } from '@onepass/core/common';
 import { stringToUint8Array, keyTobase64uri, base64uriToArray } from '@onepass/core/jseu';
+import { genCryptoRandomString, genMasterUnlockKey } from '@onepass/core/common';
 import { normalizeMasterPassword } from '@onepass/core/nkdf';
 import { computeHash } from '@onepass/core/pbkdf2';
 import { computeHKDF } from '@onepass/core/hkdf';
@@ -166,9 +166,9 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
             const normPassword = normalizeMasterPassword(password);
 
             /**
-             * SRP variables computing functions
+             *  SRP variables computing functions
              *
-             * `pbkdf2` for key derivation
+             *  `pbkdf2` for key derivation
              */
             const randomSaltForSRP = genRandomSalt(16);
             const keySaltForSRP = await deriveEncryptionKeySalt({ salted: userId, randomSalt: randomSaltForSRP });
@@ -176,24 +176,29 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
             const verifier = computeVerifier({ privateKey: privateKeySetForSRP.key });
 
             /**
-             * Encryption Variables
+             *  Encryption Keys Generation Functions
              */
 
-            // 1. Generate Secret Key
+            /**
+             *  1. Generate Secret Key
+             */
             const secretKey = generateSecretKey({ versionCode, userId });
-            // 2. Compute Master Unlock Key (MUK)
+
+            /**
+             *  2. Compute Master Unlock Key (MUK)
+             */
             const randomSalt = genRandomSalt(16);
             const encryptionKeySalt = await deriveEncryptionKeySalt({ salted: email, randomSalt });
-            // Returns: Object
+            const base64EncKeySalt = await keyTobase64uri(encryptionKeySalt);
             const hashedKeySet = await generateHashedKeySet({ normPassword, encryptionKeySalt });
             const intermediateKey = await deriveIntermediateKey({ secretKey, userId });
             const masterUnlockKey = genMasterUnlockKey({ hashedKey: hashedKeySet.key, intermediateKey });
             console.log('A:secret key: ', secretKey);
-            console.log('A:encSalt:', encryptionKeySalt);
-            console.log('A:hashedKeySet', hashedKeySet);
-            console.log('A:intermediateKey:', intermediateKey);
             console.log('A:created MUK: ', masterUnlockKey);
-            // 3. Create Encrypted Key Set
+
+            /**
+             *  3. Create Encrypted Key Set
+             */
             const symmetricKey = generateSymmetricKey();
             const vaultKey = genCryptoRandomString(32);
             const { publicKey, privateKey } = await generateKeypair();
@@ -203,10 +208,16 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
                 symmetricKey,
                 masterUnlockKey,
                 iterations: hashedKeySet.iterations,
-                salt: await keyTobase64uri(encryptionKeySalt),
+                salt: base64EncKeySalt,
             });
 
-            // Data to be send to server
+            console.log('A:symmetrickey', symmetricKey);
+            console.log('A: encSymKey', encryptedSymmetricKeySet.key);
+            // ToDo: convert keys to base64
+
+            /**
+             *  Data to be send to server
+             */
             const encryptionKeys = {
                 pubKey: {
                     key: publicKey,
@@ -227,7 +238,7 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
                 type: types.USER_SIGNUP_SUCCEEDED,
             });
 
-            // ToDo: Auto-Login on completion and autodownload the secretkey for user(PDF)
+            // ToDo: Autodownload the secretkey for user(in PDF) on first login
 
             // eslint-disable-next-line no-use-before-define
             dispatch(submitLoginData({ email, password, secretKey }));
@@ -259,12 +270,16 @@ export const submitLoginData = ({ email, password, secretKey }) => {
 
             const normPassword = normalizeMasterPassword(password);
 
-            // get `salt` and `serverEphemeral.public` from server
+            /**
+             * 1. Get `salt` and `serverEphemeral.public` from server
+             */
             const {
                 data: { userId, salt, serverPublicEphemeral },
             } = await sendRequest({ email, stage: 'init' });
 
-            // Derive `clientEphemeral` pair
+            /**
+             * 2. Derive `clientEphemeral` pair
+             */
             const clientEphemeral = genClientEphemeral();
             dispatch({
                 type: types.GET_SERVER_AUTH_RESPONSE,
@@ -274,7 +289,9 @@ export const submitLoginData = ({ email, password, secretKey }) => {
                 },
             });
 
-            // Derive the shared strong session key, and a proof
+            /**
+             *  3. Derive the shared strong session key, and a proof
+             */
             const clientSecretEphemeral = clientEphemeral.secret;
             // use `pbkdf2` key derivation
             const keySaltForSRPLogin = await deriveEncryptionKeySalt({
@@ -295,7 +312,9 @@ export const submitLoginData = ({ email, password, secretKey }) => {
             const clientPublicEphemeral = clientEphemeral.public;
             const clientSessionProof = clientSession.proof;
 
-            // Send `clientSessionProof` & `clientPublicEphemeral` to the server
+            /**
+             *  4. Send `clientSessionProof` & `clientPublicEphemeral` to the server
+             */
             const {
                 data: { serverSessionProof, token },
             } = await sendRequest({
@@ -306,7 +325,7 @@ export const submitLoginData = ({ email, password, secretKey }) => {
             });
 
             /**
-             * Verify that the server has derived the correct strong session key
+             *  5. Verify that the server has derived the correct strong session key
              */
             verifyLoginSession(clientPublicEphemeral, clientSession, serverSessionProof);
 
@@ -318,7 +337,9 @@ export const submitLoginData = ({ email, password, secretKey }) => {
                 payload: decodeJwt(token),
             });
 
-            // Fetch keys & data using this token
+            /**
+             *  Fetch keys & data using this token
+             */
             // eslint-disable-next-line no-use-before-define
             dispatch(fetchDataAndKeys({ email, normPassword, secretKey, userId }));
 
@@ -364,7 +385,6 @@ export const fetchDataAndKeys = ({ email, normPassword, secretKey, userId }) => 
 
     return async dispatch => {
         try {
-            // ToDo: send multiple request to fetch vault items, keys concurrently
             const [keys, vault] = await Promise.all([getEncKeys(), getVaultData()]);
             const { encKeySet } = keys.data;
             const { encVaultData } = vault.data;
@@ -389,21 +409,31 @@ export const fetchDataAndKeys = ({ email, normPassword, secretKey, userId }) => 
 export const decryptVaultKey = ({ email, normPassword, secretKey, userId, encKeySet, encVaultData }) => {
     return async dispatch => {
         try {
-            // 1. Compute MUK
+            /**
+             * 1. Compute MUK
+             */
             const { encPriKey, encSymKey } = encKeySet;
             const encryptionKeySalt = await base64uriToArray(encSymKey.salt);
-            // Returns: Object
             const hashedKeySet = await generateHashedKeySet({ normPassword, encryptionKeySalt });
             const intermediateKey = await deriveIntermediateKey({ secretKey, userId });
             const masterUnlockKey = genMasterUnlockKey({ hashedKey: hashedKeySet.key, intermediateKey });
-            console.log('B:secret key: ', secretKey);
-            console.log('B:encSalt:', encryptionKeySalt);
-            console.log('B:hashedKeySet', hashedKeySet);
-            console.log('B:intermediateKey:', intermediateKey);
+            // console.log('B:secret key: ', secretKey);
+            // console.log('B:encSalt:', encryptionKeySalt);
+            // console.log('B:hashedKeySet', hashedKeySet);
+            // console.log('B:intermediateKey:', intermediateKey);
             console.log('computed MUK: ', masterUnlockKey);
-            // 2. Decrypt Symmetric Key with MUK
-            // 3. Decrypt Private Key with Symmetric Key
-            // 4. Decrypt Vault Key with Private Key
+            /**
+             *  2. Decrypt Symmetric Key with MUK
+             */
+            const encryptedSymmetricKey = encSymKey.key;
+            console.log('B: encSymKey', encryptedSymmetricKey);
+            // console.log('A:symmetrickey', symmetricKey);
+            /**
+             *  3. Decrypt Private Key with Symmetric Key
+             */
+            /**
+             *  4. Decrypt Vault Key with Private Key
+             */
         } catch (err) {
             console.log(err);
         }
