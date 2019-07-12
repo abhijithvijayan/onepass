@@ -10,9 +10,10 @@ import {
     encryptVaultKey,
     encryptPrivateKey,
     encryptSymmetricKey,
+    decryptSymmetricKey,
 } from '@onepass/core/forge';
 import { deriveClientSession, verifyLoginSession, genClientEphemeral, computeVerifier } from '@onepass/core/srp';
-import { stringToUint8Array, keyTobase64uri, base64uriToArray } from '@onepass/core/jseu';
+import { stringToUint8Array, arrayTobase64uri, base64uriToArray, hexToUint8Array } from '@onepass/core/jseu';
 import { genCryptoRandomString, genMasterUnlockKey } from '@onepass/core/common';
 import { normalizeMasterPassword } from '@onepass/core/nkdf';
 import { computeHash } from '@onepass/core/pbkdf2';
@@ -66,7 +67,7 @@ const deriveIntermediateKey = ({ secretKey, userId }) => {
 const generateSymmetricKey = () => {
     const key = genRandomSalt(32);
     const encodedSymmetricKey = stringToUint8Array(key);
-    return keyTobase64uri(encodedSymmetricKey);
+    return arrayTobase64uri(encodedSymmetricKey);
 };
 
 /** ------------------------------------------------------ */
@@ -189,12 +190,12 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
              */
             const randomSalt = genRandomSalt(16);
             const encryptionKeySalt = await deriveEncryptionKeySalt({ salted: email, randomSalt });
-            const base64EncKeySalt = await keyTobase64uri(encryptionKeySalt);
+            const base64EncKeySalt = await arrayTobase64uri(encryptionKeySalt);
             const hashedKeySet = await generateHashedKeySet({ normPassword, encryptionKeySalt });
             const intermediateKey = await deriveIntermediateKey({ secretKey, userId });
             const masterUnlockKey = genMasterUnlockKey({ hashedKey: hashedKeySet.key, intermediateKey });
             console.log('A:secret key: ', secretKey);
-            console.log('A:created MUK: ', masterUnlockKey);
+            // console.log('A:created MUK: ', masterUnlockKey);
 
             /**
              *  3. Create Encrypted Key Set
@@ -421,13 +422,26 @@ export const decryptVaultKey = ({ email, normPassword, secretKey, userId, encKey
             // console.log('B:encSalt:', encryptionKeySalt);
             // console.log('B:hashedKeySet', hashedKeySet);
             // console.log('B:intermediateKey:', intermediateKey);
-            console.log('computed MUK: ', masterUnlockKey);
+            // console.log('computed MUK: ', masterUnlockKey);
             /**
              *  2. Decrypt Symmetric Key with MUK
              */
             const encryptedSymmetricKey = encSymKey.key;
+            const decSymKeyOutput = decryptSymmetricKey({
+                encryptedSymmetricKey,
+                masterUnlockKey,
+                iv: encSymKey.iv,
+                tag: encSymKey.tag,
+                tagLength: encSymKey.tagLength,
+            });
             console.log('B: encSymKey', encryptedSymmetricKey);
-            // console.log('A:symmetrickey', symmetricKey);
+            if (decSymKeyOutput.status) {
+                const { decryptedSymmetricKeyInHex } = decSymKeyOutput;
+                const encodedSymmetricKey = await hexToUint8Array(decryptedSymmetricKeyInHex);
+                const symmetricKey = arrayTobase64uri(encodedSymmetricKey);
+                console.log('B: symKey', symmetricKey);
+            }
+
             /**
              *  3. Decrypt Private Key with Symmetric Key
              */
