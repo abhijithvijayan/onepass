@@ -171,8 +171,9 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
              *
              *  `pbkdf2` for key derivation
              */
-            const randomSaltForSRP = genRandomSalt(16);
+            const randomSaltForSRP = genRandomSalt(32);
             console.log('saltfor srp', randomSaltForSRP);
+            // ToDo: store this as base64uri in DB
             const keySaltForSRP = await deriveEncryptionKeySalt({ salted: userId, randomSalt: randomSaltForSRP });
             const privateKeySetForSRP = await generateHashedKeySet({ normPassword, encryptionKeySalt: keySaltForSRP });
             const verifier = computeVerifier({ privateKey: privateKeySetForSRP.key });
