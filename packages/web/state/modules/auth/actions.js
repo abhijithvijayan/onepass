@@ -12,6 +12,7 @@ import {
     encryptSymmetricKey,
     decryptSymmetricKey,
     decryptPrivateKey,
+    decryptVaultKey,
 } from '@onepass/core/forge';
 import { deriveClientSession, verifyLoginSession, genClientEphemeral, computeVerifier } from '@onepass/core/srp';
 import { stringToUint8Array, arrayTobase64uri, base64uriToArray } from '@onepass/core/jseu';
@@ -219,7 +220,9 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
 
             // console.log('A:symmetrickey', symmetricKey);
             // console.log('A: encSymKey', encryptedSymmetricKeySet.key);
-            console.log('A: privatekey', privateKey);
+            // console.log('A: privatekey', privateKey);
+            console.log('A: vaultKey:', vaultKey);
+
             // ToDo: convert keys to base64
             /**
              *  Data to be send to server
@@ -405,14 +408,14 @@ export const fetchDataAndKeys = ({ email, normPassword, secretKey, userId }) => 
 
             // Call next action for decryption of vault
             // eslint-disable-next-line no-use-before-define
-            dispatch(decryptVaultKey({ email, normPassword, secretKey, userId, encKeySet, encVaultData }));
+            dispatch(decryptTheVaultKey({ email, normPassword, secretKey, userId, encKeySet, encVaultData }));
         } catch (err) {
             console.log(err);
         }
     };
 };
 
-export const decryptVaultKey = ({ email, normPassword, secretKey, userId, encKeySet, encVaultData }) => {
+export const decryptTheVaultKey = ({ email, normPassword, secretKey, userId, encKeySet, encVaultData }) => {
     return async dispatch => {
         try {
             /**
@@ -432,30 +435,36 @@ export const decryptVaultKey = ({ email, normPassword, secretKey, userId, encKey
              *  2. Decrypt Symmetric Key with MUK
              */
             const encryptedSymmetricKey = encSymKey.key;
-            const decSymKeyOutput = decryptSymmetricKey({
+            const decSymKeyOutput = await decryptSymmetricKey({
                 encryptedSymmetricKey,
                 masterUnlockKey,
                 iv: encSymKey.iv,
                 tag: encSymKey.tag,
                 tagLength: encSymKey.tagLength,
             });
-            console.log('B: encSymKey', encryptedSymmetricKey);
+            // console.log('B: encSymKey', encryptedSymmetricKey);
             if (decSymKeyOutput.status) {
                 const { decryptedSymmetricKey } = decSymKeyOutput;
-                console.log('B: decSymKey', decryptedSymmetricKey);
+                // console.log('B: decSymKey', decryptedSymmetricKey);
 
                 /**
                  *  3. Decrypt Private Key with Symmetric Key
                  */
-                const { decryptedPrivateKey } = decryptPrivateKey({
+                const { decryptedPrivateKey } = await decryptPrivateKey({
                     encryptedPrivateKey: encPriKey.key,
                     decryptedSymmetricKey,
                 });
-                console.log('B: decPriKey', decryptedPrivateKey);
+                // console.log('B: decPriKey', decryptedPrivateKey);
 
                 /**
                  *  4. Decrypt Vault Key with Private Key
                  */
+                const { encVaultKey } = encVaultData;
+                const decryptedVaultKey = await decryptVaultKey({
+                    encryptedVaultKey: encVaultKey.key,
+                    decryptedPrivateKey,
+                });
+                console.log('decVaultKey', decryptedVaultKey);
             }
         } catch (err) {
             console.log(err);
