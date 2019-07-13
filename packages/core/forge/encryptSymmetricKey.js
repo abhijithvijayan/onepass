@@ -30,14 +30,15 @@ export const encryptSymmetricKey = ({ symmetricKey, masterUnlockKey, iterations,
     cipher.update(forge.util.createBuffer(symmetricKey));
     cipher.finish();
 
+    // https://github.com/digitalbazaar/forge/issues/134#issuecomment-50488411
     const encryptedSymmetricKey = cipher.output;
     const encSymKey = {
         kid: 'mp',
         enc: 'A256GCM',
         tagLength,
-        // buffer to hex
-        tag: cipher.mode.tag.toHex(),
-        key: encryptedSymmetricKey.toHex(),
+        // buffer to base64
+        tag: forge.util.encode64(cipher.mode.tag.getBytes()),
+        key: forge.util.encode64(encryptedSymmetricKey.getBytes()),
         // bytes to hex
         iv: forge.util.bytesToHex(iv),
         iterations,

@@ -1,7 +1,7 @@
 import forge from 'node-forge';
 
-export const retrieveBufferFromHex = hexValue => {
-    return forge.util.createBuffer(forge.util.hexToBytes(hexValue));
+export const retrieveBufferFromBase64 = base64Value => {
+    return forge.util.createBuffer(forge.util.decode64(base64Value));
 };
 
 export const decryptSymmetricKey = ({ encryptedSymmetricKey, masterUnlockKey, iv, tag, tagLength }) => {
@@ -10,9 +10,9 @@ export const decryptSymmetricKey = ({ encryptedSymmetricKey, masterUnlockKey, iv
     decipher.start({
         iv: forge.util.hexToBytes(iv),
         tagLength,
-        tag: retrieveBufferFromHex(tag),
+        tag: retrieveBufferFromBase64(tag),
     });
-    decipher.update(retrieveBufferFromHex(encryptedSymmetricKey));
+    decipher.update(retrieveBufferFromBase64(encryptedSymmetricKey));
 
     const pass = decipher.finish();
     // pass is false if there was a failure (eg: authentication tag didn't match)
