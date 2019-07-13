@@ -13,7 +13,7 @@ import {
     decryptSymmetricKey,
 } from '@onepass/core/forge';
 import { deriveClientSession, verifyLoginSession, genClientEphemeral, computeVerifier } from '@onepass/core/srp';
-import { stringToUint8Array, arrayTobase64uri, base64uriToArray, hexToUint8Array } from '@onepass/core/jseu';
+import { stringToUint8Array, arrayTobase64uri, base64uriToArray } from '@onepass/core/jseu';
 import { genCryptoRandomString, genMasterUnlockKey } from '@onepass/core/common';
 import { normalizeMasterPassword } from '@onepass/core/nkdf';
 import { computeHash } from '@onepass/core/pbkdf2';
@@ -172,6 +172,7 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
              *  `pbkdf2` for key derivation
              */
             const randomSaltForSRP = genRandomSalt(16);
+            console.log('saltfor srp', randomSaltForSRP);
             const keySaltForSRP = await deriveEncryptionKeySalt({ salted: userId, randomSalt: randomSaltForSRP });
             const privateKeySetForSRP = await generateHashedKeySet({ normPassword, encryptionKeySalt: keySaltForSRP });
             const verifier = computeVerifier({ privateKey: privateKeySetForSRP.key });
@@ -440,14 +441,14 @@ export const decryptVaultKey = ({ email, normPassword, secretKey, userId, encKey
             if (decSymKeyOutput.status) {
                 const { decryptedSymmetricKey } = decSymKeyOutput;
                 console.log('B: decSymKey', decryptedSymmetricKey);
-            }
 
-            /**
-             *  3. Decrypt Private Key with Symmetric Key
-             */
-            /**
-             *  4. Decrypt Vault Key with Private Key
-             */
+                /**
+                 *  3. Decrypt Private Key with Symmetric Key
+                 */
+                /**
+                 *  4. Decrypt Vault Key with Private Key
+                 */
+            }
         } catch (err) {
             console.log(err);
         }

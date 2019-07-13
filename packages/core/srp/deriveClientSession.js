@@ -1,5 +1,5 @@
 import srpClient from 'secure-remote-password/client';
-import { array2hex } from './keyConversion';
+import { array2hex } from '../common';
 
 export const deriveClientSession = ({ salt, privateKey, userId, clientSecretEphemeral, serverPublicEphemeral }) => {
     const privateKeyForSRP = array2hex(privateKey);
