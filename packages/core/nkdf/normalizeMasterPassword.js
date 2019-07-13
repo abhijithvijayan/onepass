@@ -8,8 +8,7 @@ import trimRight from 'trim-right';
 
 export const normalizeMasterPassword = password => {
     /* Trim white-spaces from master password */
-    const leftTrimmed = trimLeft(password);
-    const rightTrimmed = trimRight(leftTrimmed);
+    const rightTrimmed = trimRight(trimLeft(password));
     const combiningCharacters = /[\u0300-\u036F]/g;
     /* nfkd Normalisation */
     return unorm.nfkd(rightTrimmed).replace(combiningCharacters, '');
