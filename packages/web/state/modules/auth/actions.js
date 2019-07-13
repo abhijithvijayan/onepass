@@ -200,6 +200,8 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
             /**
              *  3. Create Encrypted Key Set
              */
+
+            // base64uri key
             const symmetricKey = generateSymmetricKey();
             const vaultKey = genCryptoRandomString(32);
             const { publicKey, privateKey } = await generateKeypair();
@@ -436,10 +438,8 @@ export const decryptVaultKey = ({ email, normPassword, secretKey, userId, encKey
             });
             console.log('B: encSymKey', encryptedSymmetricKey);
             if (decSymKeyOutput.status) {
-                const { decryptedSymmetricKeyInHex } = decSymKeyOutput;
-                const encodedSymmetricKey = await hexToUint8Array(decryptedSymmetricKeyInHex);
-                const symmetricKey = arrayTobase64uri(encodedSymmetricKey);
-                console.log('B: symKey', symmetricKey);
+                const { decryptedSymmetricKey } = decSymKeyOutput;
+                console.log('B: decSymKey', decryptedSymmetricKey);
             }
 
             /**

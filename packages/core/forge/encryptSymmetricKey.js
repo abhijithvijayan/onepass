@@ -21,15 +21,12 @@ import { genRandomSalt } from './genRandonSalt';
 export const encryptSymmetricKey = ({ symmetricKey, masterUnlockKey, iterations, salt }) => {
     const iv = genRandomSalt(12);
     const tagLength = 128;
-    // create a buffer
-    const keyBuffer = forge.util.createBuffer(masterUnlockKey);
-    const symKeyBuffer = forge.util.createBuffer(symmetricKey);
-    const cipher = forge.cipher.createCipher('AES-GCM', keyBuffer);
+    const cipher = forge.cipher.createCipher('AES-GCM', forge.util.createBuffer(masterUnlockKey));
     cipher.start({
         iv,
         tagLength,
     });
-    cipher.update(symKeyBuffer);
+    cipher.update(forge.util.createBuffer(symmetricKey));
     cipher.finish();
 
     const encryptedSymmetricKey = cipher.output;
