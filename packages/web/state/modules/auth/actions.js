@@ -11,6 +11,7 @@ import {
     encryptPrivateKey,
     encryptSymmetricKey,
     decryptSymmetricKey,
+    decryptPrivateKey,
 } from '@onepass/core/forge';
 import { deriveClientSession, verifyLoginSession, genClientEphemeral, computeVerifier } from '@onepass/core/srp';
 import { stringToUint8Array, arrayTobase64uri, base64uriToArray } from '@onepass/core/jseu';
@@ -216,10 +217,10 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
                 salt: base64EncKeySalt,
             });
 
-            console.log('A:symmetrickey', symmetricKey);
-            console.log('A: encSymKey', encryptedSymmetricKeySet.key);
+            // console.log('A:symmetrickey', symmetricKey);
+            // console.log('A: encSymKey', encryptedSymmetricKeySet.key);
+            console.log('A: privatekey', privateKey);
             // ToDo: convert keys to base64
-
             /**
              *  Data to be send to server
              */
@@ -446,6 +447,12 @@ export const decryptVaultKey = ({ email, normPassword, secretKey, userId, encKey
                 /**
                  *  3. Decrypt Private Key with Symmetric Key
                  */
+                const { decryptedPrivateKey } = decryptPrivateKey({
+                    encryptedPrivateKey: encPriKey.key,
+                    decryptedSymmetricKey,
+                });
+                console.log('B: decPriKey', decryptedPrivateKey);
+
                 /**
                  *  4. Decrypt Vault Key with Private Key
                  */

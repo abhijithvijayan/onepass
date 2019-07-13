@@ -9,8 +9,8 @@ const { pki } = forge;
  *
  * Output
  * {
- *      enc: ,
- *      key: ,
+ *      enc,
+ *      key,
  * }
  */
 
@@ -20,12 +20,17 @@ export const encryptPrivateKey = ({ privateKey, symmetricKey }) => {
     // wrap an RSAPrivateKey ASN.1 object in a PKCS#8 ASN.1 PrivateKeyInfo
     const privateKeyInfo = pki.wrapRsaPrivateKey(rsaPrivateKey);
     // encrypts a PrivateKeyInfo and outputs an EncryptedPrivateKeyInfo
-    const encryptedPrivateKey = pki.encryptPrivateKeyInfo(privateKeyInfo, symmetricKey, {
+    const encryptedPrivateKeyInfo = pki.encryptPrivateKeyInfo(privateKeyInfo, symmetricKey, {
         algorithm: 'aes256',
     });
+
+    // converts an EncryptedPrivateKeyInfo to PEM Format
+    const pem = pki.encryptedPrivateKeyToPem(encryptedPrivateKeyInfo);
+
     const encPriKey = {
         enc: 'A256GCM',
-        key: encryptedPrivateKey,
+        key: pem,
     };
+
     return encPriKey;
 };
