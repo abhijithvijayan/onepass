@@ -2213,11 +2213,6 @@ binary-extensions@^1.0.0:
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-1.13.1.tgz#598afe54755b2868a5330d2aff9d4ebb53209b65"
   integrity sha512-Un7MIEDdUC5gNpcGDV97op1Ywk748MpHcFTHoYs6qnj1Z3j7I53VG3nwZhKzoBZmbdRNnb6WRdFlwl7tSDuZGw==
 
-bitwise@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/bitwise/-/bitwise-2.0.3.tgz#ee875d5b5c71a5de676896b91695b7b35d94ee8f"
-  integrity sha512-oNhwCqCWVq6pGtHIVmWgRTbUlbVElTZnuko7zIHba8ZWaVuI4z6+Twxm49GXxG0VY4D1Hqef/kGIhhmiPk2Rkg==
-
 block-stream@*:
   version "0.0.9"
   resolved "https://registry.yarnpkg.com/block-stream/-/block-stream-0.0.9.tgz#13ebfe778a03205cfe03751481ebb4b3300c126a"
