@@ -72,18 +72,20 @@ exports.signup = async (req, res) => {
         return res.status(403).json({ error: 'This email is already registered' });
     }
     const newUser = await createUser({ email, name });
+    // ToDo: Restore
     /* Handle Verification email */
-    const mail = await transporter.sendMail({
-        from: process.env.MAIL_FROM || process.env.MAIL_USER,
-        to: newUser.email,
-        subject: `Verification code: ${newUser.verificationToken}`,
-        text: verifyMailText.replace(/{{verification}}/gim, newUser.verificationToken),
-        html: verifyEmailTemplate.replace(/{{verification}}/gim, newUser.verificationToken),
-    });
-    if (mail.accepted.length) {
-        return res.status(201).json({ email, message: 'Verification email has been sent.' });
-    }
-    return res.status(400).json({ error: "Couldn't send verification email. Try again." });
+    // const mail = await transporter.sendMail({
+    //     from: process.env.MAIL_FROM || process.env.MAIL_USER,
+    //     to: newUser.email,
+    //     subject: `Verification code: ${newUser.verificationToken}`,
+    //     text: verifyMailText.replace(/{{verification}}/gim, newUser.verificationToken),
+    //     html: verifyEmailTemplate.replace(/{{verification}}/gim, newUser.verificationToken),
+    // });
+    // if (mail.accepted.length) {
+    //     return res.status(201).json({ email, message: 'Verification email has been sent.' });
+    // }
+    // return res.status(400).json({ error: "Couldn't send verification email. Try again." });
+    return res.status(201).json({ email, message: 'Sending Email temporarily disabled.' });
 };
 
 /* Done */
