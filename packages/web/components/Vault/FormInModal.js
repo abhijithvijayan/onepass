@@ -52,16 +52,11 @@ const cascaderOptions = [
 const renderInput = renderField(Input);
 const renderSelect = renderField(Cascader);
 
-const onFormSubmit = ({ url = '', name, folder = '', username = '', password = '' }) => {
-    /* eslint-disable-next-line no-console */
-    console.log('Received Values:', url, name, folder, username, password);
-};
-
 class ModalForm extends Component {
     render() {
         const { handleSubmit } = this.props;
         return (
-            <FormHolder onSubmit={handleSubmit}>
+            <FormHolder onSubmit={handleSubmit(this.props.onSubmit)}>
                 <Field label="URL" name="url" type="text" icon="link" component={renderInput} />
                 <Col md={{ span: 12 }} className="form__split--component">
                     <Field label="Name" name="name" type="text" component={renderInput} />
@@ -99,6 +94,5 @@ const FormInModal = connect()(ModalForm);
 
 export default reduxForm({
     form: 'form_in_modal',
-    onSubmit: onFormSubmit,
     validate,
 })(FormInModal);

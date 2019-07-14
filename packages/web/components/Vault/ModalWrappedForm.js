@@ -4,8 +4,8 @@ import { bindActionCreators } from 'redux';
 import { submit } from 'redux-form';
 import { Button, Modal } from 'antd';
 
-import { toggleItemModal } from '../../state/modules/vault/operations';
 import FormInModal from './FormInModal';
+import { toggleItemModal, performVaultItemEncryption } from '../../state/modules/vault/operations';
 
 class ModalWrappedForm extends Component {
     handleSubmit = () => {
@@ -16,6 +16,22 @@ class ModalWrappedForm extends Component {
 
     handleReturn = () => {
         this.props.toggleItemModal(false);
+    };
+
+    onFormSubmit = ({ url = '', name, folder = '', username = '', password = '' }) => {
+        const { vaultKey } = this.props;
+        const overview = {
+            url,
+            name,
+            folder,
+        };
+        const details = {
+            username,
+            password,
+        };
+        /* eslint-disable-next-line no-console */
+        console.log('Received Values:', url, name, folder, username, password);
+        this.props.encryptVaultItem({ overview, details, vaultKey });
     };
 
     render() {
@@ -38,16 +54,23 @@ class ModalWrappedForm extends Component {
                         </Button>,
                     ]}
                 >
-                    <FormInModal />
+                    <FormInModal onSubmit={this.onFormSubmit} />
                 </Modal>
             </div>
         );
     }
 }
 
-const mapStateToProps = ({ vault: { ui } }) => {
+const mapStateToProps = state => {
+    const {
+        vault: { ui },
+    } = state;
+    const {
+        auth: { login },
+    } = state;
     return {
         isItemModalOpen: ui.isItemModalOpen,
+        vaultKey: login.decrypted.keys && login.decrypted.keys.decVaultKey,
     };
 };
 
@@ -55,6 +78,7 @@ const mapDispatchToProps = dispatch => {
     return {
         toggleItemModal: bindActionCreators(toggleItemModal, dispatch),
         submitForm: bindActionCreators(submit, dispatch),
+        encryptVaultItem: bindActionCreators(performVaultItemEncryption, dispatch),
     };
 };
 

@@ -1,3 +1,3 @@
-import { toggleSideBar, toggleItemModal, expandActionButtons } from './actions';
+import { toggleSideBar, toggleItemModal, expandActionButtons, performVaultItemEncryption } from './actions';
 
-export { toggleSideBar, toggleItemModal, expandActionButtons };
+export { toggleSideBar, toggleItemModal, expandActionButtons, performVaultItemEncryption };
