@@ -7,6 +7,7 @@ import { createReducer } from '../../utils';
 const initialLoginState = {
     isAuthenticated: false,
     encrypted: {},
+    decrypted: {},
 };
 
 const initialSignUpState = {};
@@ -44,13 +45,14 @@ function finishSignUp() {
  * LOGIN / LOGOUT reducer functions
  */
 
-function saveClientEphemeral(state, action) {
-    const { serverSRPResponse, clientEphemeral } = action.payload;
+function saveClientEphemeral(state, { payload }) {
+    const { serverSRPResponse, clientEphemeral } = payload;
     return { ...state, srp: { serverSRPResponse, clientEphemeral } };
 }
 
-function onSuccessfulLogin(state, action) {
-    return { ...state, isAuthenticated: true, user: action.payload.id };
+function onSuccessfulLogin(state, { payload }) {
+    const { email, userId } = payload;
+    return { ...state, isAuthenticated: true, user: { email, userId }, decrypted: { keys: payload.keys } };
 }
 
 function onLogoutRequest() {
@@ -61,8 +63,8 @@ function onLogoutRequest() {
  * Encryption Keys functions
  */
 
-function onFetchKeys(state, action) {
-    return { ...state, encrypted: { keys: action.payload } };
+function onFetchKeys(state, { payload }) {
+    return { ...state, encrypted: { keys: payload } };
 }
 
 /* ------------------------------------- */

@@ -341,19 +341,11 @@ export const submitLoginData = ({ email, password, secretKey }) => {
             const in1Hour = 1 / 24;
             cookie.set('token', token, { expires: in1Hour });
 
-            dispatch({
-                type: types.USER_AUTH_SUCCEEDED,
-                payload: decodeJwt(token),
-            });
-
             /**
              *  Fetch keys & data using this token
              */
             // eslint-disable-next-line no-use-before-define
             dispatch(fetchDataAndKeys({ email, normPassword, secretKey, userId }));
-
-            // ToDo: Only redirect if secret key is valid
-            Router.push('/vault');
         } catch (err) {
             console.log(err);
             dispatch({
@@ -465,6 +457,21 @@ export const decryptTheVaultKey = ({ email, normPassword, secretKey, userId, enc
                     decryptedPrivateKey,
                 });
                 console.log('decVaultKey', decryptedVaultKey);
+
+                dispatch({
+                    type: types.USER_AUTH_SUCCEEDED,
+                    payload: {
+                        email,
+                        userId,
+                        keys: {
+                            decVaultKey: decryptedVaultKey,
+                            secretKey,
+                        },
+                    },
+                });
+                Router.push('/vault');
+            } else {
+                console.log('decryption unsuccessful');
             }
         } catch (err) {
             console.log(err);
