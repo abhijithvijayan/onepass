@@ -51,8 +51,12 @@ const generateHashedKeySet = ({ normPassword, encryptionKeySalt }) => {
 };
 
 const generateSecretKey = ({ versionCode, userId }) => {
-    // get string after `user_`
-    const trimmedUserId = userId.slice(5);
+    // get string after `user_` & then remove `_` & then uppercase it
+    const trimmedUserId = userId
+        .slice(5)
+        .split('_')
+        .join('')
+        .toUpperCase();
     const length = 34 - (versionCode.length + trimmedUserId.length);
     const randomString = genCryptoRandomString(length);
     // generate 34 char secret key

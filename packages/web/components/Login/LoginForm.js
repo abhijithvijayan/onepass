@@ -17,7 +17,7 @@ const renderInputField = ({ input, type, icon, label, meta: { touched, invalid, 
 
 class LoginForm extends Component {
     onSubmit = ({ email, password, secretKey }) => {
-        this.props.submitLoginData({ email, password, secretKey });
+        this.props.submitLoginData({ email, password, secretKey: secretKey.toUpperCase() });
     };
 
     render() {
