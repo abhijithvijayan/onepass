@@ -1,4 +1,6 @@
 /* eslint-disable no-console */
+/* eslint-disable no-use-before-define */
+
 import decodeJwt from 'jwt-decode';
 import Router from 'next/router';
 import cookie from 'js-cookie';
@@ -79,9 +81,7 @@ const generateSymmetricKey = () => {
 /** ------------------------------------------------------ */
 
 /**
- * Initial signup step
- * @param {String} email
- * @param {String} name
+ * Initial Signup step
  */
 
 export const submitSignUpData = ({ email, name }) => {
@@ -91,6 +91,7 @@ export const submitSignUpData = ({ email, name }) => {
             dispatch({
                 type: uiTypes.SHOW_PAGE_LOADER,
             });
+
             const { data } = await api({
                 method: 'POST',
                 url: endpoints.SIGNUP_SUBMIT_ENDPOINT,
@@ -99,12 +100,14 @@ export const submitSignUpData = ({ email, name }) => {
                     name,
                 },
             });
+
             dispatch({
                 type: types.VALID_SIGNUP_FORM_SUBMISSION,
                 payload: {
                     data,
                 },
             });
+
             Router.push('/verify', '/signup/verify');
         } catch ({ response }) {
             console.log(response.data.error);
@@ -118,8 +121,6 @@ export const submitSignUpData = ({ email, name }) => {
 
 /**
  * Token Verification step
- * @param {String} email
- * @param {Number} verificationToken
  */
 
 export const submitVerificationToken = ({ email, verificationToken }) => {
@@ -128,6 +129,7 @@ export const submitVerificationToken = ({ email, verificationToken }) => {
             dispatch({
                 type: uiTypes.SHOW_PAGE_LOADER,
             });
+
             const response = await api({
                 method: 'POST',
                 url: endpoints.TOKEN_VERIFICATION_ENDPOINT,
@@ -136,10 +138,12 @@ export const submitVerificationToken = ({ email, verificationToken }) => {
                     email,
                 },
             });
+
             dispatch({
                 type: types.VALID_VERIFICATION_TOKEN_SUBMISSION,
                 payload: response.data,
             });
+
             Router.push('/masterpassword', '/signup/masterpassword');
         } catch ({ response }) {
             console.log(response.data.error);
@@ -152,7 +156,7 @@ export const submitVerificationToken = ({ email, verificationToken }) => {
 };
 
 /**
- * Account signup completion step
+ * Account-Signup completion step
  */
 
 export const completeSignUp = ({ email, userId, versionCode, password }) => {
@@ -178,14 +182,13 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
              *  `pbkdf2` for key derivation
              */
             const randomSaltForSRP = genRandomSalt(32);
-            console.log('saltfor srp', randomSaltForSRP);
-            // ToDo: store this as base64uri in DB
+            // ToDo: store salt as base64uri in DB
             const keySaltForSRP = await deriveEncryptionKeySalt({ salted: userId, randomSalt: randomSaltForSRP });
             const privateKeySetForSRP = await generateHashedKeySet({ normPassword, encryptionKeySalt: keySaltForSRP });
             const verifier = computeVerifier({ privateKey: privateKeySetForSRP.key });
 
             /**
-             *  Encryption Keys Generation Functions
+             *  Encryption-Keys Generation Functions
              */
 
             /**
@@ -202,14 +205,10 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
             const hashedKeySet = await generateHashedKeySet({ normPassword, encryptionKeySalt });
             const intermediateKey = await deriveIntermediateKey({ secretKey, userId });
             const masterUnlockKey = genMasterUnlockKey({ hashedKey: hashedKeySet.key, intermediateKey });
-            console.log('A:secret key: ', secretKey);
-            // console.log('A:created MUK: ', masterUnlockKey);
 
             /**
              *  3. Create Encrypted Key Set
              */
-
-            // base64uri key
             const symmetricKey = generateSymmetricKey();
             const vaultKey = genCryptoRandomString(32);
             const { publicKey, privateKey } = await generateKeypair();
@@ -222,14 +221,10 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
                 salt: base64EncKeySalt,
             });
 
-            // console.log('A:symmetrickey', symmetricKey);
-            // console.log('A: encSymKey', encryptedSymmetricKeySet.key);
-            // console.log('A: privatekey', privateKey);
-            console.log('A: vaultKey:', vaultKey);
-
-            // ToDo: convert keys to base64
             /**
-             *  Data to be send to server
+             *  Encrypted Keys to be send to server
+             *
+             *  @output {Object} Keys
              */
             const encryptionKeys = {
                 pubKey: {
@@ -247,13 +242,13 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
                 userId,
                 encryptionKeys,
             });
+
             dispatch({
                 type: types.USER_SIGNUP_SUCCEEDED,
             });
 
             // ToDo: Autodownload the secretkey for user(in PDF) on first login
 
-            // eslint-disable-next-line no-use-before-define
             dispatch(submitLoginData({ email, password, secretKey }));
         } catch (err) {
             console.log(err);
@@ -264,6 +259,10 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
         }
     };
 };
+
+/**
+ * Login using SRP Authentication
+ */
 
 export const submitLoginData = ({ email, password, secretKey }) => {
     const sendRequest = async data => {
@@ -294,6 +293,7 @@ export const submitLoginData = ({ email, password, secretKey }) => {
              * 2. Derive `clientEphemeral` pair
              */
             const clientEphemeral = genClientEphemeral();
+
             dispatch({
                 type: types.GET_SERVER_AUTH_RESPONSE,
                 payload: {
@@ -342,13 +342,15 @@ export const submitLoginData = ({ email, password, secretKey }) => {
              */
             verifyLoginSession(clientPublicEphemeral, clientSession, serverSessionProof);
 
+            /**
+             *  6. Save JWT Token to cookie
+             */
             const in1Hour = 1 / 24;
             cookie.set('token', token, { expires: in1Hour });
 
             /**
-             *  Fetch keys & data using this token
+             *   7. Fetch keys & data using this token
              */
-            // eslint-disable-next-line no-use-before-define
             dispatch(fetchDataAndKeys({ email, normPassword, secretKey, userId }));
         } catch (err) {
             console.log(err);
@@ -358,6 +360,10 @@ export const submitLoginData = ({ email, password, secretKey }) => {
         }
     };
 };
+
+/**
+ * Fetching Data and Encrypted Keys from Vault
+ */
 
 export const fetchDataAndKeys = ({ email, normPassword, secretKey, userId }) => {
     const sendRequest = async (data, endpoint) => {
@@ -393,6 +399,7 @@ export const fetchDataAndKeys = ({ email, normPassword, secretKey, userId }) => 
             const [keys, vault] = await Promise.all([getEncKeys(), getVaultData()]);
             const { encKeySet } = keys.data;
             const { encVaultData } = vault.data;
+
             dispatch({
                 type: types.FETCH_ENCRYPTION_KEYS,
                 payload: encKeySet,
@@ -402,8 +409,6 @@ export const fetchDataAndKeys = ({ email, normPassword, secretKey, userId }) => 
                 payload: encVaultData,
             });
 
-            // Call next action for decryption of vault
-            // eslint-disable-next-line no-use-before-define
             dispatch(decryptTheVaultKey({ email, normPassword, secretKey, userId, encKeySet, encVaultData }));
         } catch (err) {
             console.log(err);
@@ -411,22 +416,22 @@ export const fetchDataAndKeys = ({ email, normPassword, secretKey, userId }) => 
     };
 };
 
+/**
+ *  Decryption of Vault Key
+ */
+
 export const decryptTheVaultKey = ({ email, normPassword, secretKey, userId, encKeySet, encVaultData }) => {
     return async dispatch => {
         try {
             /**
-             * 1. Compute MUK
+             * 1. Compute Master Unlock Key
              */
             const { encPriKey, encSymKey } = encKeySet;
             const encryptionKeySalt = await base64uriToArray(encSymKey.salt);
             const hashedKeySet = await generateHashedKeySet({ normPassword, encryptionKeySalt });
             const intermediateKey = await deriveIntermediateKey({ secretKey, userId });
             const masterUnlockKey = genMasterUnlockKey({ hashedKey: hashedKeySet.key, intermediateKey });
-            // console.log('B:secret key: ', secretKey);
-            // console.log('B:encSalt:', encryptionKeySalt);
-            // console.log('B:hashedKeySet', hashedKeySet);
-            // console.log('B:intermediateKey:', intermediateKey);
-            // console.log('computed MUK: ', masterUnlockKey);
+
             /**
              *  2. Decrypt Symmetric Key with MUK
              */
@@ -438,10 +443,10 @@ export const decryptTheVaultKey = ({ email, normPassword, secretKey, userId, enc
                 tag: encSymKey.tag,
                 tagLength: encSymKey.tagLength,
             });
-            // console.log('B: encSymKey', encryptedSymmetricKey);
+
+            /** Successful decryption of Symmetric Key */
             if (decSymKeyOutput.status) {
                 const { decryptedSymmetricKey } = decSymKeyOutput;
-                // console.log('B: decSymKey', decryptedSymmetricKey);
 
                 /**
                  *  3. Decrypt Private Key with Symmetric Key
@@ -450,7 +455,6 @@ export const decryptTheVaultKey = ({ email, normPassword, secretKey, userId, enc
                     encryptedPrivateKey: encPriKey.key,
                     decryptedSymmetricKey,
                 });
-                // console.log('B: decPriKey', decryptedPrivateKey);
 
                 /**
                  *  4. Decrypt Vault Key with Private Key
@@ -460,7 +464,6 @@ export const decryptTheVaultKey = ({ email, normPassword, secretKey, userId, enc
                     encryptedVaultKey: encVaultKey.key,
                     decryptedPrivateKey,
                 });
-                console.log('decVaultKey', decryptedVaultKey);
 
                 dispatch({
                     type: types.USER_AUTH_SUCCEEDED,
@@ -473,9 +476,13 @@ export const decryptTheVaultKey = ({ email, normPassword, secretKey, userId, enc
                         },
                     },
                 });
+
                 Router.push('/vault');
             } else {
                 console.log('decryption unsuccessful');
+                dispatch({
+                    type: uiTypes.HIDE_PAGE_LOADER,
+                });
             }
         } catch (err) {
             console.log(err);
@@ -483,7 +490,7 @@ export const decryptTheVaultKey = ({ email, normPassword, secretKey, userId, enc
     };
 };
 
-/* ------------------------------ */
+/* ----------------------------------------------------------- */
 
 export const authUser = payload => {
     return dispatch => {

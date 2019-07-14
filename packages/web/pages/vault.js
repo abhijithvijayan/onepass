@@ -27,6 +27,7 @@ class VaultPage extends Component {
 
 VaultPage.getInitialProps = ({ req, store }) => {
     const token = req && req.cookies && req.cookies.token;
+    // ToDo: refactor (store secretKey to cookie)
     if (token && store) {
         store.dispatch(authUser(decodeJwt(token)));
     }
