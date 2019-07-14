@@ -6,6 +6,7 @@ import { encryptPrivateKey } from './encryptPrivateKey';
 import { decryptPrivateKey } from './decryptPrivateKey';
 import { encryptSymmetricKey } from './encryptSymmetricKey';
 import { decryptSymmetricKey } from './decryptSymmetricKey';
+import { encryptVaultItem } from './encryptVaultItem';
 
 export {
     genRandomSalt,
@@ -16,4 +17,5 @@ export {
     decryptSymmetricKey,
     decryptPrivateKey,
     decryptVaultKey,
+    encryptVaultItem,
 };
