@@ -329,7 +329,7 @@ export const submitLoginData = ({ email, password, secretKey }) => {
              *  4. Send `clientSessionProof` & `clientPublicEphemeral` to the server
              */
             const {
-                data: { serverSessionProof, token },
+                data: { serverSessionProof, token, name },
             } = await sendRequest({
                 email,
                 clientPublicEphemeral,
@@ -345,13 +345,12 @@ export const submitLoginData = ({ email, password, secretKey }) => {
             /**
              *  6. Save JWT Token to cookie
              */
-            const in1Hour = 1 / 24;
-            cookie.set('token', token, { expires: in1Hour });
+            cookie.set('token', token, { expires: 1 });
 
             /**
              *   7. Fetch keys & data using this token
              */
-            dispatch(fetchDataAndKeys({ email, normPassword, secretKey, userId }));
+            dispatch(fetchDataAndKeys({ email, name, normPassword, secretKey, userId }));
         } catch (err) {
             console.log(err);
             dispatch({
@@ -365,7 +364,7 @@ export const submitLoginData = ({ email, password, secretKey }) => {
  * Fetching Data and Encrypted Keys from Vault
  */
 
-export const fetchDataAndKeys = ({ email, normPassword, secretKey, userId }) => {
+export const fetchDataAndKeys = ({ email, name, normPassword, secretKey, userId }) => {
     const sendRequest = async (data, endpoint) => {
         const response = await api({
             method: 'POST',
@@ -409,7 +408,7 @@ export const fetchDataAndKeys = ({ email, normPassword, secretKey, userId }) => 
                 payload: encVaultData,
             });
 
-            dispatch(decryptTheVaultKey({ email, normPassword, secretKey, userId, encKeySet, encVaultData }));
+            dispatch(decryptTheVaultKey({ email, name, normPassword, secretKey, userId, encKeySet, encVaultData }));
         } catch (err) {
             console.log(err);
         }
@@ -420,7 +419,7 @@ export const fetchDataAndKeys = ({ email, normPassword, secretKey, userId }) => 
  *  Decryption of Vault Key
  */
 
-export const decryptTheVaultKey = ({ email, normPassword, secretKey, userId, encKeySet, encVaultData }) => {
+export const decryptTheVaultKey = ({ email, name, normPassword, secretKey, userId, encKeySet, encVaultData }) => {
     return async dispatch => {
         try {
             /**
@@ -477,6 +476,21 @@ export const decryptTheVaultKey = ({ email, normPassword, secretKey, userId, enc
                     },
                 });
 
+                // ToDo: store only if item doesn't exist
+                /**
+                 *  Save items to LocalStorage (distinguished by userId)
+                 */
+                localStorage.setItem(
+                    userId,
+                    JSON.stringify({
+                        userId,
+                        name,
+                        email,
+                        secretKey,
+                    })
+                );
+                localStorage.setItem('lastUser', userId);
+
                 Router.push('/vault');
             } else {
                 console.log('decryption unsuccessful');
@@ -504,6 +518,9 @@ export const authUser = payload => {
 export const logoutUser = () => {
     return dispatch => {
         cookie.remove('token');
+        // fetch userId & remove accordingly
+        localStorage.removeItem(localStorage.getItem('lastUser'));
+        localStorage.removeItem('lastUser');
         dispatch({
             type: types.USER_DE_AUTH_SUCCEEDED,
         });

@@ -70,11 +70,12 @@ exports.saveServerEphemeral = async ({ serverSecretEphemeral, email }) => {
 exports.retrieveSRPCredentials = async ({ email }) => {
     const session = driver.session();
     const { records = [] } = await session.readTransaction(tx => {
-        return tx.run('MATCH (u: User { email: $emailParam, isVerified: true })-[:SRP]->(auth) RETURN auth', {
+        return tx.run('MATCH (u: User { email: $emailParam, isVerified: true })-[:SRP]->(auth) RETURN auth, u', {
             emailParam: email,
         });
     });
     session.close();
     const { salt, verifier, userId, serverSecretEphemeral } = records.length && records[0].get('auth').properties;
-    return { salt, verifier, userId, serverSecretEphemeral };
+    const { name } = records.length && records[0].get('u').properties;
+    return { salt, verifier, userId, name, serverSecretEphemeral };
 };

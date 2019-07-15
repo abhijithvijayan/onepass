@@ -24,11 +24,12 @@ const resetEmailTemplatePath = path.join(__dirname, '../mail/template-reset.html
 const resetEmailTemplate = fs.readFileSync(resetEmailTemplatePath, { encoding: 'utf-8' });
 
 /* Function to generate JWT Token */
-const genJWTtoken = email => {
+const genJWTtoken = ({ email, name }) => {
     return JWT.sign(
         {
             iss: 'ApiAuth',
             id: email,
+            name,
             iat: new Date().getTime(),
         },
         process.env.JWT_SECRET,
@@ -138,8 +139,8 @@ exports.login = async (req, res) => {
         }
         case 'login': {
             const { clientPublicEphemeral, clientSessionProof } = req.body;
-            const { verifier, salt, userId, serverSecretEphemeral } = await retrieveSRPCredentials({ email });
-            if (verifier && salt && userId && serverSecretEphemeral) {
+            const { verifier, salt, userId, name, serverSecretEphemeral } = await retrieveSRPCredentials({ email });
+            if (verifier && salt && userId && name && serverSecretEphemeral) {
                 try {
                     const serverSession = srp.deriveSession(
                         serverSecretEphemeral,
@@ -150,8 +151,8 @@ exports.login = async (req, res) => {
                         clientSessionProof
                     );
                     const serverSessionProof = serverSession.proof;
-                    const token = genJWTtoken(email);
-                    return res.status(201).json({ serverSessionProof, token });
+                    const token = genJWTtoken({ email, name });
+                    return res.status(201).json({ serverSessionProof, token, name });
                 } catch (err) {
                     return res.status(403).json({ error: 'Invalid client session proof' });
                 }
@@ -164,9 +165,10 @@ exports.login = async (req, res) => {
     }
 };
 
+// ToDo: Get `name`
 exports.renewToken = async (req, res) => {
-    const { email } = req.user;
-    const token = genJWTtoken(email);
+    const { email, name } = req.user;
+    const token = genJWTtoken({ email, name });
     return res.status(200).json({ token });
 };
 
@@ -194,11 +196,12 @@ exports.requestPasswordReset = async (req, res) => {
 // ToDo: Refactor
 /* Reset the passwordResetToken and timer */
 exports.resetPasswordValidation = async (req, res, next) => {
-    const { email, passwordResetToken } = req.query;
+    const { email, name, passwordResetToken } = req.query;
     const user = await validatePasswordRequest({ email, passwordResetToken });
     if (user) {
         // generate some new token for other api after this middleware
-        const token = genJWTtoken(user);
+        // ToDo: Get `name`
+        const token = genJWTtoken({ name, email });
         req.user = { token };
         return next();
     }
