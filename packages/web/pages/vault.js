@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Router from 'next/router';
-import decodeJwt from 'jwt-decode';
 
 import BodyWrapper from '../components/BodyWrapper';
 import Vault from '../components/Vault';
-import { authUser } from '../state/modules/auth/actions';
 
 class VaultPage extends Component {
     componentDidMount() {
@@ -24,15 +22,6 @@ class VaultPage extends Component {
         );
     }
 }
-
-VaultPage.getInitialProps = ({ req, store }) => {
-    const token = req && req.cookies && req.cookies.token;
-    // ToDo: refactor (store secretKey to cookie)
-    if (token && store) {
-        store.dispatch(authUser(decodeJwt(token)));
-    }
-    return {};
-};
 
 const mapStateToProps = ({ auth: { login } }) => {
     return {

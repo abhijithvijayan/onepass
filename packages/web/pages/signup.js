@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import decodeJwt from 'jwt-decode';
 import Router from 'next/router';
 
 import SignUp from '../components/SignUp';
 import BodyWrapper from '../components/BodyWrapper';
-import { authUser } from '../state/modules/auth/actions';
 
 class SignUpPage extends Component {
     componentDidMount() {
@@ -24,14 +22,6 @@ class SignUpPage extends Component {
         );
     }
 }
-
-SignUpPage.getInitialProps = ({ req, store }) => {
-    const token = req && req.cookies && req.cookies.token;
-    if (token && store) {
-        store.dispatch(authUser(decodeJwt(token)));
-    }
-    return {};
-};
 
 const mapStateToProps = ({ auth: { login } }) => {
     return {
