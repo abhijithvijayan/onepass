@@ -17,13 +17,26 @@ exports.getEncKeySet = async ({ email }) => {
 exports.getVaultData = async ({ email }) => {
     const session = driver.session();
     const { records = [] } = await session.readTransaction(tx => {
-        return tx.run('MATCH (u: User { email: $emailParam, isVerified: true })-[:VAULT]->(vault) RETURN vault', {
-            emailParam: email,
-        });
+        return tx.run(
+            'MATCH (u: User { email: $emailParam, isVerified: true })-[:VAULT]->(v: vault) ' +
+                'WITH v ' +
+                'OPTIONAL MATCH path = (v)-[:PASSWORDS]->()-[:Archive]->() ' +
+                'RETURN v, path',
+            {
+                emailParam: email,
+            }
+        );
     });
     session.close();
-    const { encVaultKey } = records.length && records[0].get('vault').properties;
-    return { encVaultKey: JSON.parse(encVaultKey) };
+    const { encVaultKey } = records.length && records[0].get('v').properties;
+    const encArchiveList = records.map(record => {
+        return record._fields[1]
+            ? {
+                  ...record._fields[1].end.properties,
+              }
+            : {};
+    });
+    return { encVaultKey: JSON.parse(encVaultKey), encArchiveList };
 };
 
 exports.saveEncVaultItem = async ({ encDetails, encOverview, email }) => {

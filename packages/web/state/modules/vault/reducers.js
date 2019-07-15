@@ -25,8 +25,11 @@ const encryptionReducer = createReducer({})({
  * Encryption Data functions
  */
 
+// ToDo: reset vault on logout
+
 function onFetchVaultContents(state, { payload }) {
-    return { ...state, keys: { encVaultKey: payload.encVaultKey } };
+    const { encVaultKey, encArchiveList } = payload;
+    return { ...state, keys: { encVaultKey }, items: encArchiveList };
 }
 
 function onSaveItemSuccess(state, { payload }) {

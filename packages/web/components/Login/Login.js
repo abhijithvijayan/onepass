@@ -12,6 +12,8 @@ const LoginContentsHolder = styled.div`
     }};
 `;
 
+// ToDo: get previous session from localStorage & show user
+
 const Login = () => {
     return (
         <LoginContentsHolder>

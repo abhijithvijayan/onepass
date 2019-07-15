@@ -4,7 +4,6 @@ import cookie from 'js-cookie';
 
 // Core Libraries
 import { encryptVaultItem } from '@onepass/core/forge';
-import { stringToUint8Array } from '@onepass/core/jseu';
 
 import api from '../../../api';
 import * as types from './types';
