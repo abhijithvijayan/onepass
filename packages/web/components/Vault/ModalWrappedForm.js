@@ -19,7 +19,7 @@ class ModalWrappedForm extends Component {
     };
 
     onFormSubmit = ({ url = '', name, folder = '', username = '', password = '' }) => {
-        const { vaultKey } = this.props;
+        const { vaultKey, email } = this.props;
         const overview = {
             url,
             name,
@@ -31,7 +31,7 @@ class ModalWrappedForm extends Component {
         };
         /* eslint-disable-next-line no-console */
         console.log('Received Values:', url, name, folder, username, password);
-        this.props.encryptVaultItem({ overview, details, vaultKey });
+        this.props.encryptVaultItem({ overview, details, vaultKey, email });
     };
 
     render() {
@@ -70,6 +70,7 @@ const mapStateToProps = state => {
     } = state;
     return {
         isItemModalOpen: ui.isItemModalOpen,
+        email: login.user && login.user.email,
         vaultKey: login.decrypted.keys && login.decrypted.keys.decVaultKey,
     };
 };

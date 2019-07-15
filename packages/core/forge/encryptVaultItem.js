@@ -13,8 +13,8 @@ export const encryptContent = ({ content, vaultKey }) => {
         iv,
         tagLength,
     });
-    // JSON stringify -> Uint8Array -> forge-buffer
-    cipher.update(forge.util.createBuffer(stringToUint8Array(JSON.stringify(content))));
+    // JSON stringify -> forge-buffer
+    cipher.update(forge.util.createBuffer(JSON.stringify(content)));
     cipher.finish();
 
     const encryptedContent = {
