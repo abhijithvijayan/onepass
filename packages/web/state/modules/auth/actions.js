@@ -281,6 +281,11 @@ export const submitLoginData = ({ email, password, secretKey }) => {
             });
 
             const normPassword = normalizeMasterPassword(password);
+            // Trim to 34 characters
+            const normSecretKey = secretKey
+                .split('-')
+                .join('')
+                .toUpperCase();
 
             /**
              * 1. Get `salt` and `serverEphemeral.public` from server
@@ -350,7 +355,7 @@ export const submitLoginData = ({ email, password, secretKey }) => {
             /**
              *   7. Fetch keys & data using this token
              */
-            dispatch(fetchDataAndKeys({ email, name, normPassword, secretKey, userId }));
+            dispatch(fetchDataAndKeys({ email, name, normPassword, secretKey: normSecretKey, userId }));
         } catch (err) {
             console.log(err);
             dispatch({

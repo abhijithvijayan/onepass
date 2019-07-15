@@ -50,8 +50,8 @@ const validate = values => {
     }
     if (!values.secretKey) {
         errors.secretKey = 'Required';
-    } else if (values.secretKey.length > 34) {
-        errors.secretKey = 'Must be 34 characters or less';
+    } else if (values.secretKey.length > 40) {
+        errors.secretKey = 'Must be 40 characters or less';
     }
     if (!values.password) {
         errors.password = 'Required';
