@@ -1,5 +1,4 @@
-const forge = require('node-forge');
-
+const generate = require('nanoid/generate');
 const driver = require('./neo4j');
 
 exports.getEncKeySet = async ({ email }) => {
@@ -41,19 +40,21 @@ exports.getVaultData = async ({ email }) => {
 
 exports.saveEncVaultItem = async ({ encDetails, encOverview, email }) => {
     const session = driver.session();
+    const vaultItemRandomPrefix = generate('1245689abefklprtvxz', 6);
     const { records = [] } = await session.writeTransaction(tx => {
         return tx.run(
             'MATCH (u: User { email: $emailParam, isVerified: true })-[:VAULT]-(v: vault) ' +
                 'MERGE (v)-[:PASSWORDS]->(p: passwordCollection) ' +
                 'ON CREATE SET p.userId = v.userId, p.lastItem = 1, p.itemPrefix = $itemPrefixParam ' +
                 'ON MATCH SET p.lastItem = p.lastItem + 1 ' +
-                'WITH p.itemPrefix + p.lastItem AS eid, p ' +
+                'WITH p.itemPrefix + $vaultItemRandomPrefixParam + p.lastItem AS eid, p ' +
                 'CREATE (e: entry { entryId: eid, encDetails: $encDetails, encOverview: $encOverview, createdAt: $createdAtParam }) ' +
                 'CREATE (p)-[a:Archive { entryId: eid }]->(e) ' +
                 'RETURN e',
             {
                 emailParam: email,
                 itemPrefixParam: 'item_',
+                vaultItemRandomPrefixParam: `${vaultItemRandomPrefix}_`,
                 encDetails: JSON.stringify(encDetails),
                 encOverview: JSON.stringify(encOverview),
                 createdAtParam: new Date().toJSON(),
