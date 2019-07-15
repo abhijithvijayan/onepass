@@ -18,7 +18,20 @@ const vaultUIReducer = createReducer(initialVaultState)({
 
 const encryptionReducer = createReducer({})({
     [types.FETCH_VAULT_CONTENTS]: onFetchVaultContents,
+    [types.SAVE_VAULT_ITEM]: onSaveItemSuccess,
 });
+
+/**
+ * Encryption Data functions
+ */
+
+function onFetchVaultContents(state, { payload }) {
+    return { ...state, keys: { encVaultKey: payload.encVaultKey } };
+}
+
+function onSaveItemSuccess(state, { payload }) {
+    return { ...state, response: payload };
+}
 
 /**
  * Vault UI functions
@@ -34,14 +47,6 @@ function toggleItemModal(state, { payload }) {
 
 function hoverOverActionButtons(state, { payload }) {
     return { ...state, hoverOverActionButtons: payload.hover };
-}
-
-/**
- * Encryption Data functions
- */
-
-function onFetchVaultContents(state, { payload }) {
-    return { ...state, keys: { encVaultKey: payload.encVaultKey } };
 }
 
 /* ------------------------------------- */
