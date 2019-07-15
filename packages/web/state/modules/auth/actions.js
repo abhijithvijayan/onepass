@@ -527,6 +527,9 @@ export const logoutUser = () => {
         localStorage.removeItem(localStorage.getItem('lastUser'));
         localStorage.removeItem('lastUser');
         dispatch({
+            type: vaultTypes.CLEAR_VAULT,
+        });
+        dispatch({
             type: types.USER_DE_AUTH_SUCCEEDED,
         });
         Router.push('/login');

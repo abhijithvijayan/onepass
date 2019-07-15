@@ -4,21 +4,24 @@ import { combineReducers } from 'redux';
 import * as types from './types';
 import { createReducer } from '../../utils';
 
-const initialVaultState = {
+const initialVaultUIState = {
     isSideBarOpen: true,
     isItemModalOpen: false,
     hoverOverActionButtons: false,
 };
 
-const vaultUIReducer = createReducer(initialVaultState)({
+const initialVaultDataState = {};
+
+const vaultUIReducer = createReducer(initialVaultUIState)({
     [types.TOGGLE_SIDEBAR]: toggleSideBar,
     [types.TOGGLE_ITEM_MODAL]: toggleItemModal,
     [types.ACTION_BUTTONS_HOVER]: hoverOverActionButtons,
 });
 
-const encryptionReducer = createReducer({})({
+const encryptionReducer = createReducer(initialVaultDataState)({
     [types.FETCH_VAULT_CONTENTS]: onFetchVaultContents,
     [types.SAVE_VAULT_ITEM]: onSaveItemSuccess,
+    [types.CLEAR_VAULT]: clearVault,
 });
 
 /**
@@ -34,6 +37,10 @@ function onFetchVaultContents(state, { payload }) {
 
 function onSaveItemSuccess(state, { payload }) {
     return { ...state, response: payload };
+}
+
+function clearVault() {
+    return initialVaultDataState;
 }
 
 /**
