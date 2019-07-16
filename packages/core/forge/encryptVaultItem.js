@@ -20,7 +20,7 @@ export const encryptContent = ({ content, vaultKey }) => {
     const encryptedContent = {
         // buffer to base64
         tag: forge.util.encode64(cipher.mode.tag.getBytes()),
-        key: forge.util.encode64(cipher.output.getBytes()),
+        data: forge.util.encode64(cipher.output.getBytes()),
         tagLength,
         // bytes to hex
         iv: forge.util.bytesToHex(iv),

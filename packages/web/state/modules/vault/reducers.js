@@ -10,7 +10,8 @@ const initialVaultUIState = {
     hoverOverActionButtons: false,
 };
 
-const initialVaultDataState = {};
+const initialEncryptedState = {};
+const initialDecryptedState = {};
 
 const vaultUIReducer = createReducer(initialVaultUIState)({
     [types.TOGGLE_SIDEBAR]: toggleSideBar,
@@ -18,17 +19,19 @@ const vaultUIReducer = createReducer(initialVaultUIState)({
     [types.ACTION_BUTTONS_HOVER]: hoverOverActionButtons,
 });
 
-const encryptionReducer = createReducer(initialVaultDataState)({
+const encryptionReducer = createReducer(initialEncryptedState)({
     [types.FETCH_VAULT_CONTENTS]: onFetchVaultContents,
     [types.SAVE_VAULT_ITEM]: onSaveItemSuccess,
     [types.CLEAR_VAULT]: clearVault,
 });
 
+const decryptionReducer = createReducer(initialDecryptedState)({
+    [types.VAULT_DECRYPTION_SUCCEEDED]: saveDecryptedVault,
+});
+
 /**
  * Encryption Data functions
  */
-
-// ToDo: reset vault on logout
 
 function onFetchVaultContents(state, { payload }) {
     const { encVaultKey, encArchiveList } = payload;
@@ -40,7 +43,15 @@ function onSaveItemSuccess(state, { payload }) {
 }
 
 function clearVault() {
-    return initialVaultDataState;
+    return initialEncryptedState;
+}
+
+/**
+ * Decryption Data functions
+ */
+
+function saveDecryptedVault(state, { payload }) {
+    return { ...state, items: payload.decVaultData };
 }
 
 /**
@@ -64,4 +75,5 @@ function hoverOverActionButtons(state, { payload }) {
 export default combineReducers({
     ui: vaultUIReducer,
     encrypted: encryptionReducer,
+    decrypted: decryptionReducer,
 });

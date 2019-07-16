@@ -29,6 +29,8 @@ import * as vaultTypes from '../vault/types';
 import * as uiTypes from '../common/ui/types';
 import * as endpoints from '../../../api/constants';
 
+import { performVaultItemDecryption } from '../vault/operations';
+
 /** ------------------------------------------------------ */
 
 /**
@@ -413,6 +415,7 @@ export const fetchDataAndKeys = ({ email, name, normPassword, secretKey, userId 
                 payload: encVaultData,
             });
 
+            // ToDo: move this to some other function
             dispatch(decryptTheVaultKey({ email, name, normPassword, secretKey, userId, encKeySet, encVaultData }));
         } catch (err) {
             console.log(err);
@@ -469,6 +472,18 @@ export const decryptTheVaultKey = ({ email, name, normPassword, secretKey, userI
                     decryptedPrivateKey,
                 });
 
+                // ToDo: refactor this chaining
+
+                /**
+                 *  DECRYPT VAULT
+                 */
+                // array of objects
+                const { encArchiveList } = encVaultData;
+                // decrypt if vault is not empty
+                if (encArchiveList !== null) {
+                    dispatch(performVaultItemDecryption({ encArchiveList, vaultKey: decryptedVaultKey }));
+                }
+                // Success Auth
                 dispatch({
                     type: types.USER_AUTH_SUCCEEDED,
                     payload: {

@@ -28,18 +28,24 @@ exports.getVaultData = async ({ email }) => {
     });
     session.close();
     const { encVaultKey } = records.length && records[0].get('v').properties;
+    // ToDo: refactor to return empty object if list is empty
     const encArchiveList = records.map(record => {
         const item = record._fields[1]
             ? {
                   ...record._fields[1].end.properties,
               }
-            : {};
-        return {
-            encOverview: Object.prototype.hasOwnProperty.call(item, 'encOverview') ? JSON.parse(item.encOverview) : '',
-            encDetails: Object.prototype.hasOwnProperty.call(item, 'encDetails') ? JSON.parse(item.encDetails) : '',
-            createdAt: Object.prototype.hasOwnProperty.call(item, 'createdAt') ? item.createdAt : '',
-            entryId: Object.prototype.hasOwnProperty.call(item, 'entryId') ? item.entryId : '',
-        };
+            : null;
+        if (item) {
+            return {
+                encOverview: Object.prototype.hasOwnProperty.call(item, 'encOverview')
+                    ? JSON.parse(item.encOverview)
+                    : '',
+                encDetails: Object.prototype.hasOwnProperty.call(item, 'encDetails') ? JSON.parse(item.encDetails) : '',
+                createdAt: Object.prototype.hasOwnProperty.call(item, 'createdAt') ? item.createdAt : '',
+                entryId: Object.prototype.hasOwnProperty.call(item, 'entryId') ? item.entryId : '',
+            };
+        }
+        return null;
     });
     return { encVaultKey: JSON.parse(encVaultKey), encArchiveList };
 };

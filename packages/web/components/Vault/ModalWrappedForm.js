@@ -11,7 +11,6 @@ class ModalWrappedForm extends Component {
     handleSubmit = () => {
         // Manually submit redux-form
         this.props.submitForm('form_in_modal');
-        // this.props.toggleItemModal(false);
     };
 
     handleReturn = () => {
@@ -29,8 +28,6 @@ class ModalWrappedForm extends Component {
             username,
             password,
         };
-        /* eslint-disable-next-line no-console */
-        console.log('Received Values:', url, name, folder, username, password);
         this.props.encryptVaultItem({ overview, details, vaultKey, email });
     };
 
