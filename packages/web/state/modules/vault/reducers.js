@@ -73,7 +73,7 @@ function toggleSideBar(state, { payload }) {
 }
 
 function toggleItemModal(state, { payload }) {
-    return { ...state, isItemModalOpen: payload.isItemModalOpen };
+    return { ...state, isItemModalOpen: payload.isItemModalOpen, selectedItemId: payload.id };
 }
 
 function hoverOverActionButtons(state, { payload }) {

@@ -76,7 +76,8 @@ export const performVaultItemEncryption = ({ overview, details, vaultKey, email 
     return async dispatch => {
         try {
             const { encDetails, encOverview } = await encryptVaultItem({ overview, details, vaultKey, email });
-            dispatch(toggleItemModal(false));
+            // ToDo: pass id -> Refactor
+            dispatch(toggleItemModal(false, ''));
 
             const { data } = await api({
                 method: 'POST',
@@ -204,11 +205,12 @@ export const toggleSideBar = toggleStatus => {
     };
 };
 
-export const toggleItemModal = toggleStatus => {
+export const toggleItemModal = (toggleStatus, id) => {
     return {
         type: types.TOGGLE_ITEM_MODAL,
         payload: {
             isItemModalOpen: toggleStatus,
+            id,
         },
     };
 };

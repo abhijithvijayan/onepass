@@ -94,10 +94,20 @@ const validate = values => {
     return errors;
 };
 
-const FormInModal = connect()(ModalForm);
+const mapStateToProps = (state, ownProps) => {
+    return {
+        initialValues: ownProps.initialValues, // retrieve name from redux store
+    };
+};
+
+const FormInModal = connect(
+    null,
+    mapStateToProps
+)(ModalForm);
 
 export default reduxForm({
     form: 'form_in_modal',
     validate,
     onSubmitSuccess: afterSubmit,
+    enableReinitialize: true,
 })(FormInModal);

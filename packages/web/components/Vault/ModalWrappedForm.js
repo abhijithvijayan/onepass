@@ -14,7 +14,8 @@ class ModalWrappedForm extends Component {
     };
 
     handleReturn = () => {
-        this.props.toggleItemModal(false);
+        // ToDo: pass id -> Refactor
+        this.props.toggleItemModal(false, '');
     };
 
     onFormSubmit = ({ url = '', name, folder = '', username = '', password = '' }) => {
@@ -32,7 +33,24 @@ class ModalWrappedForm extends Component {
     };
 
     render() {
-        const { isItemModalOpen } = this.props;
+        const { isItemModalOpen, selectedItemId, items } = this.props;
+        // Initial Values for modalForm
+        let initialValues = { url: '', name: '', username: '', password: '' };
+        const selectedItem = items[selectedItemId];
+        // If item exist
+        if (selectedItem) {
+            const {
+                decOverview: { url, name },
+                decDetails: { username, password },
+            } = selectedItem;
+
+            initialValues = {
+                url,
+                name,
+                username,
+                password,
+            };
+        }
         return (
             <div>
                 <Modal
@@ -51,7 +69,7 @@ class ModalWrappedForm extends Component {
                         </Button>,
                     ]}
                 >
-                    <FormInModal onSubmit={this.onFormSubmit} />
+                    <FormInModal onSubmit={this.onFormSubmit} initialValues={initialValues} />
                 </Modal>
             </div>
         );
@@ -60,13 +78,15 @@ class ModalWrappedForm extends Component {
 
 const mapStateToProps = state => {
     const {
-        vault: { ui },
+        vault: { ui, decrypted },
     } = state;
     const {
         auth: { login },
     } = state;
     return {
         isItemModalOpen: ui.isItemModalOpen,
+        selectedItemId: ui.selectedItemId,
+        items: decrypted.items,
         email: login.user && login.user.email,
         vaultKey: login.decrypted.keys && login.decrypted.keys.decVaultKey,
     };

@@ -71,7 +71,8 @@ class BottomActionButtons extends Component {
                         {this.props.hoverOverActionButtons ? <div>Add Item</div> : null}
                         <ActionButton
                             onClick={() => {
-                                return this.props.toggleItemModal(true);
+                                // ToDo: pass id -> Refactor
+                                return this.props.toggleItemModal(true, '');
                             }}
                             type="primary"
                             shape="circle"
