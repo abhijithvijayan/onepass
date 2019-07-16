@@ -29,12 +29,12 @@ import * as vaultTypes from '../vault/types';
 import * as uiTypes from '../common/ui/types';
 import * as endpoints from '../../../api/constants';
 
-import { performVaultItemDecryption } from '../vault/operations';
+import { fetchDataAndKeys, performVaultItemDecryption } from '../vault/operations';
 
 /** ------------------------------------------------------ */
 
 /**
- * Encryption Util funtions
+ * Encryption Helper funtions
  */
 
 const deriveEncryptionKeySalt = ({ salted, randomSalt }) => {
@@ -83,7 +83,7 @@ const generateSymmetricKey = () => {
 /** ------------------------------------------------------ */
 
 /**
- * Initial Signup step
+ *  Initial Signup
  */
 
 export const submitSignUpData = ({ email, name }) => {
@@ -122,7 +122,7 @@ export const submitSignUpData = ({ email, name }) => {
 };
 
 /**
- * Token Verification step
+ *  Token Verification step
  */
 
 export const submitVerificationToken = ({ email, verificationToken }) => {
@@ -158,7 +158,7 @@ export const submitVerificationToken = ({ email, verificationToken }) => {
 };
 
 /**
- * Account-Signup completion step
+ *  Account-Signup completion
  */
 
 export const completeSignUp = ({ email, userId, versionCode, password }) => {
@@ -190,7 +190,7 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
             const verifier = computeVerifier({ privateKey: privateKeySetForSRP.key });
 
             /**
-             *  Encryption-Keys Generation Functions
+             *  Encryption-Keys derivation functions
              */
 
             /**
@@ -224,7 +224,7 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
             });
 
             /**
-             *  Encrypted Keys to be send to server
+             *  Encrypted KeySet to be send to server
              *
              *  @output {Object} Keys
              */
@@ -263,7 +263,7 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
 };
 
 /**
- * Login using SRP Authentication
+ *  Login using SRP Authentication
  */
 
 export const submitLoginData = ({ email, password, secretKey }) => {
@@ -357,7 +357,57 @@ export const submitLoginData = ({ email, password, secretKey }) => {
             /**
              *   7. Fetch keys & data using this token
              */
-            dispatch(fetchDataAndKeys({ email, name, normPassword, secretKey: normSecretKey, userId }));
+            const { encKeySet, encVaultData } = await dispatch(
+                fetchDataAndKeys({ email, name, normPassword, secretKey: normSecretKey, userId })
+            );
+
+            /**
+             *   8. Decrypt Vault Key
+             */
+            const decryptedVaultKey = await dispatch(
+                decryptTheVaultKey({ email, name, normPassword, secretKey, userId, encKeySet, encVaultData })
+            );
+
+            /**
+             *   9. Decrypt Vault
+             */
+            const { encArchiveList } = encVaultData;
+            // decrypt if vault is not empty
+            if (encArchiveList !== null) {
+                await dispatch(performVaultItemDecryption({ encArchiveList, vaultKey: decryptedVaultKey }));
+            }
+
+            /**
+             *  10. Dispatch Successful auth
+             */
+            dispatch({
+                type: types.USER_AUTH_SUCCEEDED,
+                payload: {
+                    email,
+                    userId,
+                    keys: {
+                        decVaultKey: decryptedVaultKey,
+                        secretKey,
+                    },
+                },
+            });
+
+            // ToDo: store only if item doesn't exist
+            /**
+             *   11. Save items to LocalStorage (distinguished by userId)
+             */
+            localStorage.setItem(
+                userId,
+                JSON.stringify({
+                    userId,
+                    name,
+                    email,
+                    secretKey,
+                })
+            );
+            localStorage.setItem('lastUser', userId);
+
+            Router.push('/vault');
         } catch (err) {
             console.log(err);
             dispatch({
@@ -368,66 +418,10 @@ export const submitLoginData = ({ email, password, secretKey }) => {
 };
 
 /**
- * Fetching Data and Encrypted Keys from Vault
- */
-
-export const fetchDataAndKeys = ({ email, name, normPassword, secretKey, userId }) => {
-    const sendRequest = async (data, endpoint) => {
-        const response = await api({
-            method: 'POST',
-            url: endpoint,
-            headers: { Authorization: cookie.get('token') },
-            data,
-        });
-        return response;
-    };
-
-    function getEncKeys() {
-        return sendRequest(
-            {
-                email,
-            },
-            endpoints.FETCH_KEYS_ENDPOINT
-        );
-    }
-
-    function getVaultData() {
-        return sendRequest(
-            {
-                email,
-            },
-            endpoints.FETCH_VAULT_ENDPOINT
-        );
-    }
-
-    return async dispatch => {
-        try {
-            const [keys, vault] = await Promise.all([getEncKeys(), getVaultData()]);
-            const { encKeySet } = keys.data;
-            const { encVaultData } = vault.data;
-
-            dispatch({
-                type: types.FETCH_ENCRYPTION_KEYS,
-                payload: encKeySet,
-            });
-            dispatch({
-                type: vaultTypes.FETCH_VAULT_CONTENTS,
-                payload: encVaultData,
-            });
-
-            // ToDo: move this to some other function
-            dispatch(decryptTheVaultKey({ email, name, normPassword, secretKey, userId, encKeySet, encVaultData }));
-        } catch (err) {
-            console.log(err);
-        }
-    };
-};
-
-/**
  *  Decryption of Vault Key
  */
 
-export const decryptTheVaultKey = ({ email, name, normPassword, secretKey, userId, encKeySet, encVaultData }) => {
+export const decryptTheVaultKey = ({ normPassword, secretKey, userId, encKeySet, encVaultData }) => {
     return async dispatch => {
         try {
             /**
@@ -472,52 +466,13 @@ export const decryptTheVaultKey = ({ email, name, normPassword, secretKey, userI
                     decryptedPrivateKey,
                 });
 
-                // ToDo: refactor this chaining
-
-                /**
-                 *  DECRYPT VAULT
-                 */
-                // array of objects
-                const { encArchiveList } = encVaultData;
-                // decrypt if vault is not empty
-                if (encArchiveList !== null) {
-                    dispatch(performVaultItemDecryption({ encArchiveList, vaultKey: decryptedVaultKey }));
-                }
-                // Success Auth
-                dispatch({
-                    type: types.USER_AUTH_SUCCEEDED,
-                    payload: {
-                        email,
-                        userId,
-                        keys: {
-                            decVaultKey: decryptedVaultKey,
-                            secretKey,
-                        },
-                    },
-                });
-
-                // ToDo: store only if item doesn't exist
-                /**
-                 *  Save items to LocalStorage (distinguished by userId)
-                 */
-                localStorage.setItem(
-                    userId,
-                    JSON.stringify({
-                        userId,
-                        name,
-                        email,
-                        secretKey,
-                    })
-                );
-                localStorage.setItem('lastUser', userId);
-
-                Router.push('/vault');
-            } else {
-                console.log('decryption unsuccessful');
-                dispatch({
-                    type: uiTypes.HIDE_PAGE_LOADER,
-                });
+                return decryptedVaultKey;
             }
+            // ToDo: return status
+            console.log('decryption unsuccessful');
+            dispatch({
+                type: uiTypes.HIDE_PAGE_LOADER,
+            });
         } catch (err) {
             console.log(err);
         }

@@ -7,14 +7,70 @@ import { encryptVaultItem, decryptItemOverview, decryptItemDetails } from '@onep
 
 import api from '../../../api';
 import * as types from './types';
+import * as authTypes from '../auth/types';
 import * as uiTypes from '../common/ui/types';
 import * as endpoints from '../../../api/constants';
 
 /** ------------------------------------------------------ */
+/**
+ *          Encryption / Decryption Actions
+ */
+/** ------------------------------------------------------ */
 
 /**
- *  Encryption / Decryption Actions
+ *  Fetching Data and Encrypted Keys from Vault
  */
+
+export const fetchDataAndKeys = ({ email }) => {
+    const sendRequest = async (data, endpoint) => {
+        const response = await api({
+            method: 'POST',
+            url: endpoint,
+            headers: { Authorization: cookie.get('token') },
+            data,
+        });
+        return response;
+    };
+
+    function getEncKeys() {
+        return sendRequest(
+            {
+                email,
+            },
+            endpoints.FETCH_KEYS_ENDPOINT
+        );
+    }
+
+    function getVaultData() {
+        return sendRequest(
+            {
+                email,
+            },
+            endpoints.FETCH_VAULT_ENDPOINT
+        );
+    }
+
+    return async dispatch => {
+        try {
+            const [keys, vault] = await Promise.all([getEncKeys(), getVaultData()]);
+            const { encKeySet } = keys.data;
+            const { encVaultData } = vault.data;
+
+            dispatch({
+                type: authTypes.FETCH_ENCRYPTION_KEYS,
+                payload: encKeySet,
+            });
+            dispatch({
+                type: types.FETCH_VAULT_CONTENTS,
+                payload: encVaultData,
+            });
+
+            return { encKeySet, encVaultData };
+        } catch (err) {
+            console.log(err);
+        }
+    };
+};
 
 export const performVaultItemEncryption = ({ overview, details, vaultKey, email }) => {
     return async dispatch => {
@@ -46,6 +102,10 @@ export const performVaultItemEncryption = ({ overview, details, vaultKey, email 
     };
 };
 
+/**
+ *  Decrypt overview part of item
+ */
+
 const performItemOverviewDecryption = async ({ overview, vaultKey }) => {
     try {
         const decOverview = await decryptItemOverview({ overview, vaultKey });
@@ -55,6 +115,10 @@ const performItemOverviewDecryption = async ({ overview, vaultKey }) => {
     }
 };
 
+/**
+ *  Decrypt details part of item
+ */
+
 const performItemDetailsDecryption = async ({ details, vaultKey }) => {
     try {
         const decDetails = await decryptItemDetails({ details, vaultKey });
@@ -63,6 +127,10 @@ const performItemDetailsDecryption = async ({ details, vaultKey }) => {
         console.log(err);
     }
 };
+
+/**
+ *  Decrypt Vault Item
+ */
 
 export const performVaultItemDecryption = ({ encArchiveList, vaultKey }) => {
     return async dispatch => {
@@ -92,9 +160,11 @@ export const performVaultItemDecryption = ({ encArchiveList, vaultKey }) => {
     };
 };
 
+/** ------------------------------------------------------ */
 /**
- *  UI Actions
+ *                      UI Actions
  */
+/** ------------------------------------------------------ */
 
 export const toggleSideBar = toggleStatus => {
     return {
