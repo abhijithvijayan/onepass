@@ -362,50 +362,61 @@ export const submitLoginData = ({ email, password, secretKey }) => {
             /**
              *   8. Decrypt Vault Key
              */
-            const decryptedVaultKey = await dispatch(
+            const decVaultKeyResponse = await dispatch(
                 decryptTheVaultKey({ normPassword, secretKey: normSecretKey, userId, encKeySet, encVaultData })
             );
 
-            /**
-             *   9. Decrypt Vault
-             */
-            const { encArchiveList, itemsCount } = encVaultData;
-            // decrypt if vault is not empty
-            if (itemsCount !== 0) {
-                await dispatch(performVaultItemDecryption({ encArchiveList, vaultKey: decryptedVaultKey }));
+            // If VaultKey decryption was successful
+            if (decVaultKeyResponse.vaultKeyDecStatus) {
+                const { decryptedVaultKey } = decVaultKeyResponse;
+
+                /**
+                 *   9. Decrypt Vault if not empty
+                 */
+                let decVaultStatus = true;
+                const { encArchiveList, itemsCount } = encVaultData;
+                if (itemsCount !== 0) {
+                    const response = await dispatch(
+                        performVaultItemDecryption({ encArchiveList, vaultKey: decryptedVaultKey })
+                    );
+                    // destructuring
+                    ({ decVaultStatus } = response);
+                }
+
+                // Decryption was successful
+                if (decVaultStatus) {
+                    /**
+                     *  10. Dispatch Successful auth
+                     */
+                    dispatch({
+                        type: types.USER_AUTH_SUCCEEDED,
+                        payload: {
+                            email,
+                            userId,
+                            keys: {
+                                decVaultKey: decryptedVaultKey,
+                                secretKey: normSecretKey,
+                            },
+                        },
+                    });
+
+                    /**
+                     *   11. Save items to LocalStorage (distinguished by userId)
+                     */
+                    localStorage.setItem(
+                        userId,
+                        JSON.stringify({
+                            userId,
+                            name,
+                            email,
+                            secretKey: normSecretKey,
+                        })
+                    );
+                    localStorage.setItem('lastUser', userId);
+
+                    Router.push('/vault');
+                }
             }
-
-            /**
-             *  10. Dispatch Successful auth
-             */
-            dispatch({
-                type: types.USER_AUTH_SUCCEEDED,
-                payload: {
-                    email,
-                    userId,
-                    keys: {
-                        decVaultKey: decryptedVaultKey,
-                        secretKey: normSecretKey,
-                    },
-                },
-            });
-
-            // ToDo: store only if item doesn't exist
-            /**
-             *   11. Save items to LocalStorage (distinguished by userId)
-             */
-            localStorage.setItem(
-                userId,
-                JSON.stringify({
-                    userId,
-                    name,
-                    email,
-                    secretKey: normSecretKey,
-                })
-            );
-            localStorage.setItem('lastUser', userId);
-
-            Router.push('/vault');
         } catch (err) {
             console.log(err);
             dispatch({
@@ -464,13 +475,13 @@ export const decryptTheVaultKey = ({ normPassword, secretKey, userId, encKeySet,
                     decryptedPrivateKey,
                 });
 
-                return decryptedVaultKey;
+                return { decryptedVaultKey, vaultKeyDecStatus: true };
             }
-            // ToDo: return status
             console.log('decryption unsuccessful');
             dispatch({
                 type: uiTypes.HIDE_PAGE_LOADER,
             });
+            return { vaultKeyDecStatus: false };
         } catch (err) {
             console.log(err);
         }

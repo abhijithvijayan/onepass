@@ -135,22 +135,33 @@ const performItemDetailsDecryption = async ({ details, vaultKey }) => {
 export const performVaultItemDecryption = ({ encArchiveList, vaultKey }) => {
     return async dispatch => {
         try {
+            let decVaultStatus = true;
             const decVaultData = await Promise.all(
                 encArchiveList.map(async item => {
                     const { encOverview, encDetails } = item;
                     const decOverview = await performItemOverviewDecryption({ overview: encOverview, vaultKey });
                     const decDetails = await performItemDetailsDecryption({ details: encDetails, vaultKey });
+
                     if (decOverview.status && decDetails.status) {
-                        return { decOverview: decOverview.decrypted, decDetails: decDetails.decrypted };
+                        return {
+                            decOverview: decOverview.decrypted,
+                            decDetails: decDetails.decrypted,
+                        };
                     }
-                    console.log('vault decryption failed');
+                    // Vault decryption was unsuccessful
+                    decVaultStatus = false;
                     return {};
                 })
             );
-            dispatch({
-                type: types.VAULT_DECRYPTION_SUCCEEDED,
-                payload: { decVaultData },
-            });
+            if (decVaultStatus) {
+                dispatch({
+                    type: types.VAULT_DECRYPTION_SUCCEEDED,
+                    payload: { decVaultData },
+                });
+            } else {
+                console.log('vault decryption failed');
+            }
+            return { decVaultStatus };
         } catch (err) {
             console.log(err);
             dispatch({
