@@ -51,8 +51,8 @@ function saveClientEphemeral(state, { payload }) {
 }
 
 function onSuccessfulLogin(state, { payload }) {
-    const { email, userId } = payload;
-    return { ...state, isAuthenticated: true, user: { email, userId }, decrypted: { keys: payload.keys } };
+    const { email, userId, name } = payload;
+    return { ...state, isAuthenticated: true, user: { email, userId, name }, decrypted: { keys: payload.keys } };
 }
 
 function onLogoutRequest() {
