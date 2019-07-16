@@ -22,11 +22,12 @@ const vaultUIReducer = createReducer(initialVaultUIState)({
 const encryptionReducer = createReducer(initialEncryptedState)({
     [types.FETCH_VAULT_CONTENTS]: onFetchVaultContents,
     [types.SAVE_VAULT_ITEM]: onSaveItemSuccess,
-    [types.CLEAR_VAULT]: clearVault,
+    [types.CLEAR_FETCHED_VAULT_DATA]: clearEncVaultData,
 });
 
 const decryptionReducer = createReducer(initialDecryptedState)({
     [types.VAULT_DECRYPTION_SUCCEEDED]: saveDecryptedVault,
+    [types.CLEAR_DECRYPTED_VAULT_DATA]: removeVaultData,
 });
 
 /**
@@ -42,7 +43,7 @@ function onSaveItemSuccess(state, { payload }) {
     return { ...state, response: payload };
 }
 
-function clearVault() {
+function clearEncVaultData() {
     return initialEncryptedState;
 }
 
@@ -52,6 +53,10 @@ function clearVault() {
 
 function saveDecryptedVault(state, { payload }) {
     return { ...state, items: payload.decVaultData };
+}
+
+function removeVaultData() {
+    return initialDecryptedState;
 }
 
 /**

@@ -506,7 +506,10 @@ export const logoutUser = () => {
         localStorage.removeItem(localStorage.getItem('lastUser'));
         localStorage.removeItem('lastUser');
         dispatch({
-            type: vaultTypes.CLEAR_VAULT,
+            type: vaultTypes.CLEAR_DECRYPTED_VAULT_DATA,
+        });
+        dispatch({
+            type: vaultTypes.CLEAR_FETCHED_VAULT_DATA,
         });
         dispatch({
             type: types.USER_DE_AUTH_SUCCEEDED,
