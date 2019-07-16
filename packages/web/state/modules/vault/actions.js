@@ -96,6 +96,8 @@ export const performVaultItemEncryption = ({ overview, details, vaultKey, email 
                     type: types.SAVE_VAULT_ITEM_SUCCESS,
                     payload: { item, status },
                 });
+                // ToDo: get correct items count
+                dispatch(performVaultItemDecryption({ encArchiveList: item, vaultKey, itemsCount: 15 }));
             } else {
                 // ToDo: add a fail message to store
                 console.log('Item not saved to vault');

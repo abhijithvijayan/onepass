@@ -13,6 +13,7 @@ const initialVaultUIState = {
 const initialEncryptedState = {};
 const initialDecryptedState = {
     itemsCount: 0,
+    items: {},
 };
 
 const vaultUIReducer = createReducer(initialVaultUIState)({
@@ -56,7 +57,7 @@ function clearEncVaultData() {
 
 function saveDecryptedVault(state, { payload }) {
     const { itemsCount, decVaultData } = payload;
-    return { ...state, items: decVaultData, itemsCount };
+    return { ...state, items: { ...state.items, ...decVaultData }, itemsCount };
 }
 
 function removeVaultData() {
