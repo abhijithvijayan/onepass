@@ -66,8 +66,8 @@ const EmptyHolder = styled(Empty)`
 `;
 
 class VaultContent extends Component {
-    renderItemCard(item) {
-        return <VaultItemCard item={item} key={item.entryId} />;
+    renderItemCard(key, item) {
+        return <VaultItemCard item={item} key={key} />;
     }
 
     renderFolder() {
@@ -79,8 +79,8 @@ class VaultContent extends Component {
                     <div>Social</div>
                 </FolderHead>
                 <FolderContents>
-                    {items.map(item => {
-                        return this.renderItemCard(item);
+                    {Object.entries(items).map(item => {
+                        return this.renderItemCard(item[0], item[1]);
                     })}
                 </FolderContents>
             </Folder>
@@ -112,7 +112,7 @@ const mapStateToProps = ({ vault: { decrypted } }) => {
     }
     return {
         itemsCount,
-        items: [],
+        items: {},
     };
 };
 

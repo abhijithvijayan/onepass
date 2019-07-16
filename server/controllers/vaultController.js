@@ -20,9 +20,10 @@ exports.fetchVaultData = async (req, res) => {
 
 exports.addVaultItem = async (req, res) => {
     const { encDetails, encOverview, email } = req.body;
-    const { status } = await saveEncVaultItem({ encDetails, encOverview, email });
-    if (status) {
-        return res.status(200).json({ status });
+    const response = await saveEncVaultItem({ encDetails, encOverview, email });
+    if (response.status) {
+        const { status, item } = response;
+        return res.status(200).json({ status, item });
     }
-    return res.status(403).json({ error: 'Invalid Request' });
+    return res.status(403).json({ status: response.status, error: 'Invalid Request' });
 };

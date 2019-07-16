@@ -89,10 +89,17 @@ export const performVaultItemEncryption = ({ overview, details, vaultKey, email 
                 },
             });
 
-            dispatch({
-                type: types.SAVE_VAULT_ITEM,
-                payload: data,
-            });
+            if (data.status) {
+                // Add to DB successful
+                const { item, status } = data;
+                dispatch({
+                    type: types.SAVE_VAULT_ITEM_SUCCESS,
+                    payload: { item, status },
+                });
+            } else {
+                // ToDo: add a fail message to store
+                console.log('Item not saved to vault');
+            }
         } catch (err) {
             console.log(err);
             dispatch({
@@ -136,9 +143,10 @@ export const performVaultItemDecryption = ({ encArchiveList, vaultKey, itemsCoun
     return async dispatch => {
         try {
             let decVaultStatus = true;
+            // Iterate through object
             const decVaultData = await Promise.all(
-                encArchiveList.map(async item => {
-                    const { encOverview, encDetails, entryId } = item;
+                Object.entries(encArchiveList).map(async item => {
+                    const { encOverview, encDetails, entryId } = item[1];
                     const decOverview = await performItemOverviewDecryption({ overview: encOverview, vaultKey });
                     const decDetails = await performItemDetailsDecryption({ details: encDetails, vaultKey });
 
@@ -154,10 +162,17 @@ export const performVaultItemDecryption = ({ encArchiveList, vaultKey, itemsCoun
                     return {};
                 })
             );
+            // Array to object
+            const decArchiveObjectList = Object.assign(
+                {},
+                ...decVaultData.map(item => {
+                    return { [item.entryId]: item };
+                })
+            );
             if (decVaultStatus) {
                 dispatch({
                     type: types.VAULT_DECRYPTION_SUCCEEDED,
-                    payload: { decVaultData, itemsCount },
+                    payload: { decVaultData: decArchiveObjectList, itemsCount },
                 });
             } else {
                 console.log('vault decryption failed');

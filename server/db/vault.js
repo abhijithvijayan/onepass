@@ -27,9 +27,12 @@ exports.getVaultData = async ({ email }) => {
         );
     });
     session.close();
-    const { encVaultKey } = records.length && records[0].get('v').properties;
+
     let itemsCount = 0;
-    let encArchiveList = records.map(record => {
+    let encArchiveObjectList = {};
+    const { encVaultKey } = records.length && records[0].get('v').properties;
+
+    const encArchiveList = records.map(record => {
         const item = record._fields[1]
             ? {
                   ...record._fields[1].end.properties,
@@ -48,10 +51,16 @@ exports.getVaultData = async ({ email }) => {
         }
         return {};
     });
-    if (itemsCount === 0) {
-        encArchiveList = [];
+    if (itemsCount !== 0) {
+        // Array to object
+        encArchiveObjectList = Object.assign(
+            {},
+            ...encArchiveList.map(item => {
+                return { [item.entryId]: item };
+            })
+        );
     }
-    return { encVaultKey: JSON.parse(encVaultKey), itemsCount, encArchiveList };
+    return { encVaultKey: JSON.parse(encVaultKey), itemsCount, encArchiveList: encArchiveObjectList };
 };
 
 exports.saveEncVaultItem = async ({ encDetails, encOverview, email }) => {
@@ -81,7 +90,15 @@ exports.saveEncVaultItem = async ({ encDetails, encOverview, email }) => {
     const entry = records.length && records[0].get('e').properties;
     // Parse if needed
     if (entry) {
-        return { status: true };
+        const { entryId, createdAt } = entry;
+        const item = {
+            entryId,
+            createdAt,
+            encDetails,
+            encOverview,
+        };
+        // ToDo: send status message
+        return { status: true, item };
     }
     return { status: false };
 };
