@@ -138,7 +138,7 @@ export const performVaultItemDecryption = ({ encArchiveList, vaultKey, itemsCoun
             let decVaultStatus = true;
             const decVaultData = await Promise.all(
                 encArchiveList.map(async item => {
-                    const { encOverview, encDetails } = item;
+                    const { encOverview, encDetails, entryId } = item;
                     const decOverview = await performItemOverviewDecryption({ overview: encOverview, vaultKey });
                     const decDetails = await performItemDetailsDecryption({ details: encDetails, vaultKey });
 
@@ -146,6 +146,7 @@ export const performVaultItemDecryption = ({ encArchiveList, vaultKey, itemsCoun
                         return {
                             decOverview: decOverview.decrypted,
                             decDetails: decDetails.decrypted,
+                            entryId,
                         };
                     }
                     // Vault decryption was unsuccessful

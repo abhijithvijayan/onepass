@@ -393,6 +393,7 @@ export const submitLoginData = ({ email, password, secretKey }) => {
                         payload: {
                             email,
                             userId,
+                            name,
                             keys: {
                                 decVaultKey: decryptedVaultKey,
                                 secretKey: normSecretKey,

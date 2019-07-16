@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
@@ -65,9 +66,8 @@ const EmptyHolder = styled(Empty)`
 `;
 
 class VaultContent extends Component {
-    /* eslint-disable-next-line class-methods-use-this */
     renderItemCard(item) {
-        return <VaultItemCard item={item} />;
+        return <VaultItemCard item={item} key={item.entryId} />;
     }
 
     renderFolder() {
