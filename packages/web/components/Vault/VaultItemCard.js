@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { bindActionCreators } from 'redux';
@@ -129,48 +130,72 @@ class VaultItemCard extends Component {
         });
     };
 
+    renderCardHeader(name, url) {
+        return (
+            <React.Fragment>
+                <div>
+                    <SiteName>{name}</SiteName>
+                </div>
+                <SiteUrl>{url}</SiteUrl>
+            </React.Fragment>
+        );
+    }
+
+    renderDataHolder(username) {
+        return (
+            <DataHolder>
+                <div className="data__column">
+                    <div>
+                        <h2>Username</h2>
+                        <p>{username}</p>
+                    </div>
+                </div>
+                <div className="data__column">
+                    <div>
+                        <h2>Password</h2>
+                        <p>***********</p>
+                    </div>
+                </div>
+            </DataHolder>
+        );
+    }
+
+    renderIconHolder() {
+        return (
+            <IconHolder>
+                <Tooltip placement="bottomLeft" title="Delete">
+                    <Icon
+                        onClick={() => {
+                            return this.showDeleteConfirm();
+                        }}
+                        type="delete"
+                    />
+                </Tooltip>
+                <Tooltip placement="bottom" title="Edit">
+                    <Icon
+                        onClick={() => {
+                            return this.props.toggleItemModal(true);
+                        }}
+                        type="edit"
+                    />
+                </Tooltip>
+                <Tooltip placement="bottomRight" title="Launch">
+                    <Icon type="rocket" />
+                </Tooltip>
+            </IconHolder>
+        );
+    }
+
     render() {
+        const {
+            decDetails: { username },
+            decOverview: { url, name },
+        } = this.props.item;
         return (
             <Card>
-                <div>
-                    <SiteName>Google</SiteName>
-                </div>
-                <SiteUrl>https://www.google.com</SiteUrl>
-                <DataHolder>
-                    <div className="data__column">
-                        <div>
-                            <h2>Username</h2>
-                            <p>onepass</p>
-                        </div>
-                    </div>
-                    <div className="data__column">
-                        <div>
-                            <h2>Password</h2>
-                            <p>**********</p>
-                        </div>
-                    </div>
-                </DataHolder>
-                <IconHolder>
-                    <Tooltip placement="bottomLeft" title="Delete">
-                        <Icon
-                            onClick={() => {
-                                return this.showDeleteConfirm();
-                            }}
-                            type="delete"
-                        />
-                    </Tooltip>
-                    <Tooltip placement="bottom" title="Edit">
-                        <Icon
-                            onClick={() => {
-                                return this.props.toggleItemModal(true);
-                            }}
-                            type="edit"
-                        />
-                    </Tooltip>
-                    <Tooltip placement="bottomRight" title="Launch">
-                        <Icon type="rocket" />
-                    </Tooltip>
-                </IconHolder>
+                {this.renderCardHeader(name, url)}
+                {this.renderDataHolder(username)}
+                {this.renderIconHolder()}
             </Card>
         );
     }

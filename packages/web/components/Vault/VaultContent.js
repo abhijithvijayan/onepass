@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
 import { Empty } from 'antd';
 
 import VaultItemCard from './VaultItemCard';
@@ -63,54 +64,56 @@ const EmptyHolder = styled(Empty)`
     flex-direction: column;
 `;
 
-const VaultContent = () => {
-    return (
-        <React.Fragment>
-            <MainContentHolder>
-                <VaultItemsScroll>
-                    <FolderWrapper>
-                        <Folder>
-                            <FolderHead>
-                                {/* To Do some toggle button here */}
-                                <div>Social</div>
-                            </FolderHead>
-                            <FolderContents>
-                                <VaultItemCard />
-                                <VaultItemCard />
-                                <VaultItemCard />
-                                <VaultItemCard />
-                            </FolderContents>
-                        </Folder>
-                        <Folder>
-                            <FolderHead>
-                                {/* To Do some toggle button here */}
-                                <div>Social</div>
-                            </FolderHead>
-                            <FolderContents>
-                                <VaultItemCard />
-                                <VaultItemCard />
-                                <VaultItemCard />
-                                <VaultItemCard />
-                            </FolderContents>
-                        </Folder>
-                        <Folder>
-                            <FolderHead>
-                                {/* To Do some toggle button here */}
-                                <div>Social</div>
-                            </FolderHead>
-                            <FolderContents>
-                                <VaultItemCard />
-                                <VaultItemCard />
-                                <VaultItemCard />
-                                <VaultItemCard />
-                            </FolderContents>
-                        </Folder>
-                    </FolderWrapper>
-                </VaultItemsScroll>
-                {/* <EmptyHolder /> */}
-            </MainContentHolder>
-        </React.Fragment>
-    );
+class VaultContent extends Component {
+    /* eslint-disable-next-line class-methods-use-this */
+    renderItemCard(item) {
+        return <VaultItemCard item={item} />;
+    }
+
+    renderFolder() {
+        const { items } = this.props;
+        return (
+            <Folder>
+                <FolderHead>
+                    {/* To Do some toggle button here */}
+                    <div>Social</div>
+                </FolderHead>
+                <FolderContents>
+                    {items.map(item => {
+                        return this.renderItemCard(item);
+                    })}
+                </FolderContents>
+            </Folder>
+        );
+    }
+
+    render() {
+        const { itemsCount } = this.props;
+        return (
+            <React.Fragment>
+                <MainContentHolder>
+                    <VaultItemsScroll>
+                        <FolderWrapper>{itemsCount > 0 ? this.renderFolder() : <EmptyHolder />}</FolderWrapper>
+                    </VaultItemsScroll>
+                    {/* <EmptyHolder /> */}
+                </MainContentHolder>
+            </React.Fragment>
+        );
+    }
+}
+
+const mapStateToProps = ({ vault: { decrypted } }) => {
+    const { itemsCount } = decrypted;
+    if (itemsCount !== 0) {
+        return {
+            items: decrypted.items,
+            itemsCount,
+        };
+    }
+    return {
+        itemsCount,
+        items: [],
+    };
 };
 
-export default VaultContent;
+export default connect(mapStateToProps)(VaultContent);
