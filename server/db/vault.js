@@ -28,14 +28,15 @@ exports.getVaultData = async ({ email }) => {
     });
     session.close();
     const { encVaultKey } = records.length && records[0].get('v').properties;
-    // ToDo: refactor to return empty object if list is empty
-    const encArchiveList = records.map(record => {
+    let itemsCount = 0;
+    let encArchiveList = records.map(record => {
         const item = record._fields[1]
             ? {
                   ...record._fields[1].end.properties,
               }
             : null;
         if (item) {
+            itemsCount += 1;
             return {
                 encOverview: Object.prototype.hasOwnProperty.call(item, 'encOverview')
                     ? JSON.parse(item.encOverview)
@@ -45,9 +46,12 @@ exports.getVaultData = async ({ email }) => {
                 entryId: Object.prototype.hasOwnProperty.call(item, 'entryId') ? item.entryId : '',
             };
         }
-        return null;
+        return {};
     });
-    return { encVaultKey: JSON.parse(encVaultKey), encArchiveList };
+    if (itemsCount === 0) {
+        encArchiveList = [];
+    }
+    return { encVaultKey: JSON.parse(encVaultKey), itemsCount, encArchiveList };
 };
 
 exports.saveEncVaultItem = async ({ encDetails, encOverview, email }) => {

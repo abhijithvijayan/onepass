@@ -369,9 +369,9 @@ export const submitLoginData = ({ email, password, secretKey }) => {
             /**
              *   9. Decrypt Vault
              */
-            const { encArchiveList } = encVaultData;
+            const { encArchiveList, itemsCount } = encVaultData;
             // decrypt if vault is not empty
-            if (encArchiveList !== null) {
+            if (itemsCount !== 0) {
                 await dispatch(performVaultItemDecryption({ encArchiveList, vaultKey: decryptedVaultKey }));
             }
 
