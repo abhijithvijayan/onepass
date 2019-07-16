@@ -11,7 +11,9 @@ const initialVaultUIState = {
 };
 
 const initialEncryptedState = {};
-const initialDecryptedState = {};
+const initialDecryptedState = {
+    itemsCount: 0,
+};
 
 const vaultUIReducer = createReducer(initialVaultUIState)({
     [types.TOGGLE_SIDEBAR]: toggleSideBar,
@@ -52,7 +54,8 @@ function clearEncVaultData() {
  */
 
 function saveDecryptedVault(state, { payload }) {
-    return { ...state, items: payload.decVaultData };
+    const { itemsCount, decVaultData } = payload;
+    return { ...state, items: decVaultData, itemsCount };
 }
 
 function removeVaultData() {

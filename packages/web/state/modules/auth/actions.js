@@ -377,7 +377,7 @@ export const submitLoginData = ({ email, password, secretKey }) => {
                 const { encArchiveList, itemsCount } = encVaultData;
                 if (itemsCount !== 0) {
                     const response = await dispatch(
-                        performVaultItemDecryption({ encArchiveList, vaultKey: decryptedVaultKey })
+                        performVaultItemDecryption({ encArchiveList, vaultKey: decryptedVaultKey, itemsCount })
                     );
                     // destructuring
                     ({ decVaultStatus } = response);

@@ -132,7 +132,7 @@ const performItemDetailsDecryption = async ({ details, vaultKey }) => {
  *  Decrypt Vault Item
  */
 
-export const performVaultItemDecryption = ({ encArchiveList, vaultKey }) => {
+export const performVaultItemDecryption = ({ encArchiveList, vaultKey, itemsCount }) => {
     return async dispatch => {
         try {
             let decVaultStatus = true;
@@ -156,7 +156,7 @@ export const performVaultItemDecryption = ({ encArchiveList, vaultKey }) => {
             if (decVaultStatus) {
                 dispatch({
                     type: types.VAULT_DECRYPTION_SUCCEEDED,
-                    payload: { decVaultData },
+                    payload: { decVaultData, itemsCount },
                 });
             } else {
                 console.log('vault decryption failed');
