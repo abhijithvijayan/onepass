@@ -43,7 +43,7 @@ function onFetchVaultContents(state, { payload }) {
 
 function onSaveItemSuccess(state, { payload }) {
     const { item, status } = payload;
-    return { ...state, response: status, items: [...state.items, item] };
+    return { ...state, response: status, items: { ...state.items, ...item } };
 }
 
 function clearEncVaultData() {

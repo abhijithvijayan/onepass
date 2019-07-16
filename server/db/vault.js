@@ -91,14 +91,10 @@ exports.saveEncVaultItem = async ({ encDetails, encOverview, email }) => {
     // Parse if needed
     if (entry) {
         const { entryId, createdAt } = entry;
-        const item = {
-            entryId,
-            createdAt,
-            encDetails,
-            encOverview,
-        };
+        const item = { entryId, createdAt, encDetails, encOverview };
+        const itemObj = Object.assign({}, { [entryId]: item });
         // ToDo: send status message
-        return { status: true, item };
+        return { status: true, item: itemObj };
     }
     return { status: false };
 };
