@@ -357,15 +357,13 @@ export const submitLoginData = ({ email, password, secretKey }) => {
             /**
              *   7. Fetch keys & data using this token
              */
-            const { encKeySet, encVaultData } = await dispatch(
-                fetchDataAndKeys({ email, name, normPassword, secretKey: normSecretKey, userId })
-            );
+            const { encKeySet, encVaultData } = await dispatch(fetchDataAndKeys({ email }));
 
             /**
              *   8. Decrypt Vault Key
              */
             const decryptedVaultKey = await dispatch(
-                decryptTheVaultKey({ email, name, normPassword, secretKey, userId, encKeySet, encVaultData })
+                decryptTheVaultKey({ normPassword, secretKey: normSecretKey, userId, encKeySet, encVaultData })
             );
 
             /**
@@ -387,7 +385,7 @@ export const submitLoginData = ({ email, password, secretKey }) => {
                     userId,
                     keys: {
                         decVaultKey: decryptedVaultKey,
-                        secretKey,
+                        secretKey: normSecretKey,
                     },
                 },
             });
@@ -402,7 +400,7 @@ export const submitLoginData = ({ email, password, secretKey }) => {
                     userId,
                     name,
                     email,
-                    secretKey,
+                    secretKey: normSecretKey,
                 })
             );
             localStorage.setItem('lastUser', userId);
@@ -507,7 +505,7 @@ export const logoutUser = () => {
 };
 
 export const renewAuthUser = () => {
-    return async (dispatch, getState) => {
+    return async dispatch => {
         // ToDo: Check if renew is needed from state
         try {
             const {
