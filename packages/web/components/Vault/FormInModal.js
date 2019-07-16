@@ -3,7 +3,7 @@
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { Field, reduxForm } from 'redux-form';
+import { Field, reset, reduxForm } from 'redux-form';
 import { Cascader, Col, Form, Icon, Input } from 'antd';
 
 const FormHolder = styled(Form)`
@@ -52,6 +52,10 @@ const cascaderOptions = [
 const renderInput = renderField(Input);
 const renderSelect = renderField(Cascader);
 
+const afterSubmit = (result, dispatch) => {
+    return dispatch(reset('form_in_modal'));
+};
+
 class ModalForm extends Component {
     render() {
         const { handleSubmit } = this.props;
@@ -95,4 +99,5 @@ const FormInModal = connect()(ModalForm);
 export default reduxForm({
     form: 'form_in_modal',
     validate,
+    onSubmitSuccess: afterSubmit,
 })(FormInModal);
