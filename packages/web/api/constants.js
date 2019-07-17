@@ -9,4 +9,4 @@ export const TOKEN_RENEWAL_ENDPOINT = '/auth/token.renew';
 export const FETCH_KEYS_ENDPOINT = '/vault/getKeys';
 export const FETCH_VAULT_ENDPOINT = '/vault/getVaultData';
 
-export const SAVE_ITEM_ENDPOINT = '/vault/addItem';
+export const SAVE_ITEM_ENDPOINT = '/vault/addOrUpdateItem';

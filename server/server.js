@@ -119,7 +119,7 @@ nextApp.prepare().then(() => {
 
     server.post('/api/v1/vault/getVaultData', auth.authWithJWT, vault.fetchVaultData);
 
-    server.post('/api/v1/vault/addItem', auth.authWithJWT, vault.addVaultItem);
+    server.post('/api/v1/vault/addOrUpdateItem', auth.authWithJWT, vault.addOrUpdateVaultItem);
 
     /* ---------------------------------------- */
     /* ------------ REFACTOR ROUTES ----------- */

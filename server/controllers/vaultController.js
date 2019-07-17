@@ -18,8 +18,7 @@ exports.fetchVaultData = async (req, res) => {
     return res.status(403).json({ error: 'Invalid Request' });
 };
 
-// ToDo: add or edit item
-exports.addVaultItem = async (req, res) => {
+exports.addOrUpdateVaultItem = async (req, res) => {
     const { encDetails, encOverview, email, itemId } = req.body;
     const response = await saveEncVaultItem({ encDetails, encOverview, email, itemId });
     if (response.status) {

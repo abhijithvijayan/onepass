@@ -12,7 +12,7 @@ const initialVaultUIState = {
 
 const initialEncryptedState = {};
 const initialDecryptedState = {
-    itemsCount: 0,
+    isVaultEmpty: true,
     items: {},
 };
 
@@ -56,8 +56,8 @@ function clearEncVaultData() {
  */
 
 function saveDecryptedVault(state, { payload }) {
-    const { itemsCount, decVaultData } = payload;
-    return { ...state, items: { ...state.items, ...decVaultData }, itemsCount };
+    const { isVaultEmpty, decVaultData } = payload;
+    return { ...state, items: { ...state.items, ...decVaultData }, isVaultEmpty };
 }
 
 function removeVaultData() {

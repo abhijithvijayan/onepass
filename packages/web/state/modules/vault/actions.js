@@ -99,7 +99,7 @@ export const performVaultItemEncryption = ({ overview, details, vaultKey, email,
                     payload: { item, status },
                 });
                 // ToDo: get correct items count
-                dispatch(performVaultItemDecryption({ encArchiveList: item, vaultKey, itemsCount: 15 }));
+                dispatch(performVaultItemDecryption({ encArchiveList: item, vaultKey }));
             } else {
                 // ToDo: add a fail message to store
                 console.log('Item not saved to vault');
@@ -143,10 +143,11 @@ const performItemDetailsDecryption = async ({ details, vaultKey }) => {
  *  Decrypt Vault Item
  */
 
-export const performVaultItemDecryption = ({ encArchiveList, vaultKey, itemsCount }) => {
+export const performVaultItemDecryption = ({ encArchiveList, vaultKey }) => {
     return async dispatch => {
         try {
             let decVaultStatus = true;
+            let itemsCount = 0;
             // Iterate through object
             const decVaultData = await Promise.all(
                 Object.entries(encArchiveList).map(async item => {
@@ -155,6 +156,7 @@ export const performVaultItemDecryption = ({ encArchiveList, vaultKey, itemsCoun
                     const decDetails = await performItemDetailsDecryption({ details: encDetails, vaultKey });
 
                     if (decOverview.status && decDetails.status) {
+                        itemsCount += 1;
                         return {
                             decOverview: decOverview.decrypted,
                             decDetails: decDetails.decrypted,
@@ -174,9 +176,10 @@ export const performVaultItemDecryption = ({ encArchiveList, vaultKey, itemsCoun
                 })
             );
             if (decVaultStatus) {
+                const isVaultEmpty = itemsCount === 0;
                 dispatch({
                     type: types.VAULT_DECRYPTION_SUCCEEDED,
-                    payload: { decVaultData: decArchiveObjectList, itemsCount },
+                    payload: { decVaultData: decArchiveObjectList, isVaultEmpty },
                 });
             } else {
                 console.log('vault decryption failed');

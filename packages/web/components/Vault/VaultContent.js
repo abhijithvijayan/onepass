@@ -88,12 +88,12 @@ class VaultContent extends Component {
     }
 
     render() {
-        const { itemsCount } = this.props;
+        const { isVaultEmpty } = this.props;
         return (
             <React.Fragment>
                 <MainContentHolder>
                     <VaultItemsScroll>
-                        <FolderWrapper>{itemsCount > 0 ? this.renderFolder() : <EmptyHolder />}</FolderWrapper>
+                        <FolderWrapper>{!isVaultEmpty ? this.renderFolder() : <EmptyHolder />}</FolderWrapper>
                     </VaultItemsScroll>
                     {/* <EmptyHolder /> */}
                 </MainContentHolder>
@@ -103,15 +103,15 @@ class VaultContent extends Component {
 }
 
 const mapStateToProps = ({ vault: { decrypted } }) => {
-    const { itemsCount } = decrypted;
-    if (itemsCount !== 0) {
+    const { isVaultEmpty } = decrypted;
+    if (!isVaultEmpty) {
         return {
             items: decrypted.items,
-            itemsCount,
+            isVaultEmpty,
         };
     }
     return {
-        itemsCount,
+        isVaultEmpty,
         items: {},
     };
 };
