@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { Button, Modal } from 'antd';
 import styled from 'styled-components';
 
+import { beautifySecretKey } from '@onepass/core/common';
 import { getEmergencyKit } from '../../state/modules/auth/operations';
 import PdfContent from './PdfContent';
 
@@ -42,7 +43,7 @@ class PdfModal extends Component {
                 <h2>Meet your Secret Key</h2>
                 <p>You’ll need it to sign in on new devices.</p>
                 <div>
-                    <SecretKeyHolder>{secretKey}</SecretKeyHolder>
+                    <SecretKeyHolder>{beautifySecretKey(secretKey)}</SecretKeyHolder>
                     <Button
                         type="button"
                         onClick={() => {

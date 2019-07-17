@@ -1,4 +1,5 @@
 import React from 'react';
+import { beautifySecretKey } from '@onepass/core/common';
 
 const PdfContent = props => {
     const today = new Date();
@@ -19,7 +20,7 @@ const PdfContent = props => {
                         EMAIL ADDRESS <br /> {props.email}
                     </li>
                     <li>
-                        SECRET KEY <br /> {props.secretKey}
+                        SECRET KEY <br /> {beautifySecretKey(props.secretKey)}
                     </li>
                 </ul>
             </div>
