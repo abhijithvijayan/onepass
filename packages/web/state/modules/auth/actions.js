@@ -336,7 +336,7 @@ export const submitLoginData = ({ email, password, secretKey }) => {
              *  4. Send `clientSessionProof` & `clientPublicEphemeral` to the server
              */
             const {
-                data: { serverSessionProof, token, name },
+                data: { serverSessionProof, token, name, hasDownloadedEmergencyKit },
             } = await sendRequest({
                 email,
                 clientPublicEphemeral,
@@ -394,6 +394,7 @@ export const submitLoginData = ({ email, password, secretKey }) => {
                             email,
                             userId,
                             name,
+                            hasDownloadedEmergencyKit,
                             keys: {
                                 decVaultKey: decryptedVaultKey,
                                 secretKey: normSecretKey,
@@ -483,6 +484,26 @@ export const decryptTheVaultKey = ({ normPassword, secretKey, userId, encKeySet,
                 type: uiTypes.HIDE_PAGE_LOADER,
             });
             return { vaultKeyDecStatus: false };
+        } catch (err) {
+            console.log(err);
+        }
+    };
+};
+
+export const getEmergencyKit = email => {
+    return async dispatch => {
+        try {
+            const { data } = await api({
+                method: 'POST',
+                url: endpoints.GET_EMERGENCY_KIT_ENDPOINT,
+                headers: { Authorization: cookie.get('token') },
+                data: { email },
+            });
+            // if only successful
+            dispatch({
+                type: types.DOWNLOAD_EMERGENCY_KIT,
+                payload: { status: data.status },
+            });
         } catch (err) {
             console.log(err);
         }

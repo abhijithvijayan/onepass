@@ -17,6 +17,7 @@ const loginReducer = createReducer(initialLoginState)({
     [types.USER_AUTH_SUCCEEDED]: onSuccessfulLogin,
     [types.USER_DE_AUTH_SUCCEEDED]: onLogoutRequest,
     [types.FETCH_ENCRYPTION_KEYS]: onFetchKeys,
+    [types.DOWNLOAD_EMERGENCY_KIT]: onDownloadEmergencyKit,
 });
 
 const signUpReducer = createReducer({})({
@@ -33,12 +34,17 @@ function onSignUpRequest(state, { payload }) {
     return { ...state, response: payload.data, isVerificationSent: true };
 }
 
-function onVerifyTokenSubmission(state, action) {
-    return { ...state, response: action.payload, isVerified: true };
+function onVerifyTokenSubmission(state, { payload }) {
+    return { ...state, response: payload, isVerified: true };
 }
 
 function finishSignUp() {
     return initialSignUpState;
+}
+
+function onDownloadEmergencyKit(state, { payload }) {
+    const { status } = payload;
+    return { ...state, user: { ...state.user, hasDownloadedEmergencyKit: status } };
 }
 
 /**
@@ -51,8 +57,13 @@ function saveClientEphemeral(state, { payload }) {
 }
 
 function onSuccessfulLogin(state, { payload }) {
-    const { email, userId, name } = payload;
-    return { ...state, isAuthenticated: true, user: { email, userId, name }, decrypted: { keys: payload.keys } };
+    const { email, userId, name, hasDownloadedEmergencyKit } = payload;
+    return {
+        ...state,
+        isAuthenticated: true,
+        user: { email, userId, name, hasDownloadedEmergencyKit },
+        decrypted: { keys: payload.keys },
+    };
 }
 
 function onLogoutRequest() {
