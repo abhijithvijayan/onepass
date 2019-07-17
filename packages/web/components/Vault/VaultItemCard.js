@@ -2,10 +2,10 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { bindActionCreators } from 'redux';
-import { Icon, Modal, Tooltip } from 'antd';
+import { Icon, Tooltip } from 'antd';
 import { connect } from 'react-redux';
 
-import { toggleItemModal } from '../../state/modules/vault/operations';
+import { toggleItemModal, toggleConfirmDeleteModal } from '../../state/modules/vault/operations';
 
 const Card = styled.div`
     user-select: none;
@@ -110,27 +110,9 @@ const IconHolder = styled.div`
         }
     }
 `;
-class VaultItemCard extends Component {
-    showDeleteConfirm = () => {
-        return Modal.confirm({
-            title: 'Sure you want to delete this entry?',
-            content: 'SiteName',
-            okText: 'Yes',
-            okType: 'danger',
-            cancelText: 'No',
-            centered: true,
-            onOk() {
-                /* eslint-disable-next-line no-console */
-                console.log('OK');
-            },
-            onCancel() {
-                /* eslint-disable-next-line no-console */
-                console.log('Cancel');
-            },
-        });
-    };
 
-    renderCardHeader(name, url) {
+class VaultItemCard extends Component {
+    renderCardHeader = (name, url) => {
         return (
             <React.Fragment>
                 <div>
@@ -139,9 +121,9 @@ class VaultItemCard extends Component {
                 <SiteUrl>{url}</SiteUrl>
             </React.Fragment>
         );
-    }
+    };
 
-    renderDataHolder(username) {
+    renderDataHolder = username => {
         return (
             <DataHolder>
                 <div className="data__column">
@@ -158,16 +140,16 @@ class VaultItemCard extends Component {
                 </div>
             </DataHolder>
         );
-    }
+    };
 
-    renderIconHolder(entryId) {
+    renderIconHolder = entryId => {
         return (
             <IconHolder>
                 <Tooltip placement="bottomLeft" title="Delete">
                     <Icon
                         id={entryId}
-                        onClick={() => {
-                            return this.showDeleteConfirm();
+                        onClick={e => {
+                            return this.props.toggleConfirmDeleteModal(true, e.currentTarget.id);
                         }}
                         type="delete"
                     />
@@ -186,7 +168,7 @@ class VaultItemCard extends Component {
                 </Tooltip>
             </IconHolder>
         );
-    }
+    };
 
     render() {
         const {
@@ -207,6 +189,7 @@ class VaultItemCard extends Component {
 const mapDispatchToProps = dispatch => {
     return {
         toggleItemModal: bindActionCreators(toggleItemModal, dispatch),
+        toggleConfirmDeleteModal: bindActionCreators(toggleConfirmDeleteModal, dispatch),
     };
 };
 

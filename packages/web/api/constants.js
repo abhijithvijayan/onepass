@@ -10,3 +10,4 @@ export const FETCH_KEYS_ENDPOINT = '/vault/getKeys';
 export const FETCH_VAULT_ENDPOINT = '/vault/getVaultData';
 
 export const SAVE_ITEM_ENDPOINT = '/vault/addOrUpdateItem';
+export const DELETE_ITEM_ENDPOINT = '/vault/deleteItem';

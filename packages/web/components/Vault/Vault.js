@@ -9,6 +9,7 @@ import VaultFooter from './VaultFooter';
 import PdfModal from './PdfModal';
 import ModalWrappedForm from './ModalWrappedForm';
 import BottomActionButtons from './BottomActionButtons';
+import DeleteConfirmModal from './DeleteConfirmModal';
 
 const VaultLayout = styled(Layout)`
     position: absolute;
@@ -30,6 +31,7 @@ const Vault = () => {
                 <PdfModal />
             </Layout>
             <ModalWrappedForm />
+            <DeleteConfirmModal />
         </VaultLayout>
     );
 };

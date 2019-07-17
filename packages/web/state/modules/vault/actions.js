@@ -72,6 +72,10 @@ export const fetchDataAndKeys = ({ email }) => {
     };
 };
 
+/**
+ *  Encrypt & Store Item to Vault
+ */
+
 export const performVaultItemEncryption = ({ overview, details, vaultKey, email, itemId }) => {
     return async dispatch => {
         try {
@@ -98,7 +102,6 @@ export const performVaultItemEncryption = ({ overview, details, vaultKey, email,
                     type: types.SAVE_VAULT_ITEM_SUCCESS,
                     payload: { item, status },
                 });
-                // ToDo: get correct items count
                 dispatch(performVaultItemDecryption({ encArchiveList: item, vaultKey }));
             } else {
                 // ToDo: add a fail message to store
@@ -194,6 +197,39 @@ export const performVaultItemDecryption = ({ encArchiveList, vaultKey }) => {
     };
 };
 
+/**
+ *  Delete Vault Item
+ */
+
+export const deleteVaultItem = ({ email, itemId }) => {
+    return async dispatch => {
+        try {
+            const { data } = await api({
+                method: 'POST',
+                url: endpoints.DELETE_ITEM_ENDPOINT,
+                headers: { Authorization: cookie.get('token') },
+                data: {
+                    email,
+                    itemId,
+                },
+            });
+
+            if (data.status) {
+                const { item, status } = data;
+                dispatch({
+                    type: types.DELETE_VAULT_ITEM_SUCCESS,
+                    payload: { item, status },
+                });
+            } else {
+                // ToDo: add a fail message to store
+                console.log('Item not deleted from vault');
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
+};
+
 /** ------------------------------------------------------ */
 /**
  *                      UI Actions
@@ -214,6 +250,16 @@ export const toggleItemModal = (toggleStatus, id) => {
         type: types.TOGGLE_ITEM_MODAL,
         payload: {
             isItemModalOpen: toggleStatus,
+            id,
+        },
+    };
+};
+
+export const toggleConfirmDeleteModal = (toggleStatus, id) => {
+    return {
+        type: types.TOGGLE_CONFIRM_DELETE_MODAL,
+        payload: {
+            isDeleteModalOpen: toggleStatus,
             id,
         },
     };

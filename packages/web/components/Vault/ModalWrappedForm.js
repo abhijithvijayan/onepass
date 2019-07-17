@@ -63,7 +63,6 @@ class ModalWrappedForm extends Component {
             <div>
                 <Modal
                     width={750}
-                    title="Vault Item"
                     centered
                     visible={isItemModalOpen}
                     onOk={this.handleSubmit}

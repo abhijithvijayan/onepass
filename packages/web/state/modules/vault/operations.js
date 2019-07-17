@@ -5,6 +5,8 @@ import {
     fetchDataAndKeys,
     performVaultItemEncryption,
     performVaultItemDecryption,
+    toggleConfirmDeleteModal,
+    deleteVaultItem,
 } from './actions';
 
 export {
@@ -14,4 +16,6 @@ export {
     fetchDataAndKeys,
     performVaultItemEncryption,
     performVaultItemDecryption,
+    toggleConfirmDeleteModal,
+    deleteVaultItem,
 };

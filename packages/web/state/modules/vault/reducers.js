@@ -8,6 +8,7 @@ const initialVaultUIState = {
     isSideBarOpen: true,
     isItemModalOpen: false,
     hoverOverActionButtons: false,
+    isDeleteModalOpen: false,
 };
 
 const initialEncryptedState = {};
@@ -20,12 +21,14 @@ const vaultUIReducer = createReducer(initialVaultUIState)({
     [types.TOGGLE_SIDEBAR]: toggleSideBar,
     [types.TOGGLE_ITEM_MODAL]: toggleItemModal,
     [types.ACTION_BUTTONS_HOVER]: hoverOverActionButtons,
+    [types.TOGGLE_CONFIRM_DELETE_MODAL]: toggleConfirmDeleteModal,
 });
 
 const encryptionReducer = createReducer(initialEncryptedState)({
     [types.FETCH_VAULT_CONTENTS]: onFetchVaultContents,
     [types.SAVE_VAULT_ITEM_SUCCESS]: onSaveItemSuccess,
     [types.CLEAR_FETCHED_VAULT_DATA]: clearEncVaultData,
+    [types.DELETE_VAULT_ITEM_SUCCESS]: onDeleteItemSuccess,
 });
 
 const decryptionReducer = createReducer(initialDecryptedState)({
@@ -44,6 +47,12 @@ function onFetchVaultContents(state, { payload }) {
 
 function onSaveItemSuccess(state, { payload }) {
     const { item, status } = payload;
+    return { ...state, response: status, items: { ...state.items, ...item } };
+}
+
+function onDeleteItemSuccess(state, { payload }) {
+    const { item, status } = payload;
+    // ToDo: delete the object
     return { ...state, response: status, items: { ...state.items, ...item } };
 }
 
@@ -78,6 +87,10 @@ function toggleItemModal(state, { payload }) {
 
 function hoverOverActionButtons(state, { payload }) {
     return { ...state, hoverOverActionButtons: payload.hover };
+}
+
+function toggleConfirmDeleteModal(state, { payload }) {
+    return { ...state, isDeleteModalOpen: payload.isDeleteModalOpen, selectedItemId: payload.id };
 }
 
 /* ------------------------------------- */
