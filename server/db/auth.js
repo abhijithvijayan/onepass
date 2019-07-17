@@ -76,6 +76,6 @@ exports.retrieveSRPCredentials = async ({ email }) => {
     });
     session.close();
     const { salt, verifier, userId, serverSecretEphemeral } = records.length && records[0].get('auth').properties;
-    const { name } = records.length && records[0].get('u').properties;
-    return { salt, verifier, userId, name, serverSecretEphemeral };
+    const { name, hasDownloadedEmergencyKit } = records.length && records[0].get('u').properties;
+    return { salt, verifier, userId, name, hasDownloadedEmergencyKit, serverSecretEphemeral };
 };

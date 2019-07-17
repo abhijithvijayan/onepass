@@ -6,7 +6,14 @@ const passport = require('passport');
 const generate = require('nanoid/generate');
 const srp = require('secure-remote-password/server');
 
-const { createUser, getUserDetails, verifyUser, requestResetPassword, validatePasswordRequest } = require('../db/user');
+const {
+    createUser,
+    getUserDetails,
+    verifyUser,
+    genEmergencyKit,
+    requestResetPassword,
+    validatePasswordRequest,
+} = require('../db/user');
 const {
     saveAccountCredentials,
     retrieveSRPVerifier,
@@ -139,7 +146,14 @@ exports.login = async (req, res) => {
         }
         case 'login': {
             const { clientPublicEphemeral, clientSessionProof } = req.body;
-            const { verifier, salt, userId, name, serverSecretEphemeral } = await retrieveSRPCredentials({ email });
+            const {
+                verifier,
+                salt,
+                userId,
+                name,
+                hasDownloadedEmergencyKit,
+                serverSecretEphemeral,
+            } = await retrieveSRPCredentials({ email });
             if (verifier && salt && userId && name && serverSecretEphemeral) {
                 try {
                     const serverSession = srp.deriveSession(
@@ -152,7 +166,7 @@ exports.login = async (req, res) => {
                     );
                     const serverSessionProof = serverSession.proof;
                     const token = genJWTtoken({ email, name });
-                    return res.status(201).json({ serverSessionProof, token, name });
+                    return res.status(201).json({ serverSessionProof, token, name, hasDownloadedEmergencyKit });
                 } catch (err) {
                     return res.status(403).json({ error: 'Invalid client session proof' });
                 }
@@ -165,6 +179,15 @@ exports.login = async (req, res) => {
     }
 };
 
+exports.getEmergencyKit = async (req, res) => {
+    const { email } = req.body;
+    const { status } = await genEmergencyKit({ email });
+    if (status) {
+        return res.status(201).json({ status: true, message: 'Generate Initial Emergency Kit Success' });
+    }
+    return res.status(403).json({ status: false, error: 'Invalid Request' });
+};
+
 // ToDo: Get `name`
 exports.renewToken = async (req, res) => {
     const { email, name } = req.user;
@@ -172,7 +195,10 @@ exports.renewToken = async (req, res) => {
     return res.status(200).json({ token });
 };
 
-// ToDo: Refactor later
+/* ------------------------------------------------------------- */
+/*                 // ToDo: REFACTOR Later
+/* ------------------------------------------------------------- */
+
 exports.requestPasswordReset = async (req, res) => {
     const { email } = req.body;
     const user = await requestResetPassword({ email });

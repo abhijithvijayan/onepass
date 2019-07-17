@@ -64,6 +64,30 @@ exports.verifyUser = async ({ email, verificationToken }) => {
     return user;
 };
 
+exports.genEmergencyKit = async ({ email }) => {
+    const session = driver.session();
+    const { records = [] } = await session.writeTransaction(tx => {
+        return tx.run(
+            'MATCH (u: User { email: $emailParam, isVerified: true }) ' +
+                'SET u.hasDownloadedEmergencyKit = true ' +
+                'RETURN u',
+            {
+                emailParam: email,
+            }
+        );
+    });
+    session.close();
+    const { hasDownloadedEmergencyKit } = records.length && records[0].get('u').properties;
+    if (hasDownloadedEmergencyKit) {
+        return { status: true };
+    }
+    return { status: false };
+};
+
+/* ------------------------------------------------------------- */
+/*                   // ToDo: REFACTOR
+/* ------------------------------------------------------------- */
+
 exports.requestResetPassword = async ({ email }) => {
     const session = driver.session();
     const passwordResetToken = generate('1234567890', 6);
