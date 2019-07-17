@@ -122,8 +122,7 @@ exports.deleteEncVaultItem = async ({ email, itemId }) => {
     if (delEntryId) {
         const delCreatedAt = records.length && records[0].get('createdAt');
         const item = { entryId: delEntryId, createdAt: delCreatedAt };
-        const itemObj = Object.assign({}, { [delEntryId]: item });
-        return { status: true, item: itemObj, message: 'Item deleted from vault.' };
+        return { status: true, item, message: 'Item deleted from vault.' };
     }
     return { status: false, error: "Item doesn't exist or deletion failed" };
 };

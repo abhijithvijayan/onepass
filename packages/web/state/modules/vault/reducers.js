@@ -51,9 +51,13 @@ function onSaveItemSuccess(state, { payload }) {
 }
 
 function onDeleteItemSuccess(state, { payload }) {
-    const { item, status } = payload;
-    // ToDo: delete the object
-    return { ...state, response: status, items: { ...state.items, ...item } };
+    const {
+        item: { entryId },
+        status,
+    } = payload;
+    // https://link.medium.com/wblJY3lRoY
+    const { [entryId]: deleted, ...remaining } = state.items;
+    return { ...state, response: status, items: { ...remaining } };
 }
 
 function clearEncVaultData() {
@@ -91,7 +95,7 @@ function hoverOverActionButtons(state, { payload }) {
 
 // ToDo: optional, save last deleted item id
 function toggleConfirmDeleteModal(state, { payload }) {
-    return { ...state, isDeleteModalOpen: payload.isDeleteModalOpen };
+    return { ...state, isDeleteModalOpen: payload.isDeleteModalOpen, selectedItemId: payload.id };
 }
 
 /* ------------------------------------- */
