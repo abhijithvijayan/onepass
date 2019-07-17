@@ -89,8 +89,9 @@ function hoverOverActionButtons(state, { payload }) {
     return { ...state, hoverOverActionButtons: payload.hover };
 }
 
+// ToDo: optional, save last deleted item id
 function toggleConfirmDeleteModal(state, { payload }) {
-    return { ...state, isDeleteModalOpen: payload.isDeleteModalOpen, selectedItemId: payload.id };
+    return { ...state, isDeleteModalOpen: payload.isDeleteModalOpen };
 }
 
 /* ------------------------------------- */

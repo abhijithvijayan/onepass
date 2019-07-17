@@ -121,6 +121,8 @@ nextApp.prepare().then(() => {
 
     server.post('/api/v1/vault/addOrUpdateItem', auth.authWithJWT, vault.addOrUpdateVaultItem);
 
+    server.post('/api/v1/vault/deleteItem', auth.authWithJWT, vault.deleteVaultItem);
+
     /* ---------------------------------------- */
     /* ------------ REFACTOR ROUTES ----------- */
     /* ---------------------------------------- */

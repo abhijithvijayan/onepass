@@ -215,6 +215,13 @@ export const deleteVaultItem = ({ email, itemId }) => {
             });
 
             if (data.status) {
+                dispatch({
+                    type: types.TOGGLE_CONFIRM_DELETE_MODAL,
+                    payload: {
+                        isDeleteModalOpen: false,
+                    },
+                });
+
                 const { item, status } = data;
                 dispatch({
                     type: types.DELETE_VAULT_ITEM_SUCCESS,

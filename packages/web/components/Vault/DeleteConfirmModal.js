@@ -8,7 +8,7 @@ import { deleteVaultItem, toggleConfirmDeleteModal } from '../../state/modules/v
 class DeleteConfirmModal extends Component {
     handleOk = () => {
         const { email, selectedItemId } = this.props;
-        this.props.deleteVaultItem({ email, selectedItemId });
+        this.props.deleteVaultItem({ email, itemId: selectedItemId });
     };
 
     handleCancel = () => {

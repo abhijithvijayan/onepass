@@ -96,8 +96,34 @@ exports.saveEncVaultItem = async ({ encDetails, encOverview, email, itemId }) =>
         const { entryId, createdAt } = entry;
         const item = { entryId, createdAt, encDetails, encOverview };
         const itemObj = Object.assign({}, { [entryId]: item });
-        // ToDo: send status message
-        return { status: true, item: itemObj };
+        return { status: true, item: itemObj, message: 'Item saved to vault.' };
     }
-    return { status: false };
+    return { status: false, error: 'Failed to save item to vault,' };
+};
+
+exports.deleteEncVaultItem = async ({ email, itemId }) => {
+    const session = driver.session();
+    const { records = [] } = await session.writeTransaction(tx => {
+        return tx.run(
+            'MATCH (u: User { email: $emailParam }) ' +
+                'WITH u, u.userId AS uid ' +
+                'MATCH (p: passwordCollection { userId: uid })-[:Archive]->(e: entry {entryId : $entryIdParam}) ' +
+                'WITH e, e.entryId AS eid, e.createdAt AS createdAt ' +
+                'DETACH DELETE e ' +
+                'RETURN eid, createdAt',
+            {
+                emailParam: email,
+                entryIdParam: itemId,
+            }
+        );
+    });
+    session.close();
+    const delEntryId = records.length && records[0].get('eid');
+    if (delEntryId) {
+        const delCreatedAt = records.length && records[0].get('createdAt');
+        const item = { entryId: delEntryId, createdAt: delCreatedAt };
+        const itemObj = Object.assign({}, { [delEntryId]: item });
+        return { status: true, item: itemObj, message: 'Item deleted from vault.' };
+    }
+    return { status: false, error: "Item doesn't exist or deletion failed" };
 };
