@@ -63,7 +63,7 @@ exports.getVaultData = async ({ email }) => {
     return { encVaultKey: JSON.parse(encVaultKey), itemsCount, encArchiveList: encArchiveObjectList };
 };
 
-exports.saveEncVaultItem = async ({ encDetails, encOverview, email }) => {
+exports.saveEncVaultItem = async ({ encDetails, encOverview, email, itemId }) => {
     const session = driver.session();
     const vaultItemRandomPrefix = generate('1245689abefklprtvxz', 6);
     const { records = [] } = await session.writeTransaction(tx => {
@@ -73,16 +73,19 @@ exports.saveEncVaultItem = async ({ encDetails, encOverview, email }) => {
                 'ON CREATE SET p.userId = v.userId, p.lastItem = 1, p.itemPrefix = $itemPrefixParam ' +
                 'ON MATCH SET p.lastItem = p.lastItem + 1 ' +
                 'WITH p.itemPrefix + $vaultItemRandomPrefixParam + p.lastItem AS eid, p ' +
-                'CREATE (e: entry { entryId: eid, encDetails: $encDetails, encOverview: $encOverview, createdAt: $createdAtParam }) ' +
-                'CREATE (p)-[a:Archive { entryId: eid }]->(e) ' +
+                'MERGE (e: entry { entryId: $entryIdParam }) ' +
+                'ON CREATE SET e.entryId = eid, e.encDetails = $encDetails, e.encOverview = $encOverview, e.createdAt = $timeParam ' +
+                'ON MATCH SET p.lastItem = p.lastItem - 1, e.encDetails = $encDetails, e.encOverview = $encOverview, e.updatedAt = $timeParam ' +
+                'MERGE (p)-[a: Archive]->(e) ' +
                 'RETURN e',
             {
                 emailParam: email,
                 itemPrefixParam: 'item_',
                 vaultItemRandomPrefixParam: `${vaultItemRandomPrefix}_`,
+                entryIdParam: itemId !== null ? itemId : '',
                 encDetails: JSON.stringify(encDetails),
                 encOverview: JSON.stringify(encOverview),
-                createdAtParam: new Date().toJSON(),
+                timeParam: new Date().toJSON(),
             }
         );
     });

@@ -18,8 +18,15 @@ class ModalWrappedForm extends Component {
         this.props.toggleItemModal(false, '');
     };
 
-    onFormSubmit = ({ url = '', name, folder = '', username = '', password = '' }) => {
+    onFormSubmit = formValues => {
+        let itemId = null;
         const { vaultKey, email } = this.props;
+        const { url = '', name, folder = '', username = '', password = '' } = formValues;
+        // Check if the form is in edit mode
+        if (Object.prototype.hasOwnProperty.call(formValues, 'itemId')) {
+            ({ itemId } = formValues);
+        }
+
         const overview = {
             url,
             name,
@@ -29,7 +36,7 @@ class ModalWrappedForm extends Component {
             username,
             password,
         };
-        this.props.encryptVaultItem({ overview, details, vaultKey, email });
+        this.props.encryptVaultItem({ overview, details, vaultKey, email, itemId });
     };
 
     render() {
@@ -37,7 +44,7 @@ class ModalWrappedForm extends Component {
         // Initial Values for modalForm
         let initialValues = { url: '', name: '', username: '', password: '' };
         const selectedItem = items[selectedItemId];
-        // If item exist
+        // If item exist in store
         if (selectedItem) {
             const {
                 decOverview: { url, name },
@@ -49,6 +56,7 @@ class ModalWrappedForm extends Component {
                 name,
                 username,
                 password,
+                itemId: selectedItemId,
             };
         }
         return (

@@ -72,11 +72,11 @@ export const fetchDataAndKeys = ({ email }) => {
     };
 };
 
-export const performVaultItemEncryption = ({ overview, details, vaultKey, email }) => {
+export const performVaultItemEncryption = ({ overview, details, vaultKey, email, itemId }) => {
     return async dispatch => {
         try {
             const { encDetails, encOverview } = await encryptVaultItem({ overview, details, vaultKey, email });
-            // ToDo: pass id -> Refactor
+            // hide modal
             dispatch(toggleItemModal(false, ''));
 
             const { data } = await api({
@@ -87,6 +87,7 @@ export const performVaultItemEncryption = ({ overview, details, vaultKey, email 
                     encDetails,
                     encOverview,
                     email,
+                    itemId,
                 },
             });
 
