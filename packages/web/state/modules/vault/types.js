@@ -6,6 +6,7 @@ export const ACTION_BUTTONS_HOVER = '@onepass/vault/ACTION_BUTTONS_HOVER';
 export const FETCH_VAULT_CONTENTS = '@onepass/vault/FETCH_VAULT_CONTENTS';
 export const SAVE_VAULT_ITEM_SUCCESS = '@onepass/vault/SAVE_VAULT_ITEM_SUCCESS';
 export const DELETE_VAULT_ITEM_SUCCESS = '@onepass/vault/DELETE_VAULT_ITEM_SUCCESS';
+export const REMOVE_DELETED_FROM_VAULT = '@onepass/vault/REMOVE_DELETED_FROM_VAULT';
 export const CLEAR_FETCHED_VAULT_DATA = '@onepass/vault/CLEAR_FETCHED_VAULT_DATA';
 export const CLEAR_DECRYPTED_VAULT_DATA = '@onepass/vault/CLEAR_DECRYPTED_VAULT_DATA';
 

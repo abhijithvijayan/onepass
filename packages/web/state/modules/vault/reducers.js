@@ -34,6 +34,7 @@ const encryptionReducer = createReducer(initialEncryptedState)({
 const decryptionReducer = createReducer(initialDecryptedState)({
     [types.VAULT_DECRYPTION_SUCCEEDED]: saveDecryptedVault,
     [types.CLEAR_DECRYPTED_VAULT_DATA]: removeVaultData,
+    [types.REMOVE_DELETED_FROM_VAULT]: removeDeletedItem,
 });
 
 /**
@@ -71,6 +72,15 @@ function clearEncVaultData() {
 function saveDecryptedVault(state, { payload }) {
     const { isVaultEmpty, decVaultData } = payload;
     return { ...state, items: { ...state.items, ...decVaultData }, isVaultEmpty };
+}
+
+function removeDeletedItem(state, { payload }) {
+    const {
+        item: { entryId },
+    } = payload;
+    const { [entryId]: deleted, ...remaining } = state.items;
+    const isVaultEmpty = Object.keys(remaining).length === 0;
+    return { ...state, items: { ...remaining }, isVaultEmpty };
 }
 
 function removeVaultData() {

@@ -223,10 +223,13 @@ export const deleteVaultItem = ({ email, itemId }) => {
                         id: item.entryId,
                     },
                 });
-
                 dispatch({
                     type: types.DELETE_VAULT_ITEM_SUCCESS,
                     payload: { item, status },
+                });
+                dispatch({
+                    type: types.REMOVE_DELETED_FROM_VAULT,
+                    payload: { item },
                 });
             } else {
                 // ToDo: add a fail message to store
