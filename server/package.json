@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "server": "nodemon ./server.js --ignore ../packages/mobile"
+    "server": "nodemon ./server.js"
   },
   "dependencies": {
     "body-parser": "^1.19.0",

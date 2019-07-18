@@ -14,7 +14,7 @@ import { initializeStore } from '../state/store';
 import 'normalize.css/normalize.css';
 import '../styles/main.scss';
 
-Router.events.on('routeChangeStart', url => {
+Router.events.on('routeChangeStart', () => {
     NProgress.start();
 });
 
