@@ -1,9 +1,49 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Button, Modal } from 'antd';
+import styled from 'styled-components';
+import { Button, Icon, Modal } from 'antd';
 
 import { deleteVaultItem, toggleConfirmDeleteModal } from '../../state/modules/vault/operations';
+
+const ModalWrapper = styled.div`
+    transition: all 0.3s;
+`;
+
+const ModalContentWrapper = styled(Modal)`
+    .ant-modal-footer {
+        border-top: none;
+        padding: 0 32px 24px 32px;
+    }
+`;
+
+const ModalHeader = styled.div`
+    display: flex;
+    flex-direction: row;
+    .anticon {
+        font-size: 22px;
+        margin-right: 16px;
+    }
+`;
+
+const ModalWarningMessage = styled.span`
+    display: block;
+    overflow: hidden;
+    color: rgba(0, 0, 0, 0.85);
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 1.4;
+`;
+
+const ModalBody = styled.div`
+    margin-left: 38px;
+    margin-top: 8px;
+    p {
+        color: rgba(0, 0, 0, 0.65);
+        font-size: 16px;
+        margin-bottom: 0px;
+    }
+`;
 
 class DeleteConfirmModal extends Component {
     handleOk = () => {
@@ -15,42 +55,64 @@ class DeleteConfirmModal extends Component {
         this.props.toggleConfirmDeleteModal(false, '');
     };
 
-    render() {
-        const { isDeleteModalOpen } = this.props;
+    renderModalBody = currentItemName => {
         return (
-            <Modal
+            <React.Fragment>
+                <ModalHeader>
+                    <Icon type="exclamation-circle" />
+                    <ModalWarningMessage>Are you sure you want to delete the site?</ModalWarningMessage>
+                </ModalHeader>
+                <ModalBody>
+                    <p>{currentItemName}</p>
+                </ModalBody>
+            </React.Fragment>
+        );
+    };
+
+    renderModalFooter = () => {
+        return [
+            <Button key="back" onClick={this.handleCancel}>
+                Cancel
+            </Button>,
+            <Button key="submit" type="primary" loading={false} onClick={this.handleOk}>
+                Delete
+            </Button>,
+        ];
+    };
+
+    renderModal = ({ isDeleteModalOpen, currentItemName }) => {
+        return (
+            <ModalContentWrapper
                 closable={false}
                 visible={isDeleteModalOpen}
                 centered
                 onOk={this.handleOk}
                 onCancel={this.handleCancel}
-                footer={[
-                    <Button key="back" onClick={this.handleCancel}>
-                        Cancel
-                    </Button>,
-                    <Button key="submit" type="primary" loading={false} onClick={this.handleOk}>
-                        Delete
-                    </Button>,
-                ]}
+                footer={this.renderModalFooter()}
             >
-                <p>Do</p>
-                <p>Some contents...</p>
-                <p>Some contents...</p>
-            </Modal>
+                {this.renderModalBody(currentItemName)}
+            </ModalContentWrapper>
         );
+    };
+
+    render() {
+        const { isDeleteModalOpen } = this.props;
+        return <ModalWrapper>{isDeleteModalOpen ? this.renderModal(this.props) : null}</ModalWrapper>;
     }
 }
 
 const mapStateToProps = state => {
     const {
-        vault: { ui },
+        vault: { ui, decrypted },
     } = state;
     const {
         auth: { login },
     } = state;
+    const currentItem = decrypted.items[ui.selectedItemId] && decrypted.items[ui.selectedItemId].decOverview;
     return {
         email: login.user.email,
         selectedItemId: ui.selectedItemId,
+        currentItemName: currentItem ? currentItem.name : '',
         isDeleteModalOpen: ui.isDeleteModalOpen,
     };
 };
