@@ -249,8 +249,6 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
                 type: types.USER_SIGNUP_SUCCEEDED,
             });
 
-            // ToDo: Autodownload the secretkey for user(in PDF) on first login
-
             dispatch(submitLoginData({ email, password, secretKey }));
         } catch (err) {
             console.log(err);
@@ -283,7 +281,7 @@ export const submitLoginData = ({ email, password, secretKey }) => {
             });
 
             const normPassword = normalizeMasterPassword(password);
-            // Trim to 34 characters
+            // Trim to 34 characters without dashes
             const normSecretKey = secretKey
                 .split('-')
                 .join('')
