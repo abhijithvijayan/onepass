@@ -96,9 +96,9 @@ nextApp.prepare().then(() => {
     );
 
     /* User Login */
-    // ToDo: add verificationcriterias to body
     server.post('/api/v1/auth/login', loginValidationCriterias, loginValidationBody, catchErrors(auth.login));
 
+    // ToDo: add verificationcriterias to body
     server.get('/api/v1/auth/login.getEmergencyKit:email?', auth.authWithJWT, catchErrors(auth.getEmergencyKit));
 
     server.post('/api/v1/auth/renew.token', auth.authWithJWT, catchErrors(auth.renewToken));

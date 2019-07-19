@@ -147,7 +147,7 @@ exports.login = async (req, res) => {
                 .json({ userId: sampleUserId, salt: sampleSalt, serverPublicEphemeral: sampleEphemeral.public });
         }
         case 'login': {
-            const { clientPublicEphemeral, clientSessionProof } = req.body;
+            const { clientPublicEphemeral = '', clientSessionProof = '' } = req.body;
             const { verifier, salt, user, serverSecretEphemeral } = await retrieveSRPCredentials({ email });
             if (verifier && salt && user && serverSecretEphemeral) {
                 try {

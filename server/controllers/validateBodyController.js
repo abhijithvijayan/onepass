@@ -108,6 +108,10 @@ exports.loginValidationCriterias = [
         .withMessage('Email address you entered is not valid.')
         .trim()
         .normalizeEmail(),
+    validator
+        .body('stage')
+        .exists()
+        .withMessage('No srp stage is specified.'),
 ];
 
 exports.loginValidationBody = (req, res, next) => {
@@ -115,7 +119,8 @@ exports.loginValidationBody = (req, res, next) => {
     if (!errors.isEmpty()) {
         const errorsObj = errors.mapped();
         const emailError = errorsObj.email && errorsObj.email.msg;
-        return res.status(400).json({ error: emailError });
+        const stageError = errorsObj.stage && errorsObj.stage.msg;
+        return res.status(400).json({ error: emailError || stageError });
     }
     return next();
 };
