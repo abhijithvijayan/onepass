@@ -10,6 +10,7 @@ const signUpErrorsReducer = createReducer({})({
 
 const loginErrorsReducer = createReducer({})({
     [types.USER_AUTH_FAILED]: handleLoginErrors,
+    [types.DOWNLOAD_EMERGENCY_KIT_FAILED]: handleEmergencyKitError,
 });
 
 /**
@@ -25,6 +26,10 @@ function handleSignUpErrors(state, { payload }) {
  */
 
 function handleLoginErrors(state, { payload }) {
+    return { ...state, error: payload.error };
+}
+
+function handleEmergencyKitError(state, { payload }) {
     return { ...state, error: payload.error };
 }
 

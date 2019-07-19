@@ -522,10 +522,15 @@ export const decryptTheVaultKey = ({ normPassword, secretKey, userId, encKeySet,
             });
             return { vaultKeyDecStatus: false };
         } catch (err) {
+            // ToDo: handle decryption errors
             console.log(err);
         }
     };
 };
+
+/**
+ *  Generate Initial Emergency Kit (Disable popup on login)
+ */
 
 export const getEmergencyKit = email => {
     return async dispatch => {
@@ -536,13 +541,22 @@ export const getEmergencyKit = email => {
                 headers: { Authorization: cookie.get('token') },
                 data: { email },
             });
-            // if only successful
             dispatch({
-                type: types.DOWNLOAD_EMERGENCY_KIT,
-                payload: { status: data.status },
+                type: types.DOWNLOAD_EMERGENCY_KIT_SUCCESS,
+                payload: {
+                    status: data.status,
+                },
             });
-        } catch (err) {
-            console.log(err);
+        } catch ({ response }) {
+            dispatch({
+                type: errorTypes.DOWNLOAD_EMERGENCY_KIT_FAILED,
+                payload: {
+                    error: response.data.error,
+                },
+            });
+            dispatch({
+                type: uiTypes.HIDE_PAGE_LOADER,
+            });
         }
     };
 };
@@ -576,6 +590,10 @@ export const logoutUser = () => {
         Router.push('/login');
     };
 };
+
+/* ----------------------------------------------------------- */
+/*                        REFACTOR                             */
+/* ----------------------------------------------------------- */
 
 export const renewAuthUser = () => {
     return async dispatch => {

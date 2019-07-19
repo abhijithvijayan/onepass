@@ -3,7 +3,7 @@ export const LOGIN_SUBMIT_ENDPOINT = '/auth/login';
 export const TOKEN_VERIFICATION_ENDPOINT = '/auth/verify';
 
 export const FINALIZE_ACCOUNT_ENDPOINT = '/auth/signup.finalizeAccount';
-export const GET_EMERGENCY_KIT_ENDPOINT = '/auth/signup.getEmergencyKit';
+export const GET_EMERGENCY_KIT_ENDPOINT = '/auth/login.getEmergencyKit';
 export const TOKEN_RENEWAL_ENDPOINT = '/auth/token.renew';
 
 export const FETCH_KEYS_ENDPOINT = '/vault/getKeys';

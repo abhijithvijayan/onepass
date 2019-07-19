@@ -32,6 +32,7 @@ const resetEmailTemplate = fs.readFileSync(resetEmailTemplatePath, { encoding: '
 
 /* Function to generate JWT Token */
 const genJWTtoken = ({ email, name }) => {
+    // ToDo: verify the expiry time
     return JWT.sign(
         {
             iss: 'ApiAuth',
@@ -183,10 +184,14 @@ exports.getEmergencyKit = async (req, res) => {
     const { email } = req.body;
     const { status } = await genEmergencyKit({ email });
     if (status) {
-        return res.status(201).json({ status: true, message: 'Generate Initial Emergency Kit Success' });
+        return res.status(201).json({ status: true, message: 'Generate Emergency Kit Success' });
     }
-    return res.status(403).json({ status: false, error: 'Invalid Request' });
+    return res.status(403).json({ status: false, error: 'Something went wrong. Please try again.' });
 };
+
+/* ------------------------------------------------------------- */
+/*                 // ToDo: REFACTOR Later
+/* ------------------------------------------------------------- */
 
 // ToDo: Get `name`
 exports.renewToken = async (req, res) => {
@@ -194,10 +199,6 @@ exports.renewToken = async (req, res) => {
     const token = genJWTtoken({ email, name });
     return res.status(200).json({ token });
 };
-
-/* ------------------------------------------------------------- */
-/*                 // ToDo: REFACTOR Later
-/* ------------------------------------------------------------- */
 
 exports.requestPasswordReset = async (req, res) => {
     const { email } = req.body;

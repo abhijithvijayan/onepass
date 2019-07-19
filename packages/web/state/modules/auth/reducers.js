@@ -17,7 +17,7 @@ const loginReducer = createReducer(initialLoginState)({
     [types.USER_AUTH_SUCCEEDED]: onSuccessfulLogin,
     [types.USER_DE_AUTH_SUCCEEDED]: onLogoutRequest,
     [types.FETCH_ENCRYPTION_KEYS]: onFetchKeys,
-    [types.DOWNLOAD_EMERGENCY_KIT]: onDownloadEmergencyKit,
+    [types.DOWNLOAD_EMERGENCY_KIT_SUCCESS]: onDownloadEmergencyKit,
 });
 
 const signUpReducer = createReducer({})({
