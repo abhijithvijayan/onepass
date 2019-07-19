@@ -57,12 +57,14 @@ function saveClientEphemeral(state, { payload }) {
 }
 
 function onSuccessfulLogin(state, { payload }) {
-    const { email, userId, name, hasDownloadedEmergencyKit } = payload;
+    const { user } = payload;
     return {
         ...state,
         isAuthenticated: true,
-        user: { email, userId, name, hasDownloadedEmergencyKit },
-        decrypted: { keys: payload.keys },
+        user,
+        decrypted: {
+            keys: payload.keys,
+        },
     };
 }
 

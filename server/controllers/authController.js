@@ -148,16 +148,10 @@ exports.login = async (req, res) => {
         }
         case 'login': {
             const { clientPublicEphemeral, clientSessionProof } = req.body;
-            const {
-                verifier,
-                salt,
-                userId,
-                name,
-                hasDownloadedEmergencyKit,
-                serverSecretEphemeral,
-            } = await retrieveSRPCredentials({ email });
-            if (verifier && salt && userId && name && serverSecretEphemeral) {
+            const { verifier, salt, user, serverSecretEphemeral } = await retrieveSRPCredentials({ email });
+            if (verifier && salt && user && serverSecretEphemeral) {
                 try {
+                    const { userId, name } = user;
                     const serverSession = srp.deriveSession(
                         serverSecretEphemeral,
                         clientPublicEphemeral,
@@ -168,7 +162,7 @@ exports.login = async (req, res) => {
                     );
                     const serverSessionProof = serverSession.proof;
                     const token = genJWTtoken({ email, name });
-                    return res.status(201).json({ serverSessionProof, token, name, hasDownloadedEmergencyKit });
+                    return res.status(201).json({ serverSessionProof, token, user });
                 } catch (err) {
                     return res.status(403).json({ error: 'Invalid secret key or master password' });
                 }

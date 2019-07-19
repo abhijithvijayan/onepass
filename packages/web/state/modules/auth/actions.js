@@ -355,7 +355,7 @@ export const submitLoginData = ({ email, password, secretKey }) => {
              *  4. Send `clientSessionProof` & `clientPublicEphemeral` to the server
              */
             const {
-                data: { serverSessionProof, token, name, hasDownloadedEmergencyKit },
+                data: { serverSessionProof, token, user },
             } = await sendRequest({
                 email,
                 clientPublicEphemeral,
@@ -410,10 +410,7 @@ export const submitLoginData = ({ email, password, secretKey }) => {
                     dispatch({
                         type: types.USER_AUTH_SUCCEEDED,
                         payload: {
-                            email,
-                            userId,
-                            name,
-                            hasDownloadedEmergencyKit,
+                            user,
                             keys: {
                                 decVaultKey: decryptedVaultKey,
                                 secretKey: normSecretKey,
@@ -425,11 +422,11 @@ export const submitLoginData = ({ email, password, secretKey }) => {
                      *   11. Save items to LocalStorage (distinguished by userId)
                      */
                     localStorage.setItem(
-                        userId,
+                        user.userId,
                         JSON.stringify({
-                            userId,
-                            name,
-                            email,
+                            userId: user.userId,
+                            name: user.name,
+                            email: user.email,
                             secretKey: normSecretKey,
                         })
                     );
@@ -561,16 +558,9 @@ export const getEmergencyKit = email => {
     };
 };
 
-/* ----------------------------------------------------------- */
-
-export const authUser = payload => {
-    return dispatch => {
-        dispatch({
-            type: types.USER_AUTH_SUCCEEDED,
-            payload,
-        });
-    };
-};
+/**
+ *  Logout & remove localStorage data
+ */
 
 export const logoutUser = () => {
     return dispatch => {
@@ -594,6 +584,15 @@ export const logoutUser = () => {
 /* ----------------------------------------------------------- */
 /*                        REFACTOR                             */
 /* ----------------------------------------------------------- */
+
+export const authUser = payload => {
+    return dispatch => {
+        dispatch({
+            type: types.USER_AUTH_SUCCEEDED,
+            payload,
+        });
+    };
+};
 
 export const renewAuthUser = () => {
     return async dispatch => {
