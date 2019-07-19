@@ -20,6 +20,7 @@ const {
     saveServerEphemeral,
     retrieveSRPCredentials,
 } = require('../db/auth');
+const { isAdmin } = require('../utils');
 
 /* Email Template and Options */
 const transporter = require('../mail/mail');
@@ -37,8 +38,9 @@ const genJWTtoken = ({ email, name }) => {
         {
             iss: 'ApiAuth',
             id: email,
-            name,
             iat: new Date().getTime(),
+            name,
+            isAdmin: isAdmin(email),
         },
         process.env.JWT_SECRET,
         { expiresIn: '1h' }
@@ -62,7 +64,6 @@ exports.authWithJWT = (req, res, next) => {
         if (user) {
             req.user = user;
         }
-        // console.log(user);
         return next();
     })(req, res, next);
 };
