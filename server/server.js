@@ -29,6 +29,8 @@ const {
     changePasswordBody,
     createPasswordEntryCriterias,
     createPasswordEntryBody,
+    finalizeAccountValidationCriterias,
+    finalizeAccountValidationBody,
 } = require('./controllers/validateBodyController');
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -86,8 +88,12 @@ nextApp.prepare().then(() => {
     server.post('/api/v1/auth/verify', emailVerificationCriterias, emailVerificationBody, catchErrors(auth.verify));
 
     /* Save SRP Verifier and Salt */
-    // ToDo: add verificationcriterias to body
-    server.post('/api/v1/auth/signup.finalizeAccount', catchErrors(auth.finalizeAccount));
+    server.post(
+        '/api/v1/auth/signup.finalizeAccount',
+        finalizeAccountValidationCriterias,
+        finalizeAccountValidationBody,
+        catchErrors(auth.finalizeAccount)
+    );
 
     /* User Login */
     // ToDo: add verificationcriterias to body

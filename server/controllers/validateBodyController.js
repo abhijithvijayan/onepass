@@ -28,28 +28,6 @@ exports.signUpValidationBody = (req, res, next) => {
     return next();
 };
 
-/* Login Form */
-exports.loginValidationCriterias = [
-    validator
-        .body('email')
-        .exists()
-        .withMessage('You must provide a valid email address.')
-        .isEmail()
-        .withMessage('Email address you entered is not valid.')
-        .trim()
-        .normalizeEmail(),
-];
-
-exports.loginValidationBody = (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        const errorsObj = errors.mapped();
-        const emailError = errorsObj.email && errorsObj.email.msg;
-        return res.status(400).json({ error: emailError });
-    }
-    return next();
-};
-
 /* Email - Verification Link */
 exports.emailVerificationCriterias = [
     validator
@@ -73,6 +51,71 @@ exports.emailVerificationBody = (req, res, next) => {
         const emailError = errorsObj.email && errorsObj.email.msg;
         const tokenError = errorsObj.verificationToken && errorsObj.verificationToken.msg;
         return res.status(400).json({ error: emailError || tokenError });
+    }
+    return next();
+};
+
+exports.finalizeAccountValidationCriterias = [
+    validator
+        .body('email')
+        .exists()
+        .withMessage('No email address found.')
+        .isEmail()
+        .withMessage('Invalid email address.')
+        .trim()
+        .normalizeEmail(),
+    validator
+        .body('userId')
+        .exists()
+        .withMessage('No valid userId.'),
+    validator
+        .body('salt')
+        .exists()
+        .withMessage('No valid salt.'),
+    validator
+        .body('verifier')
+        .exists()
+        .withMessage('No valid verifier.'),
+    validator
+        .body('encryptionKeys')
+        .exists()
+        .withMessage('No valid encryption keys.'),
+];
+
+exports.finalizeAccountValidationBody = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const errorsObj = errors.mapped();
+        const emailError = errorsObj.email && errorsObj.email.msg;
+        const userIdError = errorsObj.userId && errorsObj.userId.msg;
+        const saltError = errorsObj.salt && errorsObj.salt.msg;
+        const verifierError = errorsObj.verifier && errorsObj.verifier.msg;
+        const encryptionKeysError = errorsObj.encryptionKeys && errorsObj.encryptionKeys.msg;
+        return res
+            .status(400)
+            .json({ error: emailError || userIdError || saltError || verifierError || encryptionKeysError });
+    }
+    return next();
+};
+
+/* Login Form */
+exports.loginValidationCriterias = [
+    validator
+        .body('email')
+        .exists()
+        .withMessage('You must provide a valid email address.')
+        .isEmail()
+        .withMessage('Email address you entered is not valid.')
+        .trim()
+        .normalizeEmail(),
+];
+
+exports.loginValidationBody = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const errorsObj = errors.mapped();
+        const emailError = errorsObj.email && errorsObj.email.msg;
+        return res.status(400).json({ error: emailError });
     }
     return next();
 };

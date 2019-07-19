@@ -247,10 +247,10 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
             };
 
             await sendRequest({
-                verifier,
-                salt: randomSaltForSRP,
                 email,
                 userId,
+                salt: randomSaltForSRP,
+                verifier,
                 encryptionKeys,
             });
 

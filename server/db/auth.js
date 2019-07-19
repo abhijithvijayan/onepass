@@ -5,7 +5,7 @@ const driver = require('./neo4j');
  */
 
 exports.saveAccountCredentials = async ({ verifier, salt, email, userId, encryptionKeys }) => {
-    const { pubKey, encPriKey, encSymKey, encVaultKey } = encryptionKeys;
+    const { pubKey = '', encPriKey = '', encSymKey = '', encVaultKey = '' } = encryptionKeys;
     const session = driver.session();
     const { records = [] } = await session.writeTransaction(tx => {
         return tx.run(
