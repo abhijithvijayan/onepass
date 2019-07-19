@@ -31,6 +31,7 @@ class PdfModal extends Component {
         const pdf = new JSPDF('p', 'mm', 'a4');
         pdf.fromHTML(string);
         pdf.save('OnePass Emergency Kit');
+        // ToDo: Check status of download
         // Send server request
         this.props.getEmergencyKit(email);
     }
