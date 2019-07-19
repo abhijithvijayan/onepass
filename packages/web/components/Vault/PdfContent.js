@@ -7,7 +7,9 @@ const PdfContent = props => {
     return (
         <div>
             <h2>OnePass Emergency Kit</h2>
-            <p style={{ textAlign: 'center' }}>Generated on {date}</p>
+            <p style={{ textAlign: 'center' }}>
+                Generated for {props.name} on {date}
+            </p>
             <br />
             <p>The secret key is to be used with master password on login.</p>
             <ul>
@@ -16,6 +18,9 @@ const PdfContent = props => {
             </ul>
             <div>
                 <ul>
+                    <li>
+                        SIGN-IN ADDRESS <br /> {props.server}
+                    </li>
                     <li>
                         EMAIL ADDRESS <br /> {props.email}
                     </li>

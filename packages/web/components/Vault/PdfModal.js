@@ -26,8 +26,8 @@ const SecretKeyHolder = styled.div`
 
 class PdfModal extends Component {
     handleDownloadClick() {
-        const { email, secretKey } = this.props;
-        const string = renderToString(<PdfContent email={email} secretKey={secretKey} />);
+        const { email, secretKey, server, name } = this.props;
+        const string = renderToString(<PdfContent email={email} name={name} secretKey={secretKey} server={server} />);
         const pdf = new JSPDF('p', 'mm', 'a4');
         pdf.fromHTML(string);
         pdf.save('OnePass Emergency Kit');
@@ -69,10 +69,13 @@ class PdfModal extends Component {
 }
 
 const mapStateToProps = ({ auth: { login } }) => {
+    const { decrypted, user } = login;
     return {
-        email: login.user.email,
-        secretKey: login.decrypted.keys.secretKey,
-        hasDownloadedEmergencyKit: login.user.hasDownloadedEmergencyKit,
+        email: user.email,
+        name: user.name,
+        secretKey: decrypted.keys.secretKey,
+        server: user.server,
+        hasDownloadedEmergencyKit: user.hasDownloadedEmergencyKit,
     };
 };
 
