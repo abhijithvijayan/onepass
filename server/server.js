@@ -80,48 +80,34 @@ nextApp.prepare().then(() => {
     /* ---------------------------------------- */
 
     /* User Signup */
-    server.post(
-        '/api/v1/auth/signup',
-        signUpValidationCriterias,
-        signUpValidationBody,
-        catchErrors(auth.signup)
-        // ToDo: alert to check mailbox
-    );
+    server.post('/api/v1/auth/signup', signUpValidationCriterias, signUpValidationBody, catchErrors(auth.signup));
 
     /* Email - Verification */
-    server.post(
-        '/api/v1/auth/verify',
-        emailVerificationCriterias,
-        emailVerificationBody,
-        // middleware
-        catchErrors(auth.verify),
-        // ToDo: alert email verified
-        api.sendStatus
-    );
+    server.post('/api/v1/auth/verify', emailVerificationCriterias, emailVerificationBody, catchErrors(auth.verify));
 
     /* Save SRP Verifier and Salt */
     // ToDo: add verificationcriterias to body
-    server.post('/api/v1/auth/signup.finalizeAccount', auth.finalizeAccount);
+    server.post('/api/v1/auth/signup.finalizeAccount', catchErrors(auth.finalizeAccount));
 
     /* User Login */
     // ToDo: add verificationcriterias to body
-    server.post('/api/v1/auth/login', loginValidationCriterias, loginValidationBody, auth.login);
+    server.post('/api/v1/auth/login', loginValidationCriterias, loginValidationBody, catchErrors(auth.login));
 
-    server.get('/api/v1/auth/login.getEmergencyKit:email?', auth.authWithJWT, auth.getEmergencyKit);
+    server.get('/api/v1/auth/login.getEmergencyKit:email?', auth.authWithJWT, catchErrors(auth.getEmergencyKit));
 
-    server.post('/api/v1/auth/renew.token', auth.authWithJWT, auth.renewToken);
+    server.post('/api/v1/auth/renew.token', auth.authWithJWT, catchErrors(auth.renewToken));
 
     /* ---------------------------------------- */
     /* ------------- Vault routes ------------- */
     /* ---------------------------------------- */
 
-    server.get('/api/v1/vault/getKeys:email?', auth.authWithJWT, vault.fetchEncKeys);
+    server.get('/api/v1/vault/getKeys:email?', auth.authWithJWT, catchErrors(vault.fetchEncKeys));
 
-    server.get('/api/v1/vault/getVaultData:email?', auth.authWithJWT, vault.fetchVaultData);
+    server.get('/api/v1/vault/getVaultData:email?', auth.authWithJWT, catchErrors(vault.fetchVaultData));
 
-    server.post('/api/v1/vault/addOrUpdateItem', auth.authWithJWT, vault.addOrUpdateVaultItem);
+    server.post('/api/v1/vault/addOrUpdateItem', auth.authWithJWT, catchErrors(vault.addOrUpdateVaultItem));
 
-    server.post('/api/v1/vault/deleteItem', auth.authWithJWT, vault.deleteVaultItem);
+    server.post('/api/v1/vault/deleteItem', auth.authWithJWT, catchErrors(vault.deleteVaultItem));
 
     /* ---------------------------------------- */
     /* ------------ REFACTOR ROUTES ----------- */
@@ -158,10 +144,6 @@ nextApp.prepare().then(() => {
         // ToDo: Change password
         api.sendStatus
     );
-
-    /* ---------------------------------------- */
-    /* --------- Vault Archive Routes --------- */
-    /* ---------------------------------------- */
 
     // ToDo Route
     server.post(
