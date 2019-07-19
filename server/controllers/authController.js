@@ -176,7 +176,7 @@ exports.login = async (req, res) => {
 };
 
 exports.getEmergencyKit = async (req, res) => {
-    const { email } = req.body;
+    const { email } = req.query;
     const { status } = await genEmergencyKit({ email });
     if (status) {
         return res.status(201).json({ status: true, message: 'Generate Emergency Kit Success' });

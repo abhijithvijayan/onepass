@@ -533,10 +533,10 @@ export const getEmergencyKit = email => {
     return async dispatch => {
         try {
             const { data } = await api({
-                method: 'POST',
+                method: 'GET',
                 url: endpoints.GET_EMERGENCY_KIT_ENDPOINT,
                 headers: { Authorization: cookie.get('token') },
-                data: { email },
+                params: { email },
             });
             dispatch({
                 type: types.DOWNLOAD_EMERGENCY_KIT_SUCCESS,
