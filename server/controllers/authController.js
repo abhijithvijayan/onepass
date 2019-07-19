@@ -109,11 +109,11 @@ exports.verify = async (req, res) => {
 
 exports.finalizeAccount = async (req, res) => {
     const { verifier, salt, email, userId, encryptionKeys } = req.body;
-    const userAuth = await saveAccountCredentials({ verifier, salt, email, userId, encryptionKeys });
-    if (userAuth) {
-        return res.status(201).json({ status: 'Account completion successful.' });
+    const serverResponse = await saveAccountCredentials({ verifier, salt, email, userId, encryptionKeys });
+    if (serverResponse.status) {
+        return res.status(201).json({ status: 'Account signup successful.' });
     }
-    return res.status(403).json({ error: 'Account completion failed.' });
+    return res.status(403).json({ error: 'Account signup failed.' });
 };
 
 // ToDo: Refactor

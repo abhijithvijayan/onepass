@@ -31,8 +31,11 @@ exports.saveAccountCredentials = async ({ verifier, salt, email, userId, encrypt
         );
     });
     session.close();
-    const userAuth = records.length && records[0].get('a').properties;
-    return userAuth;
+    const user = records.length && records[0].get('a').properties;
+    if (user) {
+        return { status: true, user };
+    }
+    return { status: false };
 };
 
 /**

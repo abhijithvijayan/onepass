@@ -193,7 +193,7 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
              *  `pbkdf2` for key derivation
              */
             const randomSaltForSRP = genRandomSalt(32);
-            // ToDo: store salt as base64uri in DB
+            // ToDo: store salt as base64uri in DB or use srp saltGen fn
             const keySaltForSRP = await deriveEncryptionKeySalt({ salted: userId, randomSalt: randomSaltForSRP });
             const privateKeySetForSRP = await generateHashedKeySet({ normPassword, encryptionKeySalt: keySaltForSRP });
             const verifier = computeVerifier({ privateKey: privateKeySetForSRP.key });
@@ -260,11 +260,23 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
 
             dispatch(submitLoginData({ email, password, secretKey }));
         } catch (err) {
-            console.log(err);
+            // Handle error response from server
+            if (err.response && err.response.data) {
+                const { error } = err.response.data;
+                dispatch({
+                    type: errorTypes.USER_SIGNUP_FAILED,
+                    payload: {
+                        error,
+                    },
+                });
+                Router.push('/signup');
+            } else {
+                // ToDo: handle client encryption errors
+                console.log(err);
+            }
             dispatch({
                 type: uiTypes.HIDE_PAGE_LOADER,
             });
-            // ToDo: report invalid token
         }
     };
 };
