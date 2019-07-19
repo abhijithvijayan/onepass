@@ -226,29 +226,30 @@ export const deleteVaultItem = ({ email, itemId }) => {
                 },
             });
 
-            if (data.status) {
-                const { item, status } = data;
-                dispatch({
-                    type: types.TOGGLE_CONFIRM_DELETE_MODAL,
-                    payload: {
-                        isDeleteModalOpen: false,
-                        id: item.entryId,
-                    },
-                });
-                dispatch({
-                    type: types.DELETE_VAULT_ITEM_SUCCESS,
-                    payload: { item, status },
-                });
-                dispatch({
-                    type: types.REMOVE_DELETED_FROM_VAULT,
-                    payload: { item },
-                });
-            } else {
-                // ToDo: add a fail message to store
-                console.log('Item not deleted from vault');
-            }
-        } catch (err) {
-            console.log(err);
+            const { item, status } = data;
+            dispatch({
+                type: types.TOGGLE_CONFIRM_DELETE_MODAL,
+                payload: {
+                    isDeleteModalOpen: false,
+                    id: item.entryId,
+                },
+            });
+            dispatch({
+                type: types.DELETE_VAULT_ITEM_SUCCESS,
+                payload: { item, status },
+            });
+            dispatch({
+                type: types.REMOVE_DELETED_FROM_VAULT,
+                payload: { item },
+            });
+        } catch ({ response }) {
+            const { error } = response.data;
+            dispatch({
+                type: errorTypes.DELETE_VAULT_ITEM_FAILED,
+                payload: {
+                    error,
+                },
+            });
         }
     };
 };

@@ -15,6 +15,7 @@ const loginErrorsReducer = createReducer({})({
 
 const vaultErrorsReducer = createReducer({})({
     [types.SAVE_VAULT_ITEM_FAILED]: handleSaveItemError,
+    [types.DELETE_VAULT_ITEM_FAILED]: handleDeleteError,
 });
 
 /**
@@ -42,6 +43,10 @@ function handleEmergencyKitError(state, { payload }) {
  */
 
 function handleSaveItemError(state, { payload }) {
+    return { ...state, error: payload.error };
+}
+
+function handleDeleteError(state, { payload }) {
     return { ...state, error: payload.error };
 }
 
