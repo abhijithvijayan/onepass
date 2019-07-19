@@ -23,12 +23,12 @@ import * as endpoints from '../../../api/constants';
  */
 
 export const fetchDataAndKeys = ({ email }) => {
-    const sendRequest = async (data, endpoint) => {
+    const sendRequest = async (params, endpoint) => {
         const response = await api({
-            method: 'POST',
+            method: 'GET',
             url: endpoint,
             headers: { Authorization: cookie.get('token') },
-            data,
+            params,
         });
         return response;
     };
@@ -257,7 +257,7 @@ export const deleteVaultItem = ({ email, itemId }) => {
 /** ------------------------------------------------------ */
 /**
  *                      UI Actions
- */
+/**
 /** ------------------------------------------------------ */
 
 export const toggleSideBar = toggleStatus => {

@@ -115,9 +115,9 @@ nextApp.prepare().then(() => {
     /* ------------- Vault routes ------------- */
     /* ---------------------------------------- */
 
-    server.post('/api/v1/vault/getKeys', auth.authWithJWT, vault.fetchEncKeys);
+    server.get('/api/v1/vault/getKeys:email?', auth.authWithJWT, vault.fetchEncKeys);
 
-    server.post('/api/v1/vault/getVaultData', auth.authWithJWT, vault.fetchVaultData);
+    server.get('/api/v1/vault/getVaultData:email?', auth.authWithJWT, vault.fetchVaultData);
 
     server.post('/api/v1/vault/addOrUpdateItem', auth.authWithJWT, vault.addOrUpdateVaultItem);
 
