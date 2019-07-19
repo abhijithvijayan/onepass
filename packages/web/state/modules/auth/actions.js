@@ -439,7 +439,19 @@ export const submitLoginData = ({ email, password, secretKey }) => {
                 }
             }
         } catch (err) {
-            console.log(err);
+            // Handle error response from server
+            if (err.response && err.response.data) {
+                const { error } = err.response.data;
+                dispatch({
+                    type: errorTypes.USER_AUTH_FAILED,
+                    payload: {
+                        error,
+                    },
+                });
+            } else {
+                // ToDo: handle client decryption errors
+                console.log(err);
+            }
             dispatch({
                 type: uiTypes.HIDE_PAGE_LOADER,
             });
@@ -498,7 +510,13 @@ export const decryptTheVaultKey = ({ normPassword, secretKey, userId, encKeySet,
 
                 return { decryptedVaultKey, vaultKeyDecStatus: true };
             }
-            console.log('decryption unsuccessful');
+            // Decryption Failed
+            dispatch({
+                type: errorTypes.USER_AUTH_FAILED,
+                payload: {
+                    error: 'Invalid secret key or master password',
+                },
+            });
             dispatch({
                 type: uiTypes.HIDE_PAGE_LOADER,
             });

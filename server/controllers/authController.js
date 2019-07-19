@@ -168,7 +168,7 @@ exports.login = async (req, res) => {
                     const token = genJWTtoken({ email, name });
                     return res.status(201).json({ serverSessionProof, token, name, hasDownloadedEmergencyKit });
                 } catch (err) {
-                    return res.status(403).json({ error: 'Invalid client session proof' });
+                    return res.status(403).json({ error: 'Invalid secret key or master password' });
                 }
             }
             return res.status(201).json({ status: 'Account signup was left incomplete.' });

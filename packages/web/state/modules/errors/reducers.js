@@ -8,11 +8,23 @@ const signUpErrorsReducer = createReducer({})({
     [types.USER_SIGNUP_FAILED]: handleSignUpErrors,
 });
 
+const loginErrorsReducer = createReducer({})({
+    [types.USER_AUTH_FAILED]: handleLoginErrors,
+});
+
 /**
- * SignUp Errors
+ *  SignUp Errors
  */
 
 function handleSignUpErrors(state, { payload }) {
+    return { ...state, error: payload.error };
+}
+
+/**
+ *  Login Errors
+ */
+
+function handleLoginErrors(state, { payload }) {
     return { ...state, error: payload.error };
 }
 
@@ -20,4 +32,5 @@ function handleSignUpErrors(state, { payload }) {
 
 export default combineReducers({
     signup: signUpErrorsReducer,
+    login: loginErrorsReducer,
 });
