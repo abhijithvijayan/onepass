@@ -66,7 +66,6 @@ exports.authWithJWT = (req, res, next) => {
     })(req, res, next);
 };
 
-/* Done */
 exports.signup = async (req, res) => {
     const { email, name } = req.body;
     if (email.length > 64) {
@@ -96,9 +95,11 @@ exports.signup = async (req, res) => {
     return res.status(201).json({ email, message: 'Sending Email temporarily disabled.' });
 };
 
-/* Done */
 exports.verify = async (req, res) => {
     const { verificationToken = '', email = '' } = req.body;
+    if (verificationToken.length > 6) {
+        return res.status(400).json({ error: 'Verification code must be 6 characters' });
+    }
     const user = await verifyUser({ email, verificationToken });
     if (user) {
         return res.status(201).json({ userId: user.userId, email: user.email, versionCode: user.versionCode });
@@ -106,7 +107,6 @@ exports.verify = async (req, res) => {
     return res.status(403).json({ error: 'Invalid email id or verification code' });
 };
 
-// ToDo: Refactor
 exports.finalizeAccount = async (req, res) => {
     const { verifier, salt, email, userId, encryptionKeys } = req.body;
     const userAuth = await saveAccountCredentials({ verifier, salt, email, userId, encryptionKeys });

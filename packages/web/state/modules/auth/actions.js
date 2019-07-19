@@ -25,6 +25,7 @@ import { computeHKDF } from '@onepass/core/hkdf';
 
 import api from '../../../api';
 import * as types from './types';
+import * as errorTypes from '../errors/types';
 import * as vaultTypes from '../vault/types';
 import * as uiTypes from '../common/ui/types';
 import * as endpoints from '../../../api/constants';
@@ -112,11 +113,15 @@ export const submitSignUpData = ({ email, name }) => {
 
             Router.push('/verify', '/signup/verify');
         } catch ({ response }) {
-            console.log(response.data.error);
+            dispatch({
+                type: errorTypes.USER_SIGNUP_FAILED,
+                payload: {
+                    error: response.data && response.data.error,
+                },
+            });
             dispatch({
                 type: uiTypes.HIDE_PAGE_LOADER,
             });
-            // ToDo: Dispatch some error handler
         }
     };
 };
@@ -148,11 +153,15 @@ export const submitVerificationToken = ({ email, verificationToken }) => {
 
             Router.push('/masterpassword', '/signup/masterpassword');
         } catch ({ response }) {
-            console.log(response.data.error);
+            dispatch({
+                type: errorTypes.USER_SIGNUP_FAILED,
+                payload: {
+                    error: response.data && response.data.error,
+                },
+            });
             dispatch({
                 type: uiTypes.HIDE_PAGE_LOADER,
             });
-            // ToDo: report invalid token
         }
     };
 };
