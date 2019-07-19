@@ -8,6 +8,7 @@ import { encryptVaultItem, decryptItemOverview, decryptItemDetails } from '@onep
 import api from '../../../api';
 import * as types from './types';
 import * as authTypes from '../auth/types';
+import * as errorTypes from '../errors/types';
 import * as uiTypes from '../common/ui/types';
 import * as endpoints from '../../../api/constants';
 
@@ -95,20 +96,31 @@ export const performVaultItemEncryption = ({ overview, details, vaultKey, email,
                 },
             });
 
-            if (data.status) {
-                // Add to DB successful
-                const { item, status } = data;
-                dispatch({
-                    type: types.SAVE_VAULT_ITEM_SUCCESS,
-                    payload: { item, status },
-                });
-                dispatch(performVaultItemDecryption({ encArchiveList: item, vaultKey }));
-            } else {
-                // ToDo: add a fail message to store
-                console.log('Item not saved to vault');
-            }
+            // Add to DB successful
+            const { item, status } = data;
+            dispatch({
+                type: types.SAVE_VAULT_ITEM_SUCCESS,
+                payload: {
+                    item,
+                    status,
+                },
+            });
+            // Decrypt item
+            dispatch(performVaultItemDecryption({ encArchiveList: item, vaultKey }));
         } catch (err) {
-            console.log(err);
+            // Handle error response from server
+            if (err.response && err.response.data) {
+                const { error } = err.response.data;
+                dispatch({
+                    type: errorTypes.SAVE_VAULT_ITEM_FAILED,
+                    payload: {
+                        error,
+                    },
+                });
+            } else {
+                // ToDo: handle client encryption errors
+                console.log(err);
+            }
             dispatch({
                 type: uiTypes.HIDE_PAGE_LOADER,
             });

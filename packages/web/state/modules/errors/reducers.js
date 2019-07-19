@@ -13,6 +13,10 @@ const loginErrorsReducer = createReducer({})({
     [types.DOWNLOAD_EMERGENCY_KIT_FAILED]: handleEmergencyKitError,
 });
 
+const vaultErrorsReducer = createReducer({})({
+    [types.SAVE_VAULT_ITEM_FAILED]: handleSaveItemError,
+});
+
 /**
  *  SignUp Errors
  */
@@ -33,9 +37,18 @@ function handleEmergencyKitError(state, { payload }) {
     return { ...state, error: payload.error };
 }
 
+/**
+ *  Vault Errors
+ */
+
+function handleSaveItemError(state, { payload }) {
+    return { ...state, error: payload.error };
+}
+
 /* ------------------------------------- */
 
 export default combineReducers({
     signup: signUpErrorsReducer,
     login: loginErrorsReducer,
+    vault: vaultErrorsReducer,
 });
