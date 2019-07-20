@@ -33,7 +33,7 @@ class PdfModal extends Component {
         pdf.save('OnePass Emergency Kit');
         // ToDo: Check status of download
         // Send server request
-        this.props.getEmergencyKit(email);
+        this.props.getEmergencyKit();
     }
 
     renderModal() {

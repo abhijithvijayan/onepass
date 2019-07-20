@@ -529,14 +529,13 @@ export const decryptTheVaultKey = ({ normPassword, secretKey, userId, encKeySet,
  *  Generate Initial Emergency Kit (Disable popup on login)
  */
 
-export const getEmergencyKit = email => {
+export const getEmergencyKit = () => {
     return async dispatch => {
         try {
             const { data } = await api({
                 method: 'GET',
                 url: endpoints.GET_EMERGENCY_KIT_ENDPOINT,
                 headers: { Authorization: cookie.get('token') },
-                params: { email },
             });
             dispatch({
                 type: types.DOWNLOAD_EMERGENCY_KIT_SUCCESS,

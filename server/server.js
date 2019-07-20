@@ -97,13 +97,7 @@ nextApp.prepare().then(() => {
     server.post('/api/v1/auth/login', loginValidationCriterias, loginValidationBody, catchErrors(auth.login));
 
     /* Get Initial Emergency Kit */
-    server.get(
-        '/api/v1/auth/login.getEmergencyKit:email?',
-        emailInQueryCriterias,
-        emailInQuery,
-        auth.authWithJWT,
-        catchErrors(auth.getEmergencyKit)
-    );
+    server.get('/api/v1/auth/login.getEmergencyKit', auth.authWithJWT, catchErrors(auth.getEmergencyKit));
 
     // ToDo: add verificationcriterias to body
     server.post('/api/v1/auth/renew.token', auth.authWithJWT, catchErrors(auth.renewToken));
