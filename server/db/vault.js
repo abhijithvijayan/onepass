@@ -30,37 +30,47 @@ exports.getVaultData = async ({ email }) => {
 
     let itemsCount = 0;
     let encArchiveObjectList = {};
-    const { encVaultKey } = records.length && records[0].get('v').properties;
 
-    const encArchiveList = records.map(record => {
-        const item = record._fields[1]
-            ? {
-                  ...record._fields[1].end.properties,
-              }
-            : null;
-        if (item) {
-            itemsCount += 1;
-            return {
-                encOverview: Object.prototype.hasOwnProperty.call(item, 'encOverview')
-                    ? JSON.parse(item.encOverview)
-                    : '',
-                encDetails: Object.prototype.hasOwnProperty.call(item, 'encDetails') ? JSON.parse(item.encDetails) : '',
-                createdAt: Object.prototype.hasOwnProperty.call(item, 'createdAt') ? item.createdAt : '',
-                entryId: Object.prototype.hasOwnProperty.call(item, 'entryId') ? item.entryId : '',
-            };
+    if (records.length) {
+        const { encVaultKey } = records[0].get('v').properties;
+        const encArchiveList = records.map(record => {
+            const item = record._fields[1]
+                ? {
+                      ...record._fields[1].end.properties,
+                  }
+                : null;
+            if (item) {
+                itemsCount += 1;
+                return {
+                    encOverview: Object.prototype.hasOwnProperty.call(item, 'encOverview')
+                        ? JSON.parse(item.encOverview)
+                        : '',
+                    encDetails: Object.prototype.hasOwnProperty.call(item, 'encDetails')
+                        ? JSON.parse(item.encDetails)
+                        : '',
+                    createdAt: Object.prototype.hasOwnProperty.call(item, 'createdAt') ? item.createdAt : '',
+                    entryId: Object.prototype.hasOwnProperty.call(item, 'entryId') ? item.entryId : '',
+                };
+            }
+            return {};
+        });
+        if (itemsCount !== 0) {
+            // Array to object
+            encArchiveObjectList = Object.assign(
+                {},
+                ...encArchiveList.map(item => {
+                    return { [item.entryId]: item };
+                })
+            );
         }
-        return {};
-    });
-    if (itemsCount !== 0) {
-        // Array to object
-        encArchiveObjectList = Object.assign(
-            {},
-            ...encArchiveList.map(item => {
-                return { [item.entryId]: item };
-            })
-        );
+        const encVaultData = {
+            encVaultKey: JSON.parse(encVaultKey),
+            itemsCount,
+            encArchiveList: encArchiveObjectList,
+        };
+        return { encVaultData, status: true };
     }
-    return { encVaultKey: JSON.parse(encVaultKey), itemsCount, encArchiveList: encArchiveObjectList };
+    return { status: false, error: 'Account signup was left incomplete.' };
 };
 
 exports.saveEncVaultItem = async ({ encDetails, encOverview, email, itemId }) => {

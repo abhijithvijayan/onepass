@@ -167,7 +167,7 @@ exports.login = async (req, res) => {
                     return res.status(403).json({ error: 'Invalid secret key or master password' });
                 }
             }
-            return res.status(201).json({ status: 'Account signup was left incomplete.' });
+            return res.status(403).json({ error: 'Account signup was left incomplete.' });
         }
         default: {
             return res.status(403).json({ error: 'Invalid Request' });

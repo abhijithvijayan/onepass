@@ -11,11 +11,11 @@ exports.fetchEncKeys = async (req, res) => {
 
 exports.fetchVaultData = async (req, res) => {
     const { email } = req.query;
-    const encVaultData = await getVaultData({ email });
-    if (encVaultData) {
-        return res.status(200).json({ encVaultData });
+    const response = await getVaultData({ email });
+    if (response.status) {
+        return res.status(200).json({ encVaultData: response.encVaultData });
     }
-    return res.status(403).json({ error: 'Invalid Request' });
+    return res.status(403).json({ error: response.error });
 };
 
 exports.addOrUpdateVaultItem = async (req, res) => {
