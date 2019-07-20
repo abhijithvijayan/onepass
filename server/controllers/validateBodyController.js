@@ -125,6 +125,28 @@ exports.loginValidationBody = (req, res, next) => {
     return next();
 };
 
+/* Validate Email in Query */
+exports.emailInQueryCriterias = [
+    validator
+        .query('email')
+        .exists()
+        .withMessage('You must provide a valid email address.')
+        .isEmail()
+        .withMessage('Email address you entered is not valid.')
+        .trim()
+        .normalizeEmail(),
+];
+
+exports.emailInQuery = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const errorsObj = errors.mapped();
+        const emailError = errorsObj.email && errorsObj.email.msg;
+        return res.status(400).json({ error: emailError });
+    }
+    return next();
+};
+
 /* ------------------------------------------------------------- */
 /*                 // ToDo: REFACTOR Later
 /* ------------------------------------------------------------- */

@@ -25,12 +25,10 @@ const {
     resetPasswordFormBody,
     emailPasswordResetCriterias,
     emailPasswordResetBody,
-    changePasswordCriterias,
-    changePasswordBody,
-    createPasswordEntryCriterias,
-    createPasswordEntryBody,
     finalizeAccountValidationCriterias,
     finalizeAccountValidationBody,
+    emailInQueryCriterias,
+    emailInQuery,
 } = require('./controllers/validateBodyController');
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -98,18 +96,37 @@ nextApp.prepare().then(() => {
     /* User Login */
     server.post('/api/v1/auth/login', loginValidationCriterias, loginValidationBody, catchErrors(auth.login));
 
-    // ToDo: add verificationcriterias to body
-    server.get('/api/v1/auth/login.getEmergencyKit:email?', auth.authWithJWT, catchErrors(auth.getEmergencyKit));
+    /* Get Initial Emergency Kit */
+    server.get(
+        '/api/v1/auth/login.getEmergencyKit:email?',
+        emailInQueryCriterias,
+        emailInQuery,
+        auth.authWithJWT,
+        catchErrors(auth.getEmergencyKit)
+    );
 
+    // ToDo: add verificationcriterias to body
     server.post('/api/v1/auth/renew.token', auth.authWithJWT, catchErrors(auth.renewToken));
 
     /* ---------------------------------------- */
     /* ------------- Vault routes ------------- */
     /* ---------------------------------------- */
 
-    server.get('/api/v1/vault/getKeys:email?', auth.authWithJWT, catchErrors(vault.fetchEncKeys));
+    server.get(
+        '/api/v1/vault/getKeys:email?',
+        emailInQueryCriterias,
+        emailInQuery,
+        auth.authWithJWT,
+        catchErrors(vault.fetchEncKeys)
+    );
 
-    server.get('/api/v1/vault/getVaultData:email?', auth.authWithJWT, catchErrors(vault.fetchVaultData));
+    server.get(
+        '/api/v1/vault/getVaultData:email?',
+        emailInQueryCriterias,
+        emailInQuery,
+        auth.authWithJWT,
+        catchErrors(vault.fetchVaultData)
+    );
 
     server.post('/api/v1/vault/addOrUpdateItem', auth.authWithJWT, catchErrors(vault.addOrUpdateVaultItem));
 
