@@ -125,6 +125,34 @@ exports.loginValidationBody = (req, res, next) => {
     return next();
 };
 
+/* Login Form */
+exports.addOrUpdateItemCriterias = [
+    validator
+        .body('encDetails')
+        .exists()
+        .withMessage('Missing Encrypted Details.'),
+    validator
+        .body('encOverview')
+        .exists()
+        .withMessage('Missing Encrypted Overview.'),
+    validator
+        .body('itemId')
+        .exists()
+        .withMessage('Missing item id.'),
+];
+
+exports.addOrUpdateItemBody = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const errorsObj = errors.mapped();
+        const encDetailsError = errorsObj.encDetails && errorsObj.encDetails.msg;
+        const encOverviewError = errorsObj.encOverview && errorsObj.encOverview.msg;
+        const itemIdError = errorsObj.itemId && errorsObj.itemId.msg;
+        return res.status(400).json({ error: encDetailsError || encOverviewError || itemIdError });
+    }
+    return next();
+};
+
 /* ------------------------------------------------------------- */
 /*                 // ToDo: REFACTOR Later
 /* ------------------------------------------------------------- */

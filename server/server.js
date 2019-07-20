@@ -27,6 +27,8 @@ const {
     emailPasswordResetBody,
     finalizeAccountValidationCriterias,
     finalizeAccountValidationBody,
+    addOrUpdateItemCriterias,
+    addOrUpdateItemBody,
 } = require('./controllers/validateBodyController');
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -108,7 +110,13 @@ nextApp.prepare().then(() => {
 
     server.get('/api/v1/vault/getVaultData', auth.authWithJWT, catchErrors(vault.fetchVaultData));
 
-    server.post('/api/v1/vault/addOrUpdateItem', auth.authWithJWT, catchErrors(vault.addOrUpdateVaultItem));
+    server.post(
+        '/api/v1/vault/addOrUpdateItem',
+        addOrUpdateItemCriterias,
+        addOrUpdateItemBody,
+        auth.authWithJWT,
+        catchErrors(vault.addOrUpdateVaultItem)
+    );
 
     server.post('/api/v1/vault/deleteItem', auth.authWithJWT, catchErrors(vault.deleteVaultItem));
 

@@ -19,7 +19,9 @@ exports.fetchVaultData = async (req, res) => {
 };
 
 exports.addOrUpdateVaultItem = async (req, res) => {
-    const { encDetails, encOverview, email, itemId } = req.body;
+    const { encDetails, encOverview, itemId } = req.body;
+    const { email } = req.user;
+    // ToDo: validate item(details and overview content)
     const response = await saveEncVaultItem({ encDetails, encOverview, email, itemId });
     if (response.status) {
         const { status, item, message } = response;

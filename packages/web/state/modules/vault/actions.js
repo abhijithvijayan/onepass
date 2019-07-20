@@ -80,7 +80,6 @@ export const performVaultItemEncryption = ({ overview, details, vaultKey, email,
                 data: {
                     encDetails,
                     encOverview,
-                    email,
                     itemId,
                 },
             });
