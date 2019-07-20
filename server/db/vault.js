@@ -28,10 +28,9 @@ exports.getVaultData = async ({ email }) => {
     });
     session.close();
 
-    let itemsCount = 0;
-    let encArchiveObjectList = {};
-
     if (records.length) {
+        let itemsCount = 0;
+        let encArchiveObjectList = {};
         const { encVaultKey } = records[0].get('v').properties;
         const encArchiveList = records.map(record => {
             const item = record._fields[1]

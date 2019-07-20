@@ -80,9 +80,9 @@ exports.genEmergencyKit = async ({ email }) => {
     session.close();
     const { hasDownloadedEmergencyKit } = records.length && records[0].get('u').properties;
     if (hasDownloadedEmergencyKit) {
-        return { status: true };
+        return { status: true, message: 'Generate Emergency Kit Success' };
     }
-    return { status: false };
+    return { status: false, error: 'Account signup was left incomplete.' };
 };
 
 /* ------------------------------------------------------------- */
