@@ -4,12 +4,12 @@ const driver = require('./neo4j');
  * SIGNUP Functions
  */
 
-exports.saveAccountCredentials = async ({ verifier, salt, email, userId, encryptionKeys }) => {
+exports.saveAccountAuthCredentials = async ({ verifier, salt, email, userId, encryptionKeys }) => {
     const { pubKey = '', encPriKey = '', encSymKey = '', encVaultKey = '' } = encryptionKeys;
     const session = driver.session();
     const { records = [] } = await session.writeTransaction(tx => {
         return tx.run(
-            'MATCH (u: User { email: $emailParam, userId : $userIdParam, isVerified: true }) ' +
+            'MATCH (u: User { email: $emailParam, userId : $userIdParam, isVerified: true, hasCompletedSignUp: false }) ' +
                 'MERGE (a: auth { userId : $userIdParam })<-[:SRP]-(u) ' +
                 'SET u.hasCompletedSignUp = true, u.pubKey = $pubKeyParam, a.createdAt = $createdAtParam, a.verifier = $verifierParam, a.salt = $saltParam ' +
                 'MERGE (v: vault { userId : $userIdParam })<-[:VAULT]-(u) ' +
@@ -45,9 +45,14 @@ exports.saveAccountCredentials = async ({ verifier, salt, email, userId, encrypt
 exports.retrieveSRPVerifier = async ({ email }) => {
     const session = driver.session();
     const { records = [] } = await session.readTransaction(tx => {
-        return tx.run('MATCH (u: User { email: $emailParam, isVerified: true })-[:SRP]->(auth) RETURN auth', {
-            emailParam: email,
-        });
+        return tx.run(
+            'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true })' +
+                '-[:SRP]->(auth) ' +
+                'RETURN auth',
+            {
+                emailParam: email,
+            }
+        );
     });
     session.close();
     const { salt, verifier, userId } = records.length && records[0].get('auth').properties;
@@ -58,7 +63,8 @@ exports.saveServerEphemeral = async ({ serverSecretEphemeral, email }) => {
     const session = driver.session();
     await session.writeTransaction(tx => {
         return tx.run(
-            'MATCH (u: User { email: $emailParam, isVerified: true })-[:SRP]->(auth) ' +
+            'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true })' +
+                '-[:SRP]->(auth) ' +
                 'SET auth.serverSecretEphemeral = $serverSecretEphemeralParam ' +
                 'RETURN auth',
             {
@@ -73,9 +79,14 @@ exports.saveServerEphemeral = async ({ serverSecretEphemeral, email }) => {
 exports.retrieveSRPCredentials = async ({ email }) => {
     const session = driver.session();
     const { records = [] } = await session.readTransaction(tx => {
-        return tx.run('MATCH (u: User { email: $emailParam, isVerified: true })-[:SRP]->(auth) RETURN auth, u', {
-            emailParam: email,
-        });
+        return tx.run(
+            'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true })' +
+                '-[:SRP]->(auth) ' +
+                'RETURN auth, u',
+            {
+                emailParam: email,
+            }
+        );
     });
     session.close();
     const { salt, verifier, userId, serverSecretEphemeral } = records.length && records[0].get('auth').properties;

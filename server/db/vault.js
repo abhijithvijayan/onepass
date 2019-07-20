@@ -4,9 +4,14 @@ const driver = require('./neo4j');
 exports.getEncKeySet = async ({ email }) => {
     const session = driver.session();
     const { records = [] } = await session.readTransaction(tx => {
-        return tx.run('MATCH (u: User { email: $emailParam, isVerified: true })-[:KEYSET]->(keySet) RETURN keySet', {
-            emailParam: email,
-        });
+        return tx.run(
+            'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true })' +
+                '-[:KEYSET]->(keySet) ' +
+                'RETURN keySet',
+            {
+                emailParam: email,
+            }
+        );
     });
     session.close();
     const { encPriKey, encSymKey } = records.length && records[0].get('keySet').properties;
@@ -17,7 +22,8 @@ exports.getVaultData = async ({ email }) => {
     const session = driver.session();
     const { records = [] } = await session.readTransaction(tx => {
         return tx.run(
-            'MATCH (u: User { email: $emailParam, isVerified: true })-[:VAULT]->(v: vault) ' +
+            'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true })' +
+                '-[:VAULT]->(v: vault) ' +
                 'WITH v ' +
                 'OPTIONAL MATCH path = (v)-[:PASSWORDS]->()-[:Archive]->() ' +
                 'RETURN v, path',
@@ -77,7 +83,7 @@ exports.saveEncVaultItem = async ({ encDetails, encOverview, email, itemId }) =>
     const vaultItemRandomPrefix = generate('1245689abefklprtvxz', 6);
     const { records = [] } = await session.writeTransaction(tx => {
         return tx.run(
-            'MATCH (u: User { email: $emailParam, isVerified: true })-[:VAULT]-(v: vault) ' +
+            'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true })-[:VAULT]-(v: vault) ' +
                 'MERGE (v)-[:PASSWORDS]->(p: passwordCollection) ' +
                 'ON CREATE SET p.userId = v.userId, p.lastItem = 1, p.itemPrefix = $itemPrefixParam ' +
                 'ON MATCH SET p.lastItem = p.lastItem + 1 ' +
@@ -114,7 +120,7 @@ exports.deleteEncVaultItem = async ({ email, itemId }) => {
     const session = driver.session();
     const { records = [] } = await session.writeTransaction(tx => {
         return tx.run(
-            'MATCH (u: User { email: $emailParam }) ' +
+            'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true }) ' +
                 'WITH u, u.userId AS uid ' +
                 'MATCH (p: passwordCollection { userId: uid })-[:Archive]->(e: entry {entryId : $entryIdParam}) ' +
                 'WITH e, e.entryId AS eid, e.createdAt AS createdAt ' +

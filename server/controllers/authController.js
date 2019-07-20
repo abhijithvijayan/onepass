@@ -15,7 +15,7 @@ const {
     validatePasswordRequest,
 } = require('../db/user');
 const {
-    saveAccountCredentials,
+    saveAccountAuthCredentials,
     retrieveSRPVerifier,
     saveServerEphemeral,
     retrieveSRPCredentials,
@@ -111,14 +111,13 @@ exports.verify = async (req, res) => {
 
 exports.finalizeAccount = async (req, res) => {
     const { verifier, salt, email, userId, encryptionKeys } = req.body;
-    const serverResponse = await saveAccountCredentials({ verifier, salt, email, userId, encryptionKeys });
+    const serverResponse = await saveAccountAuthCredentials({ verifier, salt, email, userId, encryptionKeys });
     if (serverResponse.status) {
         return res.status(201).json({ status: 'Account signup successful.' });
     }
     return res.status(403).json({ error: 'Account signup failed.' });
 };
 
-// ToDo: Refactor
 exports.login = async (req, res) => {
     const { stage, email } = req.body;
     switch (stage) {
@@ -132,19 +131,7 @@ exports.login = async (req, res) => {
                 // Send `salt` and `serverEphemeral.public` to the client
                 return res.status(201).json({ userId, salt, serverPublicEphemeral: serverEphemeral.public });
             }
-            /**
-             * Send a bogus salt, userId & ephemeral value to avoid leaking which users have signed up
-             * ToDo: Handle the error when done so
-             * (https://github.com/LinusU/secure-remote-password/issues/1#issuecomment-508971375)
-             */
-            const sampleSalt = nanoid();
-            const endSuffix = generate('1234567890', 2);
-            const userRandomPrefix = generate('1245689abefklprtvxz', 6);
-            const sampleUserId = `user_${userRandomPrefix}_${endSuffix}`;
-            const sampleEphemeral = srp.generateEphemeral(sampleSalt);
-            return res
-                .status(201)
-                .json({ userId: sampleUserId, salt: sampleSalt, serverPublicEphemeral: sampleEphemeral.public });
+            return res.status(403).json({ error: 'Account signup was left incomplete.' });
         }
         case 'login': {
             const { clientPublicEphemeral = '', clientSessionProof = '' } = req.body;
