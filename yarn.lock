@@ -4370,7 +4370,7 @@ file-loader@^4.0.0:
     loader-utils "^1.2.2"
     schema-utils "^1.0.0"
 
-"file-saver@github:eligrey/FileSaver.js#1.3.8":
+file-saver@eligrey/FileSaver.js#1.3.8:
   version "1.3.8"
   resolved "https://codeload.github.com/eligrey/FileSaver.js/tar.gz/e865e37af9f9947ddcced76b549e27dc45c1cb2e"
 
@@ -6133,29 +6133,29 @@ js-crypto-hash@^0.5.1:
     md5 "~2.2.1"
     sha3 "~2.0.4"
 
-js-crypto-hkdf@^0.6.1:
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/js-crypto-hkdf/-/js-crypto-hkdf-0.6.1.tgz#8c61951c182d00405d5e102f51dbd0b11ba129e7"
-  integrity sha512-RhhggI1GovC/OhJgAcklVU6rQW0kXHZ576D77gM+Cd+vOQ20gtsjHRBwmMbEUa7ON+1Hmf9fNkRrjkongZP9lw==
+js-crypto-hkdf@^0.6.2:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/js-crypto-hkdf/-/js-crypto-hkdf-0.6.2.tgz#b6a4b0db81322d9fc71b12580f6a5d91ee39c218"
+  integrity sha512-7jmKptOUkHAqVP23xgbkQX58IKt5Rmp2yC75s5VkFXpULrRWAkLD2H0hLMrLNmci2VG40v8BEQeTP+atBUd64A==
   dependencies:
     "@babel/runtime" "~7.5.0"
     js-crypto-env "^0.2.4"
-    js-crypto-hmac "^0.5.1"
-    js-crypto-random "^0.3.4"
+    js-crypto-hmac "^0.5.2"
+    js-crypto-random "^0.3.5"
 
-js-crypto-hmac@^0.5.1:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/js-crypto-hmac/-/js-crypto-hmac-0.5.1.tgz#cbe5caed2ce921ec2e1fc958d8943a109822f234"
-  integrity sha512-tpR1IzzZZBaCvZugYEp93zs31HeNQdIQq1d3ktYRX4gyvAgHKTSgu5AVIB800xWBNdvV1z1vT6RyNQ3mEN3rpw==
+js-crypto-hmac@^0.5.2:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/js-crypto-hmac/-/js-crypto-hmac-0.5.2.tgz#6ba2430b147bacad2b4cd56bd48a8e44f7de1fa5"
+  integrity sha512-hXWfZwLZQiw4pfDKVd++NQn8eHdSMVWTZmDpSx8mx0CGGSf+JyTpv4YKivQArMYdVDvAfQd9isWK7DNh24rhNA==
   dependencies:
     "@babel/runtime" "~7.5.0"
     js-crypto-env "^0.2.4"
     js-crypto-hash "^0.5.1"
 
-js-crypto-random@^0.3.4:
-  version "0.3.4"
-  resolved "https://registry.yarnpkg.com/js-crypto-random/-/js-crypto-random-0.3.4.tgz#922434b6166bd34205a398abf94b603e4119c8f2"
-  integrity sha512-wSYFeYTZvK4aO7yjAVqbW3mWKZLAWTlFZAbK9JujeOixHYRhGKo2RioYyFlVD6ZLYJkBws1gF0IzYVR4ggOuqQ==
+js-crypto-random@^0.3.5:
+  version "0.3.5"
+  resolved "https://registry.yarnpkg.com/js-crypto-random/-/js-crypto-random-0.3.5.tgz#ffcea24368630a5d9285dbb1b6fae598a60e937b"
+  integrity sha512-9VytDK+anaplWNWBls9acR4+urkERYmcA0zlYMfTwb2BdDPSfW5rCYCLeWNuZEPGtDJYU+eaasd7i2v1IF6vVg==
   dependencies:
     "@babel/runtime" "~7.5.0"
     js-crypto-env "^0.2.4"
