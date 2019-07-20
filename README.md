@@ -14,13 +14,9 @@ You could test out the live progress at
 
 https://onepass.abhijithvijayan.in
 
-Use sample credentials:
+Use sample credentials from this paste
 
-> email: abc@gmail.com
-
-> secret key: A1-AE5Z9R-1VM93K-WZQVJ-HS2EF-S2JR5-MK5AG
-
-> password: abhijith123
+https://pastebin.com/raw/4bB7DsxX
 
 <hr />
 
