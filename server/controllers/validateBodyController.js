@@ -28,7 +28,7 @@ exports.signUpValidationBody = (req, res, next) => {
     return next();
 };
 
-/* Email - Verification Link */
+/* Email - Verification Token */
 exports.emailVerificationCriterias = [
     validator
         .body('email')
@@ -125,6 +125,10 @@ exports.loginValidationBody = (req, res, next) => {
     return next();
 };
 
+/* ------------------------------------------------------------- */
+/*                 // ToDo: REFACTOR Later
+/* ------------------------------------------------------------- */
+
 /* Forget Password Form */
 exports.resetPasswordFormCriterias = [
     validator
@@ -188,24 +192,6 @@ exports.changePasswordBody = (req, res, next) => {
         const errorsObj = errors.mapped();
         const passwordError = errorsObj.password && errorsObj.password.msg;
         return res.status(400).json({ error: passwordError });
-    }
-    return next();
-};
-
-exports.createPasswordEntryCriterias = [
-    validator
-        .body('sitename', 'Sitename should be less than 1024 character')
-        .exists()
-        .withMessage('A sitename is required for the entry.')
-        .isLength({ max: 1024 }),
-];
-
-exports.createPasswordEntryBody = (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        const errorsObj = errors.mapped();
-        const sitenameError = errorsObj.sitename && errorsObj.sitename.msg;
-        return res.status(400).json({ error: sitenameError });
     }
     return next();
 };

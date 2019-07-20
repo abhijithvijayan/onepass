@@ -120,45 +120,27 @@ nextApp.prepare().then(() => {
     /* ---------------------------------------- */
 
     /* Forget Password Form submission */
-    // ToDo Route
-    server.post(
-        '/api/v1/auth/reset',
-        resetPasswordFormCriterias,
-        resetPasswordFormBody,
-        catchErrors(auth.requestPasswordReset),
-        // ToDo: alert to check mailbox
-        api.sendStatus
-    );
+    // // ToDo Route
+    // server.post(
+    //     '/api/v1/auth/reset',
+    //     resetPasswordFormCriterias,
+    //     resetPasswordFormBody,
+    //     catchErrors(auth.requestPasswordReset),
+    //     // ToDo: alert to check mailbox
+    //     api.sendStatus
+    // );
 
-    /* Email - Password Reset */
-    // ToDo Route
-    server.get(
-        '/api/v1/auth/reset:email?:passwordResetToken?',
-        emailPasswordResetCriterias,
-        emailPasswordResetBody,
-        // middleware
-        catchErrors(auth.resetPasswordValidation),
-        // ToDo: change password action (redo encryption of every password collection)
-        api.sendStatus
-    );
-
-    // ToDo Route
-    server.post(
-        '/api/v1/auth/updatePassword',
-        changePasswordCriterias,
-        changePasswordBody,
-        // ToDo: Change password
-        api.sendStatus
-    );
-
-    // ToDo Route
-    server.post(
-        '/api/v1/vault/createPasswordEntry',
-        createPasswordEntryCriterias,
-        createPasswordEntryBody,
-        catchErrors(vault.createPasswordEntry),
-        api.sendStatus
-    );
+    // /* Email - Password Reset */
+    // // ToDo Route
+    // server.get(
+    //     '/api/v1/auth/reset:email?:passwordResetToken?',
+    //     emailPasswordResetCriterias,
+    //     emailPasswordResetBody,
+    //     // middleware
+    //     catchErrors(auth.resetPasswordValidation),
+    //     // ToDo: change password action (redo encryption of every password collection)
+    //     api.sendStatus
+    // );
 
     /* ---------------------------------------- */
     /* ---------- Ends Custom Routes ---------- */
