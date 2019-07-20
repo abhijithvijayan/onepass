@@ -376,7 +376,7 @@ export const submitLoginData = ({ email, password, secretKey }) => {
             /**
              *   7. Fetch keys & data using this token
              */
-            const { encKeySet, encVaultData } = await dispatch(fetchDataAndKeys({ email }));
+            const { encKeySet, encVaultData } = await dispatch(fetchDataAndKeys());
 
             /**
              *   8. Decrypt Vault Key

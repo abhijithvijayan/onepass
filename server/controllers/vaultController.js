@@ -1,7 +1,7 @@
 const { getEncKeySet, getVaultData, saveEncVaultItem, deleteEncVaultItem } = require('../db/vault');
 
 exports.fetchEncKeys = async (req, res) => {
-    const { email } = req.query;
+    const { email } = req.user;
     const encKeySet = await getEncKeySet({ email });
     if (encKeySet) {
         return res.status(200).json({ encKeySet });
@@ -10,7 +10,7 @@ exports.fetchEncKeys = async (req, res) => {
 };
 
 exports.fetchVaultData = async (req, res) => {
-    const { email } = req.query;
+    const { email } = req.user;
     const response = await getVaultData({ email });
     if (response.status) {
         return res.status(200).json({ encVaultData: response.encVaultData });

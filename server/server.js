@@ -27,8 +27,6 @@ const {
     emailPasswordResetBody,
     finalizeAccountValidationCriterias,
     finalizeAccountValidationBody,
-    emailInQueryCriterias,
-    emailInQuery,
 } = require('./controllers/validateBodyController');
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -106,21 +104,9 @@ nextApp.prepare().then(() => {
     /* ------------- Vault routes ------------- */
     /* ---------------------------------------- */
 
-    server.get(
-        '/api/v1/vault/getKeys:email?',
-        emailInQueryCriterias,
-        emailInQuery,
-        auth.authWithJWT,
-        catchErrors(vault.fetchEncKeys)
-    );
+    server.get('/api/v1/vault/getKeys', auth.authWithJWT, catchErrors(vault.fetchEncKeys));
 
-    server.get(
-        '/api/v1/vault/getVaultData:email?',
-        emailInQueryCriterias,
-        emailInQuery,
-        auth.authWithJWT,
-        catchErrors(vault.fetchVaultData)
-    );
+    server.get('/api/v1/vault/getVaultData', auth.authWithJWT, catchErrors(vault.fetchVaultData));
 
     server.post('/api/v1/vault/addOrUpdateItem', auth.authWithJWT, catchErrors(vault.addOrUpdateVaultItem));
 

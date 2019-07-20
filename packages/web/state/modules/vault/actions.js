@@ -22,33 +22,22 @@ import * as endpoints from '../../../api/constants';
  *  Fetching Data and Encrypted Keys from Vault
  */
 
-export const fetchDataAndKeys = ({ email }) => {
-    const sendRequest = async (params, endpoint) => {
+export const fetchDataAndKeys = () => {
+    const sendRequest = async endpoint => {
         const response = await api({
             method: 'GET',
             url: endpoint,
             headers: { Authorization: cookie.get('token') },
-            params,
         });
         return response;
     };
 
     function getEncKeys() {
-        return sendRequest(
-            {
-                email,
-            },
-            endpoints.FETCH_KEYS_ENDPOINT
-        );
+        return sendRequest(endpoints.FETCH_KEYS_ENDPOINT);
     }
 
     function getVaultData() {
-        return sendRequest(
-            {
-                email,
-            },
-            endpoints.FETCH_VAULT_ENDPOINT
-        );
+        return sendRequest(endpoints.FETCH_VAULT_ENDPOINT);
     }
 
     return async dispatch => {
