@@ -124,12 +124,16 @@ exports.login = async (req, res) => {
         case 'init': {
             const { verifier, salt, userId } = await retrieveSRPVerifier({ email });
             if (salt && verifier && userId) {
-                // Compute serverEphemeral
-                const serverEphemeral = srp.generateEphemeral(verifier);
-                // Store `serverEphemeral.secret`
-                await saveServerEphemeral({ serverSecretEphemeral: serverEphemeral.secret, email });
-                // Send `salt` and `serverEphemeral.public` to the client
-                return res.status(201).json({ userId, salt, serverPublicEphemeral: serverEphemeral.public });
+                try {
+                    // Compute serverEphemeral
+                    const serverEphemeral = srp.generateEphemeral(verifier);
+                    // Store `serverEphemeral.secret`
+                    await saveServerEphemeral({ serverSecretEphemeral: serverEphemeral.secret, email });
+                    // Send `salt` and `serverEphemeral.public` to the client
+                    return res.status(201).json({ userId, salt, serverPublicEphemeral: serverEphemeral.public });
+                } catch (err) {
+                    return res.status(403).json({ error: 'Invalid SRP Verifier.' });
+                }
             }
             return res.status(403).json({ error: 'Account signup was left incomplete.' });
         }
