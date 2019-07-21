@@ -4,7 +4,7 @@ import {
     expandActionButtons,
     fetchDataAndKeys,
     performVaultItemEncryption,
-    performVaultItemDecryption,
+    performVaultArchiveDecryption,
     toggleConfirmDeleteModal,
     deleteVaultItem,
 } from './actions';
@@ -15,7 +15,7 @@ export {
     expandActionButtons,
     fetchDataAndKeys,
     performVaultItemEncryption,
-    performVaultItemDecryption,
+    performVaultArchiveDecryption,
     toggleConfirmDeleteModal,
     deleteVaultItem,
 };

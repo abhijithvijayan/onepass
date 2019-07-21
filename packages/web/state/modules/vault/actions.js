@@ -94,7 +94,7 @@ export const performVaultItemEncryption = ({ overview, details, vaultKey, email,
                 },
             });
             // Decrypt item
-            dispatch(performVaultItemDecryption({ encArchiveList: item, vaultKey }));
+            dispatch(performVaultArchiveDecryption({ encArchiveList: item, vaultKey }));
         } catch (err) {
             // Handle error response from server
             if (err.response && err.response.data) {
@@ -143,10 +143,10 @@ const performItemDetailsDecryption = async ({ details, vaultKey }) => {
 };
 
 /**
- *  Decrypt Vault Item
+ *  Decrypt Vault Item(s)
  */
 
-export const performVaultItemDecryption = ({ encArchiveList, vaultKey }) => {
+export const performVaultArchiveDecryption = ({ encArchiveList, vaultKey }) => {
     return async dispatch => {
         try {
             let decVaultStatus = true;
@@ -155,6 +155,8 @@ export const performVaultItemDecryption = ({ encArchiveList, vaultKey }) => {
             const decVaultData = await Promise.all(
                 Object.entries(encArchiveList).map(async item => {
                     const { encOverview, encDetails, entryId } = item[1];
+
+                    // ToDo: Handle decryption failure
                     const decOverview = await performItemOverviewDecryption({ overview: encOverview, vaultKey });
                     const decDetails = await performItemDetailsDecryption({ details: encDetails, vaultKey });
 
@@ -189,7 +191,7 @@ export const performVaultItemDecryption = ({ encArchiveList, vaultKey }) => {
             }
             return { decVaultStatus };
         } catch (err) {
-            console.log(err);
+            console.log('this', err);
             dispatch({
                 type: uiTypes.HIDE_PAGE_LOADER,
             });

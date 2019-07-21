@@ -30,7 +30,7 @@ import * as vaultTypes from '../vault/types';
 import * as uiTypes from '../common/ui/types';
 import * as endpoints from '../../../api/constants';
 
-import { fetchDataAndKeys, performVaultItemDecryption } from '../vault/operations';
+import { fetchDataAndKeys, performVaultArchiveDecryption } from '../vault/operations';
 
 /** ------------------------------------------------------ */
 
@@ -396,7 +396,7 @@ export const submitLoginData = ({ email, password, secretKey }) => {
                 const { encArchiveList, itemsCount } = encVaultData;
                 if (itemsCount !== 0) {
                     const response = await dispatch(
-                        performVaultItemDecryption({ encArchiveList, vaultKey: decryptedVaultKey })
+                        performVaultArchiveDecryption({ encArchiveList, vaultKey: decryptedVaultKey })
                     );
                     // destructuring
                     ({ decVaultStatus } = response);
