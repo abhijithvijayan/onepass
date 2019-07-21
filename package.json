@@ -17,6 +17,8 @@
     "lint:fix": "eslint . --fix",
     "dev:web": "yarn workspace @onepass/server server",
     "build:web": "yarn workspace @onepass/web build",
+    "dev:extension": "yarn workspace @onepass/extension start",
+    "build:extension": "yarn workspace @onepass/extension build",
     "dev:mobile": "concurrently \"yarn workspace @onepass/mobile android\" \"yarn workspace @onepass/mobile start\""
   },
   "husky": {

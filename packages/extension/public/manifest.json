@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "onepass/extension",
+  "name": "@onepass/extension",
   "version": "0.0.1",
-  "description": "OnePass Password Manager",
+  "description": "Open-Source Password Manager",
   "browser_action": {
     "default_title": "OnePass",
     "chrome_style": false

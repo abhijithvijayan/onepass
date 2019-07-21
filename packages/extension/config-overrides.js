@@ -18,8 +18,11 @@ const resolveApp = relativePath => {
 */
 
 module.exports = function override(config, env) {
-    // force the dev server to write hot reloading changes to disk,
-    // so that browser can serve them.
+    /**
+     *   Force the dev server to write hot reloading changes to disk,
+     *   so that browser can serve them.
+     */
+
     const buildPath = './build';
 
     config.output.path = path.join(__dirname, buildPath);
@@ -28,7 +31,7 @@ module.exports = function override(config, env) {
     fs.removeSync(buildPath);
     fs.copySync('./public/', buildPath);
 
-    // Monorepo sharing
+    // Monorepo code sharing
     const newConfig = rewireBabelLoader.include(
         config,
         // our packages that will now be included in the CRA build step
