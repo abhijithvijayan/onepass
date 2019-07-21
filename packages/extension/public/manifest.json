@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "description": "Open-Source Password Manager",
   "browser_action": {
+    "default_popup": "index.html",
     "default_title": "OnePass",
     "chrome_style": false
   },
@@ -14,6 +15,7 @@
   },
   "homepage_url": "https://github.com/onepassapp/onepass.git",
   "minimum_chrome_version": "49",
+  "content_security_policy": "script-src 'self'; object-src 'self'",
   "permissions": [
     "<all_urls>",
     "clipboardWrite",

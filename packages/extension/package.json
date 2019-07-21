@@ -14,7 +14,9 @@
   },
   "scripts": {
     "start": "react-app-rewired start",
-    "build": "react-app-rewired build && node build-script.js",
+    "build": "npm-run-all build:*",
+    "build:app": "react-app-rewired build",
+    "build:bg": "webpack --mode production ./src/background.js --output ./build/background.js",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject"
   },
@@ -32,5 +34,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "npm-run-all": "^4.1.5",
+    "webpack-cli": "^3.3.6"
   }
 }
