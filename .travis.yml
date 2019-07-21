@@ -10,3 +10,4 @@ cache:
 script:
   - yarn run lint
   - yarn run build:web
+  - yarn run build:extension
