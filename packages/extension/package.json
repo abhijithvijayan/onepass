@@ -19,6 +19,7 @@
   "dependencies": {
     "@onepass/web": "0.0.1",
     "cross-env": "^5.2.0",
+    "csp-html-webpack-plugin": "^3.0.2",
     "react": "^16.8.6",
     "react-app-rewire-babel-loader": "^0.1.1",
     "react-app-rewire-yarn-workspaces": "^1.0.3",

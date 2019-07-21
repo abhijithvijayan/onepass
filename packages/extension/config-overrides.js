@@ -12,15 +12,24 @@ const resolveApp = relativePath => {
     return path.resolve(appDirectory, relativePath);
 };
 
-/**
-    Related: https://github.com/facebook/create-react-app/issues/1070
-             https://github.com/gajus/write-file-webpack-plugin
-*/
+const CSPhtmlWebpackPlugin = require('csp-html-webpack-plugin');
+
+const cspConfigPolicy = {
+    'default-src': "'none'",
+    'base-uri': "'self'",
+    'object-src': "'none'",
+    'script-src': ["'self'"],
+    'manifest-src': ["'self'"],
+    'img-src': ["'self'"],
+    'style-src': ["'self'"],
+};
 
 module.exports = function override(config, env) {
     /**
      *   Force the dev server to write hot reloading changes to disk,
      *   so that browser can serve them.
+     *   Related: https://github.com/facebook/create-react-app/issues/1070
+     *            https://github.com/gajus/write-file-webpack-plugin
      */
 
     const buildPath = './build';
@@ -30,6 +39,15 @@ module.exports = function override(config, env) {
     config.output.futureEmitAssets = false;
     fs.removeSync(buildPath);
     fs.copySync('./public/', buildPath);
+
+    /**
+     *  Content Security Policy (CSP) in Create-React-App (CRA)
+     *  Related: https://medium.com/@nrshahri/csp-cra-324dd83fe5ff
+     */
+
+    if (process.env.NODE_ENV === 'production') {
+        config.plugins.push(new CSPhtmlWebpackPlugin(cspConfigPolicy));
+    }
 
     // Monorepo code sharing
     const newConfig = rewireBabelLoader.include(

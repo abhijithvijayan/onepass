@@ -15,7 +15,6 @@
   },
   "homepage_url": "https://github.com/onepassapp/onepass.git",
   "minimum_chrome_version": "49",
-  "content_security_policy": "script-src 'self'; object-src 'self'",
   "permissions": [
     "<all_urls>",
     "clipboardWrite",
