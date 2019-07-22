@@ -17,7 +17,7 @@
     "lint:fix": "eslint . --fix",
     "dev:web": "yarn workspace @onepass/server server",
     "build:web": "yarn workspace @onepass/web build",
-    "dev:extension": "yarn workspace @onepass/extension start",
+    "dev:extension": "concurrently \"yarn workspace @onepass/extension start\" \"yarn run dev:web\"",
     "build:extension": "yarn workspace @onepass/extension build",
     "dev:mobile": "concurrently \"yarn workspace @onepass/mobile android\" \"yarn workspace @onepass/mobile start\""
   },
@@ -33,13 +33,13 @@
     ]
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.2",
+    "babel-eslint": "10.0.1",
     "concurrently": "^4.1.1",
-    "eslint": "^6.1.0",
+    "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.1",
-    "eslint-config-onepass": "1.1.0",
-    "eslint-config-prettier": "^6.0.0",
-    "eslint-plugin-html": "^6.0.0",
+    "eslint-config-onepass": "1.2.1",
+    "eslint-config-prettier": "^4.3.0",
+    "eslint-plugin-html": "^5.0.5",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-prettier": "^3.1.0",
