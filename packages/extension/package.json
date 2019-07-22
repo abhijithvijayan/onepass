@@ -8,11 +8,11 @@
     "start:app": "react-app-rewired start",
     "wait-dev": "wait-on $REACT_START_URL",
     "add:scripts": "run-s wait-dev build:bg:dev",
-    "build:bg:dev": "webpack --mode development ./src/background.js --output ./build/background.js",
+    "build:bg:dev": "webpack --mode development ./src/scripts/background.js --output ./build/background.js",
     "prebuild": "rimraf build",
     "build": "npm-run-all build:*",
     "build:app": "react-app-rewired build",
-    "build:bg": "webpack --mode production ./src/background.js --output ./build/background.js",
+    "build:bg": "webpack --mode production ./src/scripts/background.js --output ./build/background.js",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject"
   },
