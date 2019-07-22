@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import Router from 'next/router';
 
-import { logoutUser } from '../state/modules/auth/actions';
+import { logoutUser, authUser } from '../state/modules/auth/actions';
 
 class LogoutPage extends Component {
-    componentDidMount() {
-        this.props.logoutUser();
-    }
+    componentDidMount = async () => {
+        await this.props.logoutUser();
+        Router.push('/login');
+    };
 
     render() {
         return <div />;
@@ -17,6 +19,7 @@ class LogoutPage extends Component {
 const mapDispatchToProps = dispatch => {
     return {
         logoutUser: bindActionCreators(logoutUser, dispatch),
+        authUser: bindActionCreators(authUser, dispatch),
     };
 };
 

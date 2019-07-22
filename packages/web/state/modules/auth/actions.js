@@ -2,7 +2,6 @@
 /* eslint-disable no-use-before-define */
 
 import decodeJwt from 'jwt-decode';
-import Router from 'next/router';
 import cookie from 'js-cookie';
 
 // Core Libraries
@@ -577,7 +576,6 @@ export const logoutUser = () => {
         dispatch({
             type: types.USER_DE_AUTH_SUCCEEDED,
         });
-        Router.push('/login');
     };
 };
 
