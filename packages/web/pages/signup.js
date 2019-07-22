@@ -12,9 +12,18 @@ class SignUpPage extends Component {
         }
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        if (nextProps.isVerificationSent) {
+            Router.push('/verify', '/signup/verify');
+        }
+        return true;
+    }
+
     render() {
+        const { isAuthenticated, isVerificationSent } = this.props;
         return (
-            !this.props.isAuthenticated && (
+            !isAuthenticated &&
+            !isVerificationSent && (
                 <BodyWrapper>
                     <SignUp />
                 </BodyWrapper>
@@ -23,9 +32,10 @@ class SignUpPage extends Component {
     }
 }
 
-const mapStateToProps = ({ auth: { login } }) => {
+const mapStateToProps = ({ auth: { login, signup } }) => {
     return {
         isAuthenticated: login.isAuthenticated,
+        isVerificationSent: signup.isVerificationSent === undefined ? false : signup.isVerificationSent,
     };
 };
 

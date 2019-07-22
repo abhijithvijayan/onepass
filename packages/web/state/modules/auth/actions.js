@@ -110,8 +110,6 @@ export const submitSignUpData = ({ email, name }) => {
                     data,
                 },
             });
-
-            Router.push('/verify', '/signup/verify');
         } catch ({ response }) {
             dispatch({
                 type: errorTypes.USER_SIGNUP_FAILED,
