@@ -1,5 +1,5 @@
 <h1 align="center">OnePass</h1>
-<p>
+<p align="center">
   <img src="https://travis-ci.org/onepassapp/onepass.svg?branch=master" />
   <img src="https://img.shields.io/badge/version-0.0.1-blue.svg?cacheSeconds=2592000" />
   <img src="https://img.shields.io/badge/node-%3E%3D%208%20%3C11-blue.svg" />
@@ -17,6 +17,17 @@ https://onepass.abhijithvijayan.in
 Use sample credentials from this paste
 
 https://pastebin.com/raw/4bB7DsxX
+
+<hr />
+
+### Directory Structure
+
+- @onepass/core - Encryption related functions
+- @onepass/web - Next.js App
+- @onepass/extension - Create-React-App Browser extension
+- @onepass/server - Express Server
+
+Note: This architecture provides code sharing to a larger extent between monorepo packages.
 
 <hr />
 
@@ -42,8 +53,6 @@ Pull requests are welcome as there are plenty of improvements & features to be w
 
 Open [issues](https://github.com/onepassapp/onepass/issues) for feedback, requesting features, reporting bugs or discussing ideas.
 
-Encryption related functions are under @onepass/core
-
 <hr />
 
 ## Stack
@@ -62,13 +71,17 @@ Encryption related functions are under @onepass/core
 - SASS (CSS Preprocessor)
 - Neo4j (Graph database)
 
+<h4>Browser extension</h4>
+
+- Create-React-App (Zero config React toolchain)
+- React (UI library)
+- Redux (State management | Ducks Style)
+- WebExtension API (Cross-Browser Support)
+  <hr />
+
 <h4>Android / iOS</hr>
 
 ...
-
-<h4>Browser extension</h4>
-...
-<hr />
 
 ## Prerequisites
 
@@ -83,7 +96,7 @@ Encryption related functions are under @onepass/core
 yarn install
 ```
 
-#### Launch Next.js - Express Server
+#### Launch WebApp (Next.js - Express Server)
 
 ```sh
 yarn run dev:web
@@ -95,10 +108,18 @@ yarn run dev:web
 yarn run dev:mobile
 ``` -->
 
-### Install packages
+### Extension
+
+```sh
+yarn run dev:extension
+```
+
+This launches create-react-app at `port 3000` and express backend server at `port 4000`
+
+### Add packages
 
 ```
-yarn workspace @onepass/<core/web/mobile> add <package_name>
+yarn workspace @onepass/<core/web/extension/mobile> add <package_name>
 ```
 
 <hr />
