@@ -1,27 +1,50 @@
 /* eslint-disable import/no-unresolved */
+const path = require('path');
 /* eslint-disable-next-line import/no-extraneous-dependencies */
 const fs = require('fs-extra');
-const path = require('path');
 const WriteFilePlugin = require('write-file-webpack-plugin');
-
+const CSPhtmlWebpackPlugin = require('csp-html-webpack-plugin');
 const rewireBabelLoader = require('react-app-rewire-babel-loader');
 const rewireYarnWorkspaces = require('react-app-rewire-yarn-workspaces');
 
-const appDirectory = fs.realpathSync(process.cwd());
-const resolveApp = relativePath => {
-    return path.resolve(appDirectory, relativePath);
+/**
+ *  Content Security Policy
+ */
+
+// Development
+const cspConfigDevPolicy = {
+    'script-src': ["'unsafe-inline'", "'self'", "'unsafe-eval'"],
+    'style-src': ["'unsafe-inline'", "'self'", "'unsafe-eval'"],
 };
 
-const CSPhtmlWebpackPlugin = require('csp-html-webpack-plugin');
+const cspDevOptions = {
+    enabled: true,
+    hashingMethod: 'sha256',
+    hashEnabled: {
+        'script-src': false,
+        'style-src': false,
+    },
+    nonceEnabled: {
+        'script-src': true,
+        'style-src': false,
+    },
+};
 
-const cspConfigPolicy = {
+// Production
+const cspConfigProdPolicy = {
     'default-src': "'none'",
     'base-uri': "'self'",
     'object-src': "'none'",
     'script-src': ["'self'"],
     'manifest-src': ["'self'"],
     'img-src': ["'self'"],
-    'style-src': ["'self'"],
+    'style-src': ["'self'", "'unsafe-inline'"],
+};
+
+/** Relative PATH for the files */
+const appDirectory = fs.realpathSync(process.cwd());
+const resolveApp = relativePath => {
+    return path.resolve(appDirectory, relativePath);
 };
 
 module.exports = function override(config, env) {
@@ -43,10 +66,14 @@ module.exports = function override(config, env) {
     /**
      *  Content Security Policy (CSP) in Create-React-App (CRA)
      *  Related: https://medium.com/@nrshahri/csp-cra-324dd83fe5ff
+     *           https://github.com/slackhq/csp-html-webpack-plugin
      */
 
     if (process.env.NODE_ENV === 'production') {
-        config.plugins.push(new CSPhtmlWebpackPlugin(cspConfigPolicy));
+        config.plugins.push(new CSPhtmlWebpackPlugin(cspConfigProdPolicy));
+    } else {
+        // ToDo: Refactor needed
+        config.plugins.push(new CSPhtmlWebpackPlugin(cspConfigDevPolicy, cspDevOptions));
     }
 
     // Monorepo code sharing
