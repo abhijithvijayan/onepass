@@ -71,17 +71,21 @@ module.exports = function override(config, env) {
 
     if (process.env.NODE_ENV === 'production') {
         config.plugins.push(new CSPhtmlWebpackPlugin(cspConfigProdPolicy));
-    } else {
-        // ToDo: Refactor needed
-        config.plugins.push(new CSPhtmlWebpackPlugin(cspConfigDevPolicy, cspDevOptions));
     }
+    // else {
+    //     // ToDo: Refactor needed
+    //     config.plugins.push(new CSPhtmlWebpackPlugin(cspConfigDevPolicy, cspDevOptions));
+    // }
 
     // Monorepo code sharing
     const newConfig = rewireBabelLoader.include(
         config,
         // our packages that will now be included in the CRA build step
         resolveApp('src'),
-        resolveApp('../web/components')
+        resolveApp('../core'),
+        resolveApp('../web/api'),
+        resolveApp('../web/components'),
+        resolveApp('../web/state')
     );
     return rewireYarnWorkspaces(newConfig, env);
 };
