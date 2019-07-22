@@ -408,21 +408,7 @@ export const submitLoginData = ({ email, password, secretKey }) => {
                 // Decryption was successful
                 if (decVaultStatus) {
                     /**
-                     *  10. Dispatch Successful auth
-                     */
-                    dispatch({
-                        type: types.USER_AUTH_SUCCEEDED,
-                        payload: {
-                            user,
-                            keys: {
-                                decVaultKey: decryptedVaultKey,
-                                secretKey: normSecretKey,
-                            },
-                        },
-                    });
-
-                    /**
-                     *   11. Save items to LocalStorage (distinguished by userId)
+                     *   10. Save items to LocalStorage (distinguished by userId)
                      */
                     localStorage.setItem(
                         user.userId,
@@ -435,7 +421,19 @@ export const submitLoginData = ({ email, password, secretKey }) => {
                     );
                     localStorage.setItem('lastUser', userId);
 
-                    Router.push('/vault');
+                    /**
+                     *   11. Dispatch Successful auth
+                     */
+                    dispatch({
+                        type: types.USER_AUTH_SUCCEEDED,
+                        payload: {
+                            user,
+                            keys: {
+                                decVaultKey: decryptedVaultKey,
+                                secretKey: normSecretKey,
+                            },
+                        },
+                    });
                 }
             }
         } catch (err) {

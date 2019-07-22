@@ -12,6 +12,13 @@ class LoginPage extends Component {
         }
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        if (nextProps.isAuthenticated) {
+            Router.push('/vault');
+        }
+        return true;
+    }
+
     render() {
         return (
             !this.props.isAuthenticated && (

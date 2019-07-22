@@ -10,6 +10,9 @@ class MasterPasswordPage extends Component {
         if (nextProps.hasFailedSignUp) {
             Router.push('/signup');
         }
+        if (nextProps.isAuthenticated) {
+            Router.push('/vault');
+        }
         return true;
     }
 
