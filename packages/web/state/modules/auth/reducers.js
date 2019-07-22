@@ -23,6 +23,7 @@ const loginReducer = createReducer(initialLoginState)({
 const signUpReducer = createReducer({})({
     [types.VALID_SIGNUP_FORM_SUBMISSION]: onSignUpRequest,
     [types.VALID_VERIFICATION_TOKEN_SUBMISSION]: onVerifyTokenSubmission,
+    [types.USER_SIGNUP_NOT_COMPLETED]: onCompletionFailure,
     [types.USER_SIGNUP_SUCCEEDED]: finishSignUp,
 });
 
@@ -35,7 +36,14 @@ function onSignUpRequest(state, { payload }) {
 }
 
 function onVerifyTokenSubmission(state, { payload }) {
-    return { ...state, response: payload, isVerified: true };
+    // Delete hasFailedSignUp flag if exists
+    const { hasFailedSignUp: deleted, ...remaining } = state;
+    return { ...remaining, response: payload, isVerified: true };
+}
+
+function onCompletionFailure(state, { payload }) {
+    const { error, hasFailedSignUp } = payload;
+    return { ...state, response: error, hasFailedSignUp, isVerified: false, isVerificationSent: false };
 }
 
 function finishSignUp() {

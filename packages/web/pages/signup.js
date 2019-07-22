@@ -20,10 +20,10 @@ class SignUpPage extends Component {
     }
 
     render() {
-        const { isAuthenticated, isVerificationSent } = this.props;
+        const { isAuthenticated, isVerificationSent, hasFailedSignUp } = this.props;
         return (
             !isAuthenticated &&
-            !isVerificationSent && (
+            (!isVerificationSent || hasFailedSignUp) && (
                 <BodyWrapper>
                     <SignUp />
                 </BodyWrapper>
@@ -36,6 +36,7 @@ const mapStateToProps = ({ auth: { login, signup } }) => {
     return {
         isAuthenticated: login.isAuthenticated,
         isVerificationSent: signup.isVerificationSent === undefined ? false : signup.isVerificationSent,
+        hasFailedSignUp: signup.hasFailedSignUp === undefined ? false : signup.hasFailedSignUp,
     };
 };
 
