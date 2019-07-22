@@ -148,8 +148,6 @@ export const submitVerificationToken = ({ email, verificationToken }) => {
                 type: types.VALID_VERIFICATION_TOKEN_SUBMISSION,
                 payload: response.data,
             });
-
-            Router.push('/masterpassword', '/signup/masterpassword');
         } catch ({ response }) {
             dispatch({
                 type: errorTypes.USER_SIGNUP_FAILED,
