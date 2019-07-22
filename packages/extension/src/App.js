@@ -1,12 +1,20 @@
 import React from 'react';
+import { Router, Route, Switch } from 'react-router-dom';
 
 import Home from '@onepass/web/components/Home';
+import history from './state/utils/history';
 
 const App = () => {
     return (
-        <div>
-            <Home />
-        </div>
+        <React.Fragment>
+            <Router history={history}>
+                <div>
+                    <Switch>
+                        <Route path="/" exact component={Home} />
+                    </Switch>
+                </div>
+            </Router>
+        </React.Fragment>
     );
 };
 
