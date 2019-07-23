@@ -544,7 +544,7 @@ export const getEmergencyKit = () => {
                 headers: { Authorization: cookie.get('token') },
             });
             dispatch({
-                type: types.DOWNLOAD_EMERGENCY_KIT_SUCCESS,
+                type: types.DOWNLOAD_EMERGENCY_KIT_SUCCEEDED,
                 payload: {
                     status: data.status,
                 },

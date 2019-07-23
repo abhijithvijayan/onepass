@@ -47,11 +47,11 @@ export const fetchDataAndKeys = () => {
             const { encVaultData } = vault.data;
 
             dispatch({
-                type: authTypes.FETCH_ENCRYPTION_KEYS,
+                type: authTypes.FETCH_ENCRYPTION_KEYS_SUCCEEDED,
                 payload: encKeySet,
             });
             dispatch({
-                type: types.FETCH_VAULT_CONTENTS,
+                type: types.FETCH_VAULT_CONTENTS_SUCCEEDED,
                 payload: encVaultData,
             });
 
@@ -59,7 +59,24 @@ export const fetchDataAndKeys = () => {
         } catch (err) {
             // Handle error response from server
             if (err.response && err.response.data) {
-                const { error } = err.response.data;
+                const { error, id } = err.response.data;
+                /* eslint-disable-next-line default-case */
+                switch (id) {
+                    case 'keys': {
+                        dispatch({
+                            type: authTypes.FETCH_ENCRYPTION_KEYS_FAILED,
+                            payload: error,
+                        });
+                        break;
+                    }
+                    case 'vault': {
+                        dispatch({
+                            type: types.FETCH_VAULT_CONTENTS_FAILED,
+                            payload: error,
+                        });
+                        break;
+                    }
+                }
             } else {
                 console.log(err);
             }
@@ -92,7 +109,7 @@ export const performVaultItemEncryption = ({ overview, details, vaultKey, email,
             // Add to DB successful
             const { item, status } = data;
             dispatch({
-                type: types.SAVE_VAULT_ITEM_SUCCESS,
+                type: types.SAVE_VAULT_ITEM_SUCCEEDED,
                 payload: {
                     item,
                     status,
@@ -231,7 +248,7 @@ export const deleteVaultItem = ({ email, itemId }) => {
                 },
             });
             dispatch({
-                type: types.DELETE_VAULT_ITEM_SUCCESS,
+                type: types.DELETE_VAULT_ITEM_SUCCEEDED,
                 payload: { item, status },
             });
             dispatch({

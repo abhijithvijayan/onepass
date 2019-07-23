@@ -25,10 +25,10 @@ const vaultUIReducer = createReducer(initialVaultUIState)({
 });
 
 const encryptionReducer = createReducer(initialEncryptedState)({
-    [types.FETCH_VAULT_CONTENTS]: onFetchVaultContents,
-    [types.SAVE_VAULT_ITEM_SUCCESS]: onSaveItemSuccess,
+    [types.FETCH_VAULT_CONTENTS_SUCCEEDED]: onFetchVaultContents,
+    [types.SAVE_VAULT_ITEM_SUCCEEDED]: onSaveItemSuccess,
     [types.CLEAR_FETCHED_VAULT_DATA]: clearEncVaultData,
-    [types.DELETE_VAULT_ITEM_SUCCESS]: onDeleteItemSuccess,
+    [types.DELETE_VAULT_ITEM_SUCCEEDED]: onDeleteItemSuccess,
 });
 
 const decryptionReducer = createReducer(initialDecryptedState)({

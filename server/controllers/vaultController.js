@@ -7,7 +7,7 @@ exports.fetchEncKeys = async (req, res) => {
         const { encPriKey, encSymKey } = response;
         return res.status(200).json({ encKeySet: { encPriKey, encSymKey } });
     }
-    return res.status(403).json({ error: response.error });
+    return res.status(403).json({ error: response.error, id: 'keys' });
 };
 
 exports.fetchVaultData = async (req, res) => {
@@ -16,7 +16,7 @@ exports.fetchVaultData = async (req, res) => {
     if (response.status) {
         return res.status(200).json({ encVaultData: response.encVaultData });
     }
-    return res.status(403).json({ error: response.error });
+    return res.status(403).json({ error: response.error, id: 'vault' });
 };
 
 exports.addOrUpdateVaultItem = async (req, res) => {
