@@ -433,7 +433,11 @@ export const submitLoginData = ({ email, password, secretKey }) => {
                             },
                         },
                     });
+                } else {
+                    // ToDo: Get vault item that failed to decrypt
                 }
+            } else {
+                // ToDo: Handle vault key decryption failure
             }
         } catch (err) {
             // Handle error response from server

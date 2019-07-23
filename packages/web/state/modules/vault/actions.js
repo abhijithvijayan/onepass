@@ -57,6 +57,7 @@ export const fetchDataAndKeys = () => {
 
             return { encKeySet, encVaultData };
         } catch (err) {
+            // ToDo: handle fetch data failure
             console.log(err);
         }
     };
@@ -187,6 +188,7 @@ export const performVaultArchiveDecryption = ({ encArchiveList, vaultKey }) => {
                     payload: { decVaultData: decArchiveObjectList, isVaultEmpty },
                 });
             } else {
+                // ToDo: Refactor
                 console.log('vault decryption failed');
             }
             return { decVaultStatus };
