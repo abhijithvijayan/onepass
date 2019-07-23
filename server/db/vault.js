@@ -14,8 +14,11 @@ exports.getEncKeySet = async ({ email }) => {
         );
     });
     session.close();
-    const { encPriKey, encSymKey } = records.length && records[0].get('keySet').properties;
-    return { encPriKey: JSON.parse(encPriKey), encSymKey: JSON.parse(encSymKey) };
+    if (records.length) {
+        const { encPriKey, encSymKey } = records[0].get('keySet').properties;
+        return { status: true, encPriKey: JSON.parse(encPriKey), encSymKey: JSON.parse(encSymKey) };
+    }
+    return { status: false, error: 'Account signup was left incomplete.' };
 };
 
 exports.getVaultData = async ({ email }) => {

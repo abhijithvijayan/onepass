@@ -57,8 +57,12 @@ export const fetchDataAndKeys = () => {
 
             return { encKeySet, encVaultData };
         } catch (err) {
-            // ToDo: handle fetch data failure
-            console.log(err);
+            // Handle error response from server
+            if (err.response && err.response.data) {
+                const { error } = err.response.data;
+            } else {
+                console.log(err);
+            }
         }
     };
 };

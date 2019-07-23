@@ -274,7 +274,7 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
                 });
             } else {
                 // ToDo: handle client encryption errors
-                console.log(err);
+                console.log('Initial Encryption for Keys failed: ', err);
             }
             dispatch({
                 type: uiTypes.HIDE_PAGE_LOADER,
@@ -435,9 +435,11 @@ export const submitLoginData = ({ email, password, secretKey }) => {
                     });
                 } else {
                     // ToDo: Get vault item that failed to decrypt
+                    console.log('Vault decyption failed.');
                 }
             } else {
                 // ToDo: Handle vault key decryption failure
+                console.log('Vault Key decryption failed.');
             }
         } catch (err) {
             // Handle error response from server

@@ -2,11 +2,12 @@ const { getEncKeySet, getVaultData, saveEncVaultItem, deleteEncVaultItem } = req
 
 exports.fetchEncKeys = async (req, res) => {
     const { email } = req.user;
-    const encKeySet = await getEncKeySet({ email });
-    if (encKeySet) {
-        return res.status(200).json({ encKeySet });
+    const response = await getEncKeySet({ email });
+    if (response.status) {
+        const { encPriKey, encSymKey } = response;
+        return res.status(200).json({ encKeySet: { encPriKey, encSymKey } });
     }
-    return res.status(403).json({ error: 'Invalid Request' });
+    return res.status(403).json({ error: response.error });
 };
 
 exports.fetchVaultData = async (req, res) => {
