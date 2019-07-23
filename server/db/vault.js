@@ -57,7 +57,7 @@ exports.getVaultData = async ({ email }) => {
                         ? JSON.parse(item.encDetails)
                         : '',
                     createdAt: Object.prototype.hasOwnProperty.call(item, 'createdAt') ? item.createdAt : '',
-                    itemId: Object.prototype.hasOwnProperty.call(item, 'itemId') ? item.itemId : '',
+                    itemId: Object.prototype.hasOwnProperty.call(item, 'entryId') ? item.entryId : '',
                 };
             }
             return {};
@@ -125,8 +125,8 @@ exports.deleteEncVaultItem = async ({ email, itemId }) => {
         return tx.run(
             'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true }) ' +
                 'WITH u, u.userId AS uid ' +
-                'MATCH (p: passwordCollection { userId: uid })-[:Archive]->(e: entry {itemId : $itemIdParam}) ' +
-                'WITH e, e.itemId AS eid, e.createdAt AS createdAt ' +
+                'MATCH (p: passwordCollection { userId: uid })-[:Archive]->(e: entry { entryId : $itemIdParam }) ' +
+                'WITH e, e.entryId AS eid, e.createdAt AS createdAt ' +
                 'DETACH DELETE e ' +
                 'RETURN eid, createdAt',
             {

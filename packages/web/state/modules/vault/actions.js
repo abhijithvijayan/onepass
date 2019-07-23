@@ -237,7 +237,7 @@ export const deleteVaultItem = ({ itemId }) => {
                 type: types.TOGGLE_CONFIRM_DELETE_MODAL,
                 payload: {
                     isDeleteModalOpen: false,
-                    id: item.itemId,
+                    id: '',
                 },
             });
             dispatch({
