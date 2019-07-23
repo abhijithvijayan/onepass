@@ -171,7 +171,7 @@ export const performVaultArchiveDecryption = ({ encArchiveList, vaultKey }) => {
             // Iterate through object
             const decVaultData = await Promise.all(
                 Object.entries(encArchiveList).map(async item => {
-                    const { encOverview, encDetails, entryId } = item[1];
+                    const { encOverview, encDetails, itemId } = item[1];
 
                     // ToDo: Handle decryption failure
                     const decOverview = await performItemOverviewDecryption({ overview: encOverview, vaultKey });
@@ -182,7 +182,7 @@ export const performVaultArchiveDecryption = ({ encArchiveList, vaultKey }) => {
                         return {
                             decOverview: decOverview.decrypted,
                             decDetails: decDetails.decrypted,
-                            entryId,
+                            itemId,
                         };
                     }
                     // Vault decryption was unsuccessful
@@ -194,7 +194,7 @@ export const performVaultArchiveDecryption = ({ encArchiveList, vaultKey }) => {
             const decArchiveObjectList = Object.assign(
                 {},
                 ...decVaultData.map(item => {
-                    return { [item.entryId]: item };
+                    return { [item.itemId]: item };
                 })
             );
             if (decVaultStatus) {
@@ -237,7 +237,7 @@ export const deleteVaultItem = ({ itemId }) => {
                 type: types.TOGGLE_CONFIRM_DELETE_MODAL,
                 payload: {
                     isDeleteModalOpen: false,
-                    id: item.entryId,
+                    id: item.itemId,
                 },
             });
             dispatch({

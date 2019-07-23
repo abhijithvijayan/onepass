@@ -57,7 +57,7 @@ exports.getVaultData = async ({ email }) => {
                         ? JSON.parse(item.encDetails)
                         : '',
                     createdAt: Object.prototype.hasOwnProperty.call(item, 'createdAt') ? item.createdAt : '',
-                    entryId: Object.prototype.hasOwnProperty.call(item, 'entryId') ? item.entryId : '',
+                    itemId: Object.prototype.hasOwnProperty.call(item, 'itemId') ? item.itemId : '',
                 };
             }
             return {};
@@ -67,7 +67,7 @@ exports.getVaultData = async ({ email }) => {
             encArchiveObjectList = Object.assign(
                 {},
                 ...encArchiveList.map(item => {
-                    return { [item.entryId]: item };
+                    return { [item.itemId]: item };
                 })
             );
         }
@@ -112,7 +112,7 @@ exports.saveEncVaultItem = async ({ encDetails, encOverview, email, itemId }) =>
     // Parse if needed
     if (entry) {
         const { entryId, createdAt } = entry;
-        const item = { entryId, createdAt, encDetails, encOverview };
+        const item = { itemId: entryId, createdAt, encDetails, encOverview };
         const itemObj = Object.assign({}, { [entryId]: item });
         return { status: true, item: itemObj, message: 'Item saved to vault.' };
     }
@@ -125,13 +125,13 @@ exports.deleteEncVaultItem = async ({ email, itemId }) => {
         return tx.run(
             'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true }) ' +
                 'WITH u, u.userId AS uid ' +
-                'MATCH (p: passwordCollection { userId: uid })-[:Archive]->(e: entry {entryId : $entryIdParam}) ' +
-                'WITH e, e.entryId AS eid, e.createdAt AS createdAt ' +
+                'MATCH (p: passwordCollection { userId: uid })-[:Archive]->(e: entry {itemId : $itemIdParam}) ' +
+                'WITH e, e.itemId AS eid, e.createdAt AS createdAt ' +
                 'DETACH DELETE e ' +
                 'RETURN eid, createdAt',
             {
                 emailParam: email,
-                entryIdParam: itemId,
+                itemIdParam: itemId,
             }
         );
     });
@@ -139,7 +139,7 @@ exports.deleteEncVaultItem = async ({ email, itemId }) => {
     const delEntryId = records.length && records[0].get('eid');
     if (delEntryId) {
         const delCreatedAt = records.length && records[0].get('createdAt');
-        const item = { entryId: delEntryId, createdAt: delCreatedAt };
+        const item = { itemId: delEntryId, createdAt: delCreatedAt };
         return { status: true, item, message: 'Item deleted from vault.' };
     }
     return { status: false, error: "Item doesn't exist or deletion failed" };

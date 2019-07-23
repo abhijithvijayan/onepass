@@ -53,11 +53,11 @@ function onSaveItemSuccess(state, { payload }) {
 
 function onDeleteItemSuccess(state, { payload }) {
     const {
-        item: { entryId },
+        item: { itemId },
         status,
     } = payload;
     // https://link.medium.com/wblJY3lRoY
-    const { [entryId]: deleted, ...remaining } = state.items;
+    const { [itemId]: deleted, ...remaining } = state.items;
     return { ...state, response: status, items: { ...remaining } };
 }
 
@@ -76,9 +76,9 @@ function saveDecryptedVault(state, { payload }) {
 
 function removeDeletedItem(state, { payload }) {
     const {
-        item: { entryId },
+        item: { itemId },
     } = payload;
-    const { [entryId]: deleted, ...remaining } = state.items;
+    const { [itemId]: deleted, ...remaining } = state.items;
     const isVaultEmpty = Object.keys(remaining).length === 0;
     return { ...state, items: { ...remaining }, isVaultEmpty };
 }

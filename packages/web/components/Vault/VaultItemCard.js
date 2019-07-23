@@ -142,12 +142,12 @@ class VaultItemCard extends Component {
         );
     };
 
-    renderIconHolder = entryId => {
+    renderIconHolder = itemId => {
         return (
             <IconHolder>
                 <Tooltip placement="bottomLeft" title="Delete">
                     <Icon
-                        id={entryId}
+                        id={itemId}
                         onClick={e => {
                             return this.props.toggleConfirmDeleteModal(true, e.currentTarget.id);
                         }}
@@ -156,7 +156,7 @@ class VaultItemCard extends Component {
                 </Tooltip>
                 <Tooltip placement="bottom" title="Edit">
                     <Icon
-                        id={entryId}
+                        id={itemId}
                         onClick={e => {
                             return this.props.toggleItemModal(true, e.currentTarget.id);
                         }}
@@ -164,7 +164,7 @@ class VaultItemCard extends Component {
                     />
                 </Tooltip>
                 <Tooltip placement="bottomRight" title="Launch">
-                    <Icon id={entryId} type="rocket" />
+                    <Icon id={itemId} type="rocket" />
                 </Tooltip>
             </IconHolder>
         );
@@ -174,13 +174,13 @@ class VaultItemCard extends Component {
         const {
             decDetails: { username },
             decOverview: { url, name },
-            entryId,
+            itemId,
         } = this.props.item;
         return (
             <Card>
                 {this.renderCardHeader(name, url)}
                 {this.renderDataHolder(username)}
-                {this.renderIconHolder(entryId)}
+                {this.renderIconHolder(itemId)}
             </Card>
         );
     }
