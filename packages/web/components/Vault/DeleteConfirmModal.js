@@ -47,8 +47,8 @@ const ModalBody = styled.div`
 
 class DeleteConfirmModal extends Component {
     handleOk = () => {
-        const { email, selectedItemId } = this.props;
-        this.props.deleteVaultItem({ email, itemId: selectedItemId });
+        const { selectedItemId } = this.props;
+        this.props.deleteVaultItem({ itemId: selectedItemId });
     };
 
     handleCancel = () => {
@@ -105,12 +105,8 @@ const mapStateToProps = state => {
     const {
         vault: { ui, decrypted },
     } = state;
-    const {
-        auth: { login },
-    } = state;
     const currentItem = decrypted.items[ui.selectedItemId] && decrypted.items[ui.selectedItemId].decOverview;
     return {
-        email: login.user.email,
         selectedItemId: ui.selectedItemId,
         currentItemName: currentItem ? currentItem.name : '',
         isDeleteModalOpen: ui.isDeleteModalOpen,

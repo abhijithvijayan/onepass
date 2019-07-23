@@ -221,7 +221,7 @@ export const performVaultArchiveDecryption = ({ encArchiveList, vaultKey }) => {
  *  Delete Vault Item
  */
 
-export const deleteVaultItem = ({ email, itemId }) => {
+export const deleteVaultItem = ({ itemId }) => {
     return async dispatch => {
         try {
             const { data } = await api({
@@ -229,7 +229,6 @@ export const deleteVaultItem = ({ email, itemId }) => {
                 url: endpoints.DELETE_ITEM_ENDPOINT,
                 headers: { Authorization: cookie.get('token') },
                 data: {
-                    email,
                     itemId,
                 },
             });
