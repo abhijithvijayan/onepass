@@ -32,7 +32,8 @@ exports.addOrUpdateVaultItem = async (req, res) => {
 };
 
 exports.deleteVaultItem = async (req, res) => {
-    const { email, itemId } = req.body;
+    const { itemId } = req.body;
+    const { email } = req.user;
     const response = await deleteEncVaultItem({ email, itemId });
     if (response.status) {
         const { status, item, message } = response;

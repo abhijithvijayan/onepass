@@ -209,7 +209,7 @@ export const performVaultArchiveDecryption = ({ encArchiveList, vaultKey }) => {
             }
             return { decVaultStatus };
         } catch (err) {
-            console.log('this', err);
+            console.log(err);
             dispatch({
                 type: uiTypes.HIDE_PAGE_LOADER,
             });
@@ -233,7 +233,6 @@ export const deleteVaultItem = ({ email, itemId }) => {
                     itemId,
                 },
             });
-
             const { item, status } = data;
             dispatch({
                 type: types.TOGGLE_CONFIRM_DELETE_MODAL,

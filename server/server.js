@@ -29,6 +29,8 @@ const {
     finalizeAccountValidationBody,
     addOrUpdateItemCriterias,
     addOrUpdateItemBody,
+    deleteItemCriterias,
+    deleteItemBody,
 } = require('./controllers/validateBodyController');
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -118,7 +120,13 @@ nextApp.prepare().then(() => {
         catchErrors(vault.addOrUpdateVaultItem)
     );
 
-    server.post('/api/v1/vault/deleteItem', auth.authWithJWT, catchErrors(vault.deleteVaultItem));
+    server.post(
+        '/api/v1/vault/deleteItem',
+        deleteItemCriterias,
+        deleteItemBody,
+        auth.authWithJWT,
+        catchErrors(vault.deleteVaultItem)
+    );
 
     /* ---------------------------------------- */
     /* ------------ REFACTOR ROUTES ----------- */

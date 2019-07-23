@@ -153,6 +153,24 @@ exports.addOrUpdateItemBody = (req, res, next) => {
     return next();
 };
 
+/* Delete item */
+exports.deleteItemCriterias = [
+    validator
+        .body('itemId')
+        .exists()
+        .withMessage('Missing item id.'),
+];
+
+exports.deleteItemBody = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const errorsObj = errors.mapped();
+        const itemIdError = errorsObj.itemId && errorsObj.itemId.msg;
+        return res.status(400).json({ error: itemIdError });
+    }
+    return next();
+};
+
 /* ------------------------------------------------------------- */
 /*                 // ToDo: REFACTOR Later
 /* ------------------------------------------------------------- */
