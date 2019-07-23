@@ -56,29 +56,24 @@ export const fetchDataAndKeys = () => {
             });
 
             return { encKeySet, encVaultData };
-        } catch (err) {
-            // Handle error response from server
-            if (err.response && err.response.data) {
-                const { error, id } = err.response.data;
-                /* eslint-disable-next-line default-case */
-                switch (id) {
-                    case 'keys': {
-                        dispatch({
-                            type: authTypes.FETCH_ENCRYPTION_KEYS_FAILED,
-                            payload: error,
-                        });
-                        break;
-                    }
-                    case 'vault': {
-                        dispatch({
-                            type: types.FETCH_VAULT_CONTENTS_FAILED,
-                            payload: error,
-                        });
-                        break;
-                    }
+        } catch ({ response }) {
+            const { error, id } = response.data;
+            /* eslint-disable-next-line default-case */
+            switch (id) {
+                case 'keys': {
+                    dispatch({
+                        type: errorTypes.FETCH_ENCRYPTION_KEYS_FAILED,
+                        payload: { error },
+                    });
+                    break;
                 }
-            } else {
-                console.log(err);
+                case 'vault': {
+                    dispatch({
+                        type: errorTypes.FETCH_VAULT_CONTENTS_FAILED,
+                        payload: { error },
+                    });
+                    break;
+                }
             }
         }
     };
