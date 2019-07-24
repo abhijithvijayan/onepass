@@ -139,6 +139,10 @@ exports.addOrUpdateItemCriterias = [
         .body('itemId')
         .exists()
         .withMessage('Missing item id.'),
+    validator
+        .body('modifiedAt')
+        .exists()
+        .withMessage('Missing last modified time.'),
 ];
 
 exports.addOrUpdateItemBody = (req, res, next) => {
@@ -148,7 +152,8 @@ exports.addOrUpdateItemBody = (req, res, next) => {
         const encDetailsError = errorsObj.encDetails && errorsObj.encDetails.msg;
         const encOverviewError = errorsObj.encOverview && errorsObj.encOverview.msg;
         const itemIdError = errorsObj.itemId && errorsObj.itemId.msg;
-        return res.status(400).json({ error: encDetailsError || encOverviewError || itemIdError });
+        const modifiedAtError = errorsObj.modifiedAt && errorsObj.modifiedAt.msg;
+        return res.status(400).json({ error: encDetailsError || encOverviewError || itemIdError || modifiedAtError });
     }
     return next();
 };
