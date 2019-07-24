@@ -89,7 +89,7 @@ nextApp.prepare().then(() => {
 
     /* Save SRP Verifier and Salt */
     server.post(
-        '/api/v1/auth/signup.finalizeAccount',
+        '/api/v1/account/activate',
         finalizeAccountValidationCriterias,
         finalizeAccountValidationBody,
         catchErrors(auth.finalizeAccount)
@@ -108,7 +108,7 @@ nextApp.prepare().then(() => {
     /* ------------- Vault routes ------------- */
     /* ---------------------------------------- */
 
-    server.get('/api/v1/vault/getKeys', auth.authWithJWT, catchErrors(vault.fetchEncKeys));
+    server.get('/api/v1/account/keysets', auth.authWithJWT, catchErrors(vault.fetchEncKeys));
 
     server.get('/api/v1/vault/getVaultData', auth.authWithJWT, catchErrors(vault.fetchVaultData));
 

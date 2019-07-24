@@ -93,7 +93,7 @@ exports.saveEncVaultItem = async ({ encDetails, encOverview, email, itemId }) =>
                 'WITH p.itemPrefix + $vaultItemRandomPrefixParam + p.lastItem AS eid, p ' +
                 'MERGE (e: entry { entryId: $entryIdParam }) ' +
                 'ON CREATE SET e.entryId = eid, e.encDetails = $encDetails, e.encOverview = $encOverview, e.createdAt = $timeParam ' +
-                'ON MATCH SET p.lastItem = p.lastItem - 1, e.encDetails = $encDetails, e.encOverview = $encOverview, e.updatedAt = $timeParam ' +
+                'ON MATCH SET p.lastItem = p.lastItem - 1, e.encDetails = $encDetails, e.encOverview = $encOverview, e.modifiedAt = $timeParam ' +
                 'MERGE (p)-[a: Archive]->(e) ' +
                 'RETURN e',
             {
