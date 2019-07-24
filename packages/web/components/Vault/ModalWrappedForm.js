@@ -14,19 +14,22 @@ class ModalWrappedForm extends Component {
     };
 
     handleReturn = () => {
-        // ToDo: pass id -> Refactor
         this.props.toggleItemModal(false, '');
+    };
+
+    hasProperty = (formValues, property) => {
+        return Object.prototype.hasOwnProperty.call(formValues, property);
     };
 
     onFormSubmit = formValues => {
         let itemId = null;
+        let modifiedAt = null;
         const { vaultKey, email } = this.props;
         const { url = '', name, folder = '', username = '', password = '' } = formValues;
-        // Check if the form is in edit mode
-        if (Object.prototype.hasOwnProperty.call(formValues, 'itemId')) {
-            ({ itemId } = formValues);
+        // If the form is in edit mode, initial values will have fields
+        if (this.hasProperty(formValues, 'itemId') && this.hasProperty(formValues, 'modifiedAt')) {
+            ({ itemId, modifiedAt } = formValues);
         }
-
         const overview = {
             url,
             name,
@@ -36,7 +39,7 @@ class ModalWrappedForm extends Component {
             username,
             password,
         };
-        this.props.encryptVaultItem({ overview, details, vaultKey, email, itemId });
+        this.props.encryptVaultItem({ overview, details, vaultKey, email, itemId, modifiedAt });
     };
 
     render() {
@@ -49,6 +52,7 @@ class ModalWrappedForm extends Component {
             const {
                 decOverview: { url, name },
                 decDetails: { username, password },
+                modifiedAt,
             } = selectedItem;
 
             initialValues = {
@@ -57,6 +61,7 @@ class ModalWrappedForm extends Component {
                 username,
                 password,
                 itemId: selectedItemId,
+                modifiedAt,
             };
         }
         return (

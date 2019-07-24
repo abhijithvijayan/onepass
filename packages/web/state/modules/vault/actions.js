@@ -83,7 +83,7 @@ export const fetchDataAndKeys = () => {
  *  Encrypt & Store Item to Vault
  */
 
-export const performVaultItemEncryption = ({ overview, details, vaultKey, email, itemId }) => {
+export const performVaultItemEncryption = ({ overview, details, vaultKey, email, itemId, modifiedAt }) => {
     return async dispatch => {
         try {
             const { encDetails, encOverview } = await encryptVaultItem({ overview, details, vaultKey, email });
@@ -98,6 +98,7 @@ export const performVaultItemEncryption = ({ overview, details, vaultKey, email,
                     encDetails,
                     encOverview,
                     itemId,
+                    modifiedAt,
                 },
             });
 
@@ -171,7 +172,7 @@ export const performVaultArchiveDecryption = ({ encArchiveList, vaultKey }) => {
             // Iterate through object
             const decVaultData = await Promise.all(
                 Object.entries(encArchiveList).map(async item => {
-                    const { encOverview, encDetails, itemId } = item[1];
+                    const { encOverview, encDetails, itemId, modifiedAt } = item[1];
 
                     // ToDo: Handle decryption failure
                     const decOverview = await performItemOverviewDecryption({ overview: encOverview, vaultKey });
@@ -183,6 +184,7 @@ export const performVaultArchiveDecryption = ({ encArchiveList, vaultKey }) => {
                             decOverview: decOverview.decrypted,
                             decDetails: decDetails.decrypted,
                             itemId,
+                            modifiedAt,
                         };
                     }
                     // Vault decryption was unsuccessful

@@ -1,4 +1,4 @@
-const { getVaultData, saveEncVaultItem, deleteEncVaultItem } = require('../db/vault');
+const { getVaultData, saveEncVaultItem, deleteEncVaultItem, getVaultItem } = require('../db/vault');
 
 exports.fetchVaultData = async (req, res) => {
     const { email } = req.user;
@@ -10,9 +10,22 @@ exports.fetchVaultData = async (req, res) => {
 };
 
 exports.addOrUpdateVaultItem = async (req, res) => {
-    const { encDetails, encOverview, itemId } = req.body;
+    const { encDetails, encOverview, itemId, modifiedAt } = req.body;
     const { email } = req.user;
-    // ToDo: validate item(details and overview content)
+    const unitItem = await getVaultItem({ email, itemId });
+    // Item exists
+    if (unitItem.status && modifiedAt) {
+        // Check if item to be modified is synced to the recent in local vault
+        const receivedItemModifiedAt = new Date(modifiedAt).getTime();
+        const existingItemModifiedAt = new Date(unitItem.item.modifiedAt).getTime();
+        if (receivedItemModifiedAt !== existingItemModifiedAt) {
+            return res.status(403).json({
+                status: false,
+                error:
+                    'Failed to save item. You have an outdated version of vault. Try making changes again after refreshing the vault.',
+            });
+        }
+    }
     const response = await saveEncVaultItem({ encDetails, encOverview, email, itemId });
     if (response.status) {
         const { status, item, message } = response;

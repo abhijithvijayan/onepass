@@ -117,6 +117,7 @@ nextApp.prepare().then(() => {
 
     server.get('/api/v1/vault/getVaultData', auth.authWithJWT, catchErrors(vault.fetchVaultData));
 
+    // ToDo: validate item(details and overview content)
     server.post(
         '/api/v1/vault/addOrUpdateItem',
         addOrUpdateItemCriterias,
