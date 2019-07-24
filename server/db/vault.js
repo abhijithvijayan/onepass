@@ -94,7 +94,6 @@ exports.saveEncVaultItem = async ({ encDetails, encOverview, email, itemId }) =>
     });
     session.close();
     const entry = records.length && records[0].get('e').properties;
-    // Parse if needed
     if (entry) {
         const { entryId, createdAt, modifiedAt } = entry;
         const item = {
@@ -108,6 +107,36 @@ exports.saveEncVaultItem = async ({ encDetails, encOverview, email, itemId }) =>
         return { status: true, item: itemObj, message: 'Item saved to vault.' };
     }
     return { status: false, error: 'Failed to save item to vault,' };
+};
+
+exports.getVaultItem = async ({ email, itemId }) => {
+    const session = driver.session();
+    const { records = [] } = await session.writeTransaction(tx => {
+        return tx.run(
+            'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true }) ' +
+                'WITH u, u.userId AS uid ' +
+                'MATCH (p: passwordCollection { userId: uid })-[:Archive]->(e: entry { entryId : $itemIdParam }) ' +
+                'RETURN e',
+            {
+                emailParam: email,
+                itemIdParam: itemId !== null ? itemId : '',
+            }
+        );
+    });
+    session.close();
+    const entry = records.length && records[0].get('e').properties;
+    if (entry) {
+        const { entryId, createdAt, modifiedAt, encDetails, encOverview } = entry;
+        const item = {
+            itemId: entryId,
+            createdAt: new Date(createdAt).getTime(),
+            modifiedAt: new Date(modifiedAt).getTime(),
+            encDetails: JSON.parse(encDetails),
+            encOverview: JSON.parse(encOverview),
+        };
+        return { status: true, item, message: 'Item found.' };
+    }
+    return { status: false, error: "Item doesn't exist." };
 };
 
 exports.deleteEncVaultItem = async ({ email, itemId }) => {
