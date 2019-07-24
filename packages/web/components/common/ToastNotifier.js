@@ -5,7 +5,7 @@ const ToastConfigContainer = props => {
     return (
         <ToastContainer
             {...props}
-            autoClose={5000}
+            autoClose={3000}
             hideProgressBar
             newestOnTop
             closeOnClick
