@@ -36,7 +36,12 @@ exports.getVaultData = async ({ email }) => {
                     encDetails: Object.prototype.hasOwnProperty.call(item, 'encDetails')
                         ? JSON.parse(item.encDetails)
                         : '',
-                    createdAt: Object.prototype.hasOwnProperty.call(item, 'createdAt') ? item.createdAt : '',
+                    createdAt: Object.prototype.hasOwnProperty.call(item, 'createdAt')
+                        ? new Date(item.createdAt).getTime()
+                        : '',
+                    modifiedAt: Object.prototype.hasOwnProperty.call(item, 'modifiedAt')
+                        ? new Date(item.modifiedAt).getTime()
+                        : '',
                     itemId: Object.prototype.hasOwnProperty.call(item, 'entryId') ? item.entryId : '',
                 };
             }
@@ -72,7 +77,7 @@ exports.saveEncVaultItem = async ({ encDetails, encOverview, email, itemId }) =>
                 'ON MATCH SET p.lastItem = p.lastItem + 1 ' +
                 'WITH p.itemPrefix + $vaultItemRandomPrefixParam + p.lastItem AS eid, p ' +
                 'MERGE (e: entry { entryId: $entryIdParam }) ' +
-                'ON CREATE SET e.entryId = eid, e.encDetails = $encDetails, e.encOverview = $encOverview, e.createdAt = $timeParam ' +
+                'ON CREATE SET e.entryId = eid, e.encDetails = $encDetails, e.encOverview = $encOverview, e.createdAt = $timeParam, e.modifiedAt = $timeParam ' +
                 'ON MATCH SET p.lastItem = p.lastItem - 1, e.encDetails = $encDetails, e.encOverview = $encOverview, e.modifiedAt = $timeParam ' +
                 'MERGE (p)-[a: Archive]->(e) ' +
                 'RETURN e',
@@ -91,8 +96,14 @@ exports.saveEncVaultItem = async ({ encDetails, encOverview, email, itemId }) =>
     const entry = records.length && records[0].get('e').properties;
     // Parse if needed
     if (entry) {
-        const { entryId, createdAt } = entry;
-        const item = { itemId: entryId, createdAt, encDetails, encOverview };
+        const { entryId, createdAt, modifiedAt } = entry;
+        const item = {
+            itemId: entryId,
+            createdAt: new Date(createdAt).getTime(),
+            modifiedAt: new Date(modifiedAt).getTime(),
+            encDetails,
+            encOverview,
+        };
         const itemObj = Object.assign({}, { [entryId]: item });
         return { status: true, item: itemObj, message: 'Item saved to vault.' };
     }
