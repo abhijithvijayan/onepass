@@ -29,6 +29,7 @@
     "react-dom": "^16.8.6",
     "react-password-strength": "^2.4.0",
     "react-redux": "^7.1.0",
+    "react-toastify": "^5.3.2",
     "redux": "^4.0.4",
     "redux-devtools-extension": "^2.13.8",
     "redux-form": "^8.2.4",

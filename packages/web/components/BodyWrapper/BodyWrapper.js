@@ -3,8 +3,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 
-import Loader from '../Loader';
 import { hidePageLoader } from '../../state/modules/common/ui/operations';
+import Loader from '../Loader';
+import ToastNotifier from '../common/ToastNotifier';
 
 const Wrapper = styled.main`
     position: relative;
@@ -26,6 +27,7 @@ class BodyWrapper extends Component {
         const renderContent = isPageLoading ? <Loader /> : children;
         return (
             <Wrapper>
+                <ToastNotifier />
                 <ContentWrapper>{renderContent}</ContentWrapper>
             </Wrapper>
         );
