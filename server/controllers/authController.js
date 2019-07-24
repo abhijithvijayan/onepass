@@ -1,15 +1,14 @@
 const fs = require('fs');
 const path = require('path');
-const nanoid = require('nanoid');
 const JWT = require('jsonwebtoken');
 const passport = require('passport');
-const generate = require('nanoid/generate');
 const srp = require('secure-remote-password/server');
 
 const {
     createUser,
     getUserDetails,
     verifyUser,
+    getEncKeySet,
     genEmergencyKit,
     requestResetPassword,
     validatePasswordRequest,
@@ -69,6 +68,7 @@ exports.authWithJWT = (req, res, next) => {
 };
 
 exports.signup = async (req, res) => {
+    // ToDo: refactor this to a user object (and collect device object)
     const { email, name } = req.body;
     if (email.length > 64) {
         return res.status(400).json({ error: 'Maximum length of email id is 64 characters' });
@@ -164,6 +164,16 @@ exports.login = async (req, res) => {
             return res.status(403).json({ error: 'Invalid Request' });
         }
     }
+};
+
+exports.fetchEncKeys = async (req, res) => {
+    const { email } = req.user;
+    const response = await getEncKeySet({ email });
+    if (response.status) {
+        const { encPriKey, encSymKey } = response;
+        return res.status(200).json({ encKeySet: { encPriKey, encSymKey } });
+    }
+    return res.status(403).json({ error: response.error, id: 'keys' });
 };
 
 exports.getEmergencyKit = async (req, res) => {

@@ -108,7 +108,7 @@ nextApp.prepare().then(() => {
     /* ------------- Vault routes ------------- */
     /* ---------------------------------------- */
 
-    server.get('/api/v1/account/keysets', auth.authWithJWT, catchErrors(vault.fetchEncKeys));
+    server.get('/api/v1/account/keysets', auth.authWithJWT, catchErrors(auth.fetchEncKeys));
 
     server.get('/api/v1/vault/getVaultData', auth.authWithJWT, catchErrors(vault.fetchVaultData));
 

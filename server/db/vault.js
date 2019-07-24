@@ -1,26 +1,6 @@
 const generate = require('nanoid/generate');
 const driver = require('./neo4j');
 
-exports.getEncKeySet = async ({ email }) => {
-    const session = driver.session();
-    const { records = [] } = await session.readTransaction(tx => {
-        return tx.run(
-            'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true })' +
-                '-[:KEYSET]->(keySet) ' +
-                'RETURN keySet',
-            {
-                emailParam: email,
-            }
-        );
-    });
-    session.close();
-    if (records.length) {
-        const { encPriKey, encSymKey } = records[0].get('keySet').properties;
-        return { status: true, encPriKey: JSON.parse(encPriKey), encSymKey: JSON.parse(encSymKey) };
-    }
-    return { status: false, error: 'Account signup was left incomplete.' };
-};
-
 exports.getVaultData = async ({ email }) => {
     const session = driver.session();
     const { records = [] } = await session.readTransaction(tx => {
