@@ -73,6 +73,14 @@ nextApp.prepare().then(() => {
         return nextApp.render(req, res, '/signup');
     });
 
+    server.get('/vault', (req, res) => {
+        return nextApp.render(req, res, '/vault');
+    });
+
+    server.get('/about', (req, res) => {
+        return nextApp.render(req, res, '/about');
+    });
+
     server.get('/logout', (req, res) => {
         return nextApp.render(req, res, '/logout');
     });
@@ -101,14 +109,11 @@ nextApp.prepare().then(() => {
     /* Get Initial Emergency Kit */
     server.get('/api/v1/auth/login.getEmergencyKit', auth.authWithJWT, catchErrors(auth.getEmergencyKit));
 
-    // ToDo: add verificationcriterias to body
-    server.post('/api/v1/auth/renew.token', auth.authWithJWT, catchErrors(auth.renewToken));
+    server.get('/api/v1/account/keysets', auth.authWithJWT, catchErrors(auth.fetchEncKeys));
 
     /* ---------------------------------------- */
     /* ------------- Vault routes ------------- */
     /* ---------------------------------------- */
-
-    server.get('/api/v1/account/keysets', auth.authWithJWT, catchErrors(auth.fetchEncKeys));
 
     server.get('/api/v1/vault/getVaultData', auth.authWithJWT, catchErrors(vault.fetchVaultData));
 
@@ -131,6 +136,8 @@ nextApp.prepare().then(() => {
     /* ---------------------------------------- */
     /* ------------ REFACTOR ROUTES ----------- */
     /* ---------------------------------------- */
+    // // ToDo: add verificationcriterias to body
+    // server.post('/api/v1/auth/renew.token', auth.authWithJWT, catchErrors(auth.renewToken));
 
     /* Forget Password Form submission */
     // // ToDo Route
