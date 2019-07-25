@@ -2,6 +2,7 @@
   "name": "@onepass/web",
   "version": "0.0.1",
   "private": true,
+  "author": "abhijithvijayan",
   "scripts": {
     "build": "next build"
   },

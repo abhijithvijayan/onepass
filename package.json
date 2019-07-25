@@ -13,13 +13,14 @@
     "nohoist": []
   },
   "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "bootstrap": "yarn",
     "dev:web": "yarn workspace @onepass/server server",
     "build:web": "yarn workspace @onepass/web build",
     "dev:extension": "concurrently \"yarn workspace @onepass/extension start\" \"yarn run dev:web\"",
     "build:extension": "yarn workspace @onepass/extension build",
-    "dev:mobile": "concurrently \"yarn workspace @onepass/mobile android\" \"yarn workspace @onepass/mobile start\""
+    "dev:mobile": "concurrently \"yarn workspace @onepass/mobile android\" \"yarn workspace @onepass/mobile start\"",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "husky": {
     "hooks": {

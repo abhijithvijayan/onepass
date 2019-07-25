@@ -2,8 +2,8 @@
   "name": "@onepass/server",
   "version": "0.0.1",
   "main": "server.js",
-  "license": "MIT",
   "private": true,
+  "author": "abhijithvijayan",
   "engines": {
     "node": ">= 8 <11"
   },

@@ -2,6 +2,7 @@
   "name": "@onepass/core",
   "version": "0.0.1",
   "private": true,
+  "author": "abhijithvijayan",
   "dependencies": {
     "crypto-random-string": "^3.0.1",
     "fast-sha256": "^1.1.0",

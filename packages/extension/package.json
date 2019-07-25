@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "main": "src/index.js",
   "private": true,
+  "author": "abhijithvijayan",
   "scripts": {
     "start": "cross-env REACT_START_URL=http://localhost:3000/ run-p start:app add:scripts",
     "start:app": "react-app-rewired start",
