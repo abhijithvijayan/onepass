@@ -14,10 +14,11 @@ class LoginPage extends Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        if (nextProps.isAuthenticated) {
+        const { isAuthenticated, error } = nextProps;
+        if (isAuthenticated) {
             Router.push('/vault');
         } else {
-            this.notify(nextProps.error);
+            this.notify(error.msg);
         }
         return true;
     }
