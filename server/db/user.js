@@ -82,7 +82,7 @@ exports.getEncKeySet = async ({ email }) => {
         const { encPriKey, encSymKey } = records[0].get('keySet').properties;
         return { status: true, encPriKey: JSON.parse(encPriKey), encSymKey: JSON.parse(encSymKey) };
     }
-    return { status: false, error: 'Account signup was left incomplete.' };
+    return { status: false, error: 'Account signup for this account was left incomplete. Please sign up again.' };
 };
 
 exports.genEmergencyKit = async ({ email }) => {
@@ -102,7 +102,7 @@ exports.genEmergencyKit = async ({ email }) => {
     if (hasDownloadedEmergencyKit) {
         return { status: true, message: 'Generate Emergency Kit Success' };
     }
-    return { status: false, error: 'Account signup was left incomplete.' };
+    return { status: false, error: 'Account signup for this account was left incomplete. Please sign up again.' };
 };
 
 /* ------------------------------------------------------------- */

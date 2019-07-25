@@ -11,12 +11,22 @@ class VaultPage extends Component {
         if (!this.props.isAuthenticated) {
             Router.push('/login');
         } else {
-            this.notify();
+            this.notify('Logged in');
         }
     }
 
-    notify = () => {
-        return toast('Logged in', { containerId: 'top__right' });
+    shouldComponentUpdate(nextProps, nextState) {
+        const { isAuthenticated, error } = nextProps;
+        if (!isAuthenticated) {
+            Router.push('/login');
+        } else {
+            this.notify(error.msg);
+        }
+        return true;
+    }
+
+    notify = message => {
+        return toast(message, { containerId: 'top__right' });
     };
 
     render() {
@@ -30,9 +40,11 @@ class VaultPage extends Component {
     }
 }
 
-const mapStateToProps = ({ auth: { login } }) => {
+const mapStateToProps = ({ auth: { login }, errors }) => {
+    const error = errors.vault.error !== undefined ? errors.vault.error : null;
     return {
         isAuthenticated: login.isAuthenticated,
+        error,
     };
 };
 

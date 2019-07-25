@@ -63,7 +63,7 @@ exports.getVaultData = async ({ email }) => {
         };
         return { encVaultData, status: true };
     }
-    return { status: false, error: 'Account signup was left incomplete.' };
+    return { status: false, error: 'Account signup for this account was left incomplete. Please sign up again.' };
 };
 
 exports.saveEncVaultItem = async ({ encDetails, encOverview, email, itemId }) => {

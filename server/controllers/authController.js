@@ -180,7 +180,7 @@ exports.login = async (req, res) => {
             }
             return res.status(403).json({
                 error: {
-                    msg: 'Account signup was left incomplete.',
+                    msg: 'Account signup for this account was left incomplete. Please sign up again.',
                     reportedAt: new Date().getTime(),
                 },
             });
@@ -213,7 +213,7 @@ exports.login = async (req, res) => {
             }
             return res.status(403).json({
                 error: {
-                    msg: 'Account signup was left incomplete.',
+                    msg: 'Account signup for this account was left incomplete. Please sign up again.',
                     reportedAt: new Date().getTime(),
                 },
             });
