@@ -23,7 +23,12 @@ exports.signUpValidationBody = (req, res, next) => {
         const errorsObj = errors.mapped();
         const emailError = errorsObj.email && errorsObj.email.msg;
         const nameError = errorsObj.name && errorsObj.name.msg;
-        return res.status(400).json({ error: emailError || nameError });
+        return res.status(400).json({
+            error: {
+                msg: emailError || nameError,
+                reportedAt: new Date().getTime(),
+            },
+        });
     }
     return next();
 };
@@ -50,7 +55,12 @@ exports.emailVerificationBody = (req, res, next) => {
         const errorsObj = errors.mapped();
         const emailError = errorsObj.email && errorsObj.email.msg;
         const tokenError = errorsObj.verificationToken && errorsObj.verificationToken.msg;
-        return res.status(400).json({ error: emailError || tokenError });
+        return res.status(400).json({
+            error: {
+                msg: emailError || tokenError,
+                reportedAt: new Date().getTime(),
+            },
+        });
     }
     return next();
 };
@@ -91,9 +101,12 @@ exports.finalizeAccountValidationBody = (req, res, next) => {
         const saltError = errorsObj.salt && errorsObj.salt.msg;
         const verifierError = errorsObj.verifier && errorsObj.verifier.msg;
         const encryptionKeysError = errorsObj.encryptionKeys && errorsObj.encryptionKeys.msg;
-        return res
-            .status(400)
-            .json({ error: emailError || userIdError || saltError || verifierError || encryptionKeysError });
+        return res.status(400).json({
+            error: {
+                msg: emailError || userIdError || saltError || verifierError || encryptionKeysError,
+                reportedAt: new Date().getTime(),
+            },
+        });
     }
     return next();
 };
@@ -120,7 +133,12 @@ exports.loginValidationBody = (req, res, next) => {
         const errorsObj = errors.mapped();
         const emailError = errorsObj.email && errorsObj.email.msg;
         const stageError = errorsObj.stage && errorsObj.stage.msg;
-        return res.status(400).json({ error: emailError || stageError });
+        return res.status(400).json({
+            error: {
+                msg: emailError || stageError,
+                reportedAt: new Date().getTime(),
+            },
+        });
     }
     return next();
 };
@@ -153,7 +171,12 @@ exports.addOrUpdateItemBody = (req, res, next) => {
         const encOverviewError = errorsObj.encOverview && errorsObj.encOverview.msg;
         const itemIdError = errorsObj.itemId && errorsObj.itemId.msg;
         const modifiedAtError = errorsObj.modifiedAt && errorsObj.modifiedAt.msg;
-        return res.status(400).json({ error: encDetailsError || encOverviewError || itemIdError || modifiedAtError });
+        return res.status(400).json({
+            error: {
+                msg: encDetailsError || encOverviewError || itemIdError || modifiedAtError,
+                reportedAt: new Date().getTime(),
+            },
+        });
     }
     return next();
 };
@@ -171,7 +194,12 @@ exports.deleteItemBody = (req, res, next) => {
     if (!errors.isEmpty()) {
         const errorsObj = errors.mapped();
         const itemIdError = errorsObj.itemId && errorsObj.itemId.msg;
-        return res.status(400).json({ error: itemIdError });
+        return res.status(400).json({
+            error: {
+                msg: itemIdError,
+                reportedAt: new Date().getTime(),
+            },
+        });
     }
     return next();
 };
@@ -197,7 +225,12 @@ exports.resetPasswordFormBody = (req, res, next) => {
     if (!errors.isEmpty()) {
         const errorsObj = errors.mapped();
         const emailError = errorsObj.email && errorsObj.email.msg;
-        return res.status(400).json({ error: emailError });
+        return res.status(400).json({
+            error: {
+                msg: emailError,
+                reportedAt: new Date().getTime(),
+            },
+        });
     }
     return next();
 };
@@ -224,7 +257,12 @@ exports.emailPasswordResetBody = (req, res, next) => {
         const errorsObj = errors.mapped();
         const emailError = errorsObj.email && errorsObj.email.msg;
         const tokenError = errorsObj.passwordResetToken && errorsObj.passwordResetToken.msg;
-        return res.status(400).json({ error: emailError || tokenError });
+        return res.status(400).json({
+            error: {
+                msg: emailError || tokenError,
+                reportedAt: new Date().getTime(),
+            },
+        });
     }
     return next();
 };
@@ -242,7 +280,12 @@ exports.changePasswordBody = (req, res, next) => {
     if (!errors.isEmpty()) {
         const errorsObj = errors.mapped();
         const passwordError = errorsObj.password && errorsObj.password.msg;
-        return res.status(400).json({ error: passwordError });
+        return res.status(400).json({
+            error: {
+                msg: passwordError,
+                reportedAt: new Date().getTime(),
+            },
+        });
     }
     return next();
 };
