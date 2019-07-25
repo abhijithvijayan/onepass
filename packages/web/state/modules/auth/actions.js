@@ -82,6 +82,22 @@ const generateSymmetricKey = () => {
 
 /** ------------------------------------------------------ */
 
+export const clearErrorState = () => {
+    return async dispatch => {
+        dispatch({
+            type: errorTypes.CLEAR_SIGNUP_ERRORS,
+        });
+        dispatch({
+            type: errorTypes.CLEAR_LOGIN_ERRORS,
+        });
+        dispatch({
+            type: errorTypes.CLEAR_VAULT_ERRORS,
+        });
+    };
+};
+
+/** ------------------------------------------------------ */
+
 /**
  *  Initial Signup
  */
@@ -433,6 +449,7 @@ export const submitLoginData = ({ email, password, secretKey }) => {
                             },
                         },
                     });
+                    dispatch(clearErrorState());
                 } else {
                     // ToDo: Get vault item that failed to decrypt
                     console.log('Vault decyption failed.');
@@ -579,6 +596,7 @@ export const logoutUser = () => {
         dispatch({
             type: vaultTypes.CLEAR_FETCHED_VAULT_DATA,
         });
+        dispatch(clearErrorState());
         dispatch({
             type: types.USER_DE_AUTH_SUCCEEDED,
         });
