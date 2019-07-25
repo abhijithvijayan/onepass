@@ -185,7 +185,12 @@ exports.login = async (req, res) => {
                     // Store `serverEphemeral.secret`
                     await saveServerEphemeral({ serverSecretEphemeral: serverEphemeral.secret, email });
                     // Send `salt` and `serverEphemeral.public` to the client
-                    return res.status(201).json({ userId, salt, serverPublicEphemeral: serverEphemeral.public });
+                    return res.status(201).json({
+                        userId,
+                        salt,
+                        serverPublicEphemeral: serverEphemeral.public,
+                        reportedAt: new Date().getTime(),
+                    });
                 } catch (err) {
                     return res.status(403).json({
                         error: {
@@ -218,7 +223,12 @@ exports.login = async (req, res) => {
                     );
                     const serverSessionProof = serverSession.proof;
                     const token = genJWTtoken({ email, name });
-                    return res.status(201).json({ serverSessionProof, token, user });
+                    return res.status(201).json({
+                        serverSessionProof,
+                        token,
+                        user,
+                        reportedAt: new Date().getTime(),
+                    });
                 } catch (err) {
                     return res.status(403).json({
                         error: {
@@ -251,7 +261,10 @@ exports.fetchEncKeys = async (req, res) => {
     const response = await getEncKeySet({ email });
     if (response.status) {
         const { encPriKey, encSymKey } = response;
-        return res.status(200).json({ encKeySet: { encPriKey, encSymKey } });
+        return res.status(200).json({
+            encKeySet: { encPriKey, encSymKey },
+            reportedAt: new Date().getTime(),
+        });
     }
     return res.status(403).json({
         error: {
@@ -268,7 +281,11 @@ exports.getEmergencyKit = async (req, res) => {
     const { status } = response;
     if (status) {
         const { message } = response;
-        return res.status(201).json({ status, message });
+        return res.status(201).json({
+            status,
+            message,
+            reportedAt: new Date().getTime(),
+        });
     }
     const { error } = response;
     return res.status(403).json({
@@ -311,7 +328,11 @@ exports.requestPasswordReset = async (req, res) => {
         html: resetEmailTemplate.replace(/{{reset}}/gim, user.passwordResetToken),
     });
     if (mail.accepted.length) {
-        return res.status(201).json({ email, message: 'Password reset email has been sent.' });
+        return res.status(201).json({
+            email,
+            message: 'Password reset email has been sent.',
+            reportedAt: new Date().getTime(),
+        });
     }
     return res.status(400).json({
         error: {
