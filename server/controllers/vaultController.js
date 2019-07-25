@@ -4,7 +4,10 @@ exports.fetchVaultData = async (req, res) => {
     const { email } = req.user;
     const response = await getVaultData({ email });
     if (response.status) {
-        return res.status(200).json({ encVaultData: response.encVaultData });
+        return res.status(200).json({
+            encVaultData: response.encVaultData,
+            reportedAt: new Date().getTime(),
+        });
     }
     return res.status(403).json({
         error: {
@@ -45,7 +48,12 @@ exports.addOrUpdateVaultItem = async (req, res) => {
         if (unitItem.status) {
             msg = 'Item updated.';
         }
-        return res.status(200).json({ item, status, msg });
+        return res.status(200).json({
+            item,
+            status,
+            msg,
+            reportedAt: new Date().getTime(),
+        });
     }
     return res.status(403).json({
         status: response.status,
@@ -62,7 +70,12 @@ exports.deleteVaultItem = async (req, res) => {
     const response = await deleteEncVaultItem({ email, itemId });
     if (response.status) {
         const { status, item, message } = response;
-        return res.status(200).json({ status, item, message });
+        return res.status(200).json({
+            status,
+            item,
+            message,
+            reportedAt: new Date().getTime(),
+        });
     }
     return res.status(403).json({
         status: response.status,
