@@ -104,9 +104,9 @@ exports.saveEncVaultItem = async ({ encDetails, encOverview, email, itemId }) =>
             encOverview,
         };
         const itemObj = Object.assign({}, { [entryId]: item });
-        return { status: true, item: itemObj, message: 'Item saved to vault.' };
+        return { status: true, item: itemObj, msg: 'Item saved to vault.' };
     }
-    return { status: false, error: 'Failed to save item to vault,' };
+    return { status: false, error: 'Failed to save or update item.' };
 };
 
 exports.getVaultItem = async ({ email, itemId }) => {

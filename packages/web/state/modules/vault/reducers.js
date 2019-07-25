@@ -47,8 +47,8 @@ function onFetchVaultContents(state, { payload }) {
 }
 
 function onSaveItemSuccess(state, { payload }) {
-    const { item, status } = payload;
-    return { ...state, response: status, items: { ...state.items, ...item } };
+    const { item, status, msg } = payload;
+    return { ...state, response: { status, msg }, items: { ...state.items, ...item } };
 }
 
 function onDeleteItemSuccess(state, { payload }) {

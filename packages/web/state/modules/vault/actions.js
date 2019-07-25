@@ -103,12 +103,13 @@ export const performVaultItemEncryption = ({ overview, details, vaultKey, email,
             });
 
             // Add to DB successful
-            const { item, status } = data;
+            const { item, msg, status } = data;
             dispatch({
                 type: types.SAVE_VAULT_ITEM_SUCCEEDED,
                 payload: {
                     item,
                     status,
+                    msg,
                 },
             });
             // Decrypt item

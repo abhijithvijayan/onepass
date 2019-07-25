@@ -37,8 +37,15 @@ exports.addOrUpdateVaultItem = async (req, res) => {
     }
     const response = await saveEncVaultItem({ encDetails, encOverview, email, itemId });
     if (response.status) {
-        const { status, item, message } = response;
-        return res.status(200).json({ status, item, message });
+        let msg;
+        const { status, item } = response;
+        // New item created
+        ({ msg } = response);
+        // Item already exists
+        if (unitItem.status) {
+            msg = 'Item updated.';
+        }
+        return res.status(200).json({ item, status, msg });
     }
     return res.status(403).json({
         status: response.status,
