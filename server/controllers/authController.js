@@ -136,7 +136,7 @@ exports.verify = async (req, res) => {
     }
     return res.status(403).json({
         error: {
-            msg: 'Invalid email id or verification code',
+            msg: 'Invalid email id or verification code. Please try again.',
             reportedAt: new Date().getTime(),
         },
     });
