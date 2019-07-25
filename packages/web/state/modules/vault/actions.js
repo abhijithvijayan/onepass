@@ -253,6 +253,13 @@ export const deleteVaultItem = ({ itemId }) => {
         } catch ({ response }) {
             const { error } = response.data;
             dispatch({
+                type: types.TOGGLE_CONFIRM_DELETE_MODAL,
+                payload: {
+                    isDeleteModalOpen: false,
+                    id: '',
+                },
+            });
+            dispatch({
                 type: errorTypes.DELETE_VAULT_ITEM_FAILED,
                 payload: {
                     error,
