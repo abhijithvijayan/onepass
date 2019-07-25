@@ -56,8 +56,11 @@ exports.authWithJWT = (req, res, next) => {
         }
         if (user && !user.isVerified) {
             return res.status(400).json({
-                error:
-                    'Your email address is not verified. Please check you mailbox or Sign Up again to get the verification link',
+                error: {
+                    msg:
+                        'Your email address is not verified. Please check you mailbox or Sign Up again to get the verification link',
+                    reportedAt: new Date().getTime(),
+                },
             });
         }
         if (user) {
@@ -71,14 +74,29 @@ exports.signup = async (req, res) => {
     // ToDo: refactor this to a user object (and collect device object)
     const { email, name } = req.body;
     if (email.length > 64) {
-        return res.status(400).json({ error: 'Maximum length of email id is 64 characters' });
+        return res.status(400).json({
+            error: {
+                msg: 'Maximum length of email id is 64 characters',
+                reportedAt: new Date().getTime(),
+            },
+        });
     }
     if (name.length > 64) {
-        return res.status(400).json({ error: 'Maximum length of name is 64 characters' });
+        return res.status(400).json({
+            error: {
+                msg: 'Maximum length of name is 64 characters',
+                reportedAt: new Date().getTime(),
+            },
+        });
     }
     const user = await getUserDetails({ email });
     if (user && user.isVerified && user.hasCompletedSignUp) {
-        return res.status(403).json({ error: 'This email is already registered' });
+        return res.status(403).json({
+            error: {
+                msg: 'This email is already registered',
+                reportedAt: new Date().getTime(),
+            },
+        });
     }
     const newUser = await createUser({ email, name });
     // ToDo: Restore
@@ -93,20 +111,35 @@ exports.signup = async (req, res) => {
     // if (mail.accepted.length) {
     //     return res.status(201).json({ email, message: 'Verification email has been sent.' });
     // }
-    // return res.status(400).json({ error: "Couldn't send verification email. Try again." });
+    // return res.status(400).json({
+    //     error: {
+    //         msg: "Couldn't send verification email. Try again.",
+    //         reportedAt: new Date().getTime(),
+    //     },
+    // });
     return res.status(201).json({ email, message: 'Sending Email temporarily disabled.' });
 };
 
 exports.verify = async (req, res) => {
     const { verificationToken = '', email = '' } = req.body;
     if (verificationToken.length > 6) {
-        return res.status(400).json({ error: 'Verification code must be 6 characters' });
+        return res.status(400).json({
+            error: {
+                msg: 'Verification code must be 6 characters',
+                reportedAt: new Date().getTime(),
+            },
+        });
     }
     const user = await verifyUser({ email, verificationToken });
     if (user) {
         return res.status(201).json({ userId: user.userId, email: user.email, versionCode: user.versionCode });
     }
-    return res.status(403).json({ error: 'Invalid email id or verification code' });
+    return res.status(403).json({
+        error: {
+            msg: 'Invalid email id or verification code',
+            reportedAt: new Date().getTime(),
+        },
+    });
 };
 
 exports.finalizeAccount = async (req, res) => {
@@ -115,7 +148,12 @@ exports.finalizeAccount = async (req, res) => {
     if (serverResponse.status) {
         return res.status(201).json({ status: 'Account signup successful.' });
     }
-    return res.status(403).json({ error: 'Account signup failed.' });
+    return res.status(403).json({
+        error: {
+            msg: 'Account signup failed.',
+            reportedAt: new Date().getTime(),
+        },
+    });
 };
 
 exports.login = async (req, res) => {
@@ -132,10 +170,20 @@ exports.login = async (req, res) => {
                     // Send `salt` and `serverEphemeral.public` to the client
                     return res.status(201).json({ userId, salt, serverPublicEphemeral: serverEphemeral.public });
                 } catch (err) {
-                    return res.status(403).json({ error: 'Invalid SRP Verifier.' });
+                    return res.status(403).json({
+                        error: {
+                            msg: 'Invalid SRP Verifier.',
+                            reportedAt: new Date().getTime(),
+                        },
+                    });
                 }
             }
-            return res.status(403).json({ error: 'Account signup was left incomplete.' });
+            return res.status(403).json({
+                error: {
+                    msg: 'Account signup was left incomplete.',
+                    reportedAt: new Date().getTime(),
+                },
+            });
         }
         case 'login': {
             const { clientPublicEphemeral = '', clientSessionProof = '' } = req.body;
@@ -155,13 +203,28 @@ exports.login = async (req, res) => {
                     const token = genJWTtoken({ email, name });
                     return res.status(201).json({ serverSessionProof, token, user });
                 } catch (err) {
-                    return res.status(403).json({ error: 'Invalid secret key or master password' });
+                    return res.status(403).json({
+                        error: {
+                            msg: 'Invalid secret key or master password',
+                            reportedAt: new Date().getTime(),
+                        },
+                    });
                 }
             }
-            return res.status(403).json({ error: 'Account signup was left incomplete.' });
+            return res.status(403).json({
+                error: {
+                    msg: 'Account signup was left incomplete.',
+                    reportedAt: new Date().getTime(),
+                },
+            });
         }
         default: {
-            return res.status(403).json({ error: 'Invalid Request' });
+            return res.status(403).json({
+                error: {
+                    msg: 'Invalid Request',
+                    reportedAt: new Date().getTime(),
+                },
+            });
         }
     }
 };
@@ -173,7 +236,13 @@ exports.fetchEncKeys = async (req, res) => {
         const { encPriKey, encSymKey } = response;
         return res.status(200).json({ encKeySet: { encPriKey, encSymKey } });
     }
-    return res.status(403).json({ error: response.error, id: 'keys' });
+    return res.status(403).json({
+        error: {
+            msg: response.error,
+            reportedAt: new Date().getTime(),
+        },
+        id: 'keys',
+    });
 };
 
 exports.getEmergencyKit = async (req, res) => {
@@ -185,7 +254,13 @@ exports.getEmergencyKit = async (req, res) => {
         return res.status(201).json({ status, message });
     }
     const { error } = response;
-    return res.status(403).json({ status, error });
+    return res.status(403).json({
+        status,
+        error: {
+            msg: error,
+            reportedAt: new Date().getTime(),
+        },
+    });
 };
 
 /* ------------------------------------------------------------- */
@@ -203,7 +278,12 @@ exports.requestPasswordReset = async (req, res) => {
     const { email } = req.body;
     const user = await requestResetPassword({ email });
     if (!user) {
-        return res.status(400).json({ error: 'No account found for this email.' });
+        return res.status(400).json({
+            error: {
+                msg: 'No account found for this email.',
+                reportedAt: new Date().getTime(),
+            },
+        });
     }
     /* Handle Password Reset email */
     const mail = await transporter.sendMail({
@@ -216,7 +296,12 @@ exports.requestPasswordReset = async (req, res) => {
     if (mail.accepted.length) {
         return res.status(201).json({ email, message: 'Password reset email has been sent.' });
     }
-    return res.status(400).json({ error: "Couldn't send password reset email. Try again." });
+    return res.status(400).json({
+        error: {
+            msg: "Couldn't send password reset email. Try again.",
+            reportedAt: new Date().getTime(),
+        },
+    });
 };
 
 // ToDo: Refactor
@@ -231,7 +316,12 @@ exports.resetPasswordValidation = async (req, res, next) => {
         req.user = { token };
         return next();
     }
-    return res.status(403).json({ error: 'Invalid email id or password reset token' });
+    return res.status(403).json({
+        error: {
+            msg: 'Invalid email id or password reset token',
+            reportedAt: new Date().getTime(),
+        },
+    });
 };
 
 // ToDo: changePassword method after resetting flags
