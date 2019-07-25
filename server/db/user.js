@@ -14,7 +14,7 @@ exports.createUser = async ({ email, name }) => {
                 'WITH id.userFixedPrefix + id.userRandomPrefix + id.count AS uid, id ' +
                 'MERGE (u:User { email : $emailParam }) ' +
                 'ON CREATE SET u.userId = uid, u.hasDownloadedEmergencyKit = false, u.hasCompletedSignUp = false, u.versionCode = $versionCodeParam, u.name = $nameParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.server = $serverParam, u.createdAt = $createdAtParam ' +
-                'ON MATCH SET id.count = id.count - 1, u.hasDownloadedEmergencyKit = false, u.hasCompletedSignUp = false, u.versionCode = $versionCodeParam, u.name = $nameParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.server = $serverParam, u.createdAt = $createdAtParam ' +
+                'ON MATCH SET id.count = id.count - 1, u.pubKey = null, u.hasDownloadedEmergencyKit = false, u.hasCompletedSignUp = false, u.versionCode = $versionCodeParam, u.name = $nameParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.server = $serverParam, u.createdAt = $createdAtParam ' +
                 'RETURN u',
             {
                 identifierParam: 'User_Counter',
