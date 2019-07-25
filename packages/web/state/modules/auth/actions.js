@@ -258,17 +258,17 @@ export const completeSignUp = ({ email, userId, versionCode, password }) => {
             // Handle error response from server
             if (err.response && err.response.data) {
                 const { error } = err.response.data;
+                dispatch({
+                    type: errorTypes.USER_SIGNUP_FAILED,
+                    payload: {
+                        error,
+                    },
+                });
                 // For Page Redirection on failure
                 dispatch({
                     type: types.USER_SIGNUP_NOT_COMPLETED,
                     payload: {
                         hasFailedSignUp: true,
-                        error,
-                    },
-                });
-                dispatch({
-                    type: errorTypes.USER_SIGNUP_FAILED,
-                    payload: {
                         error,
                     },
                 });

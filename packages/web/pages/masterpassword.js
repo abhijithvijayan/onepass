@@ -1,16 +1,24 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Router from 'next/router';
+import { toast } from 'react-toastify';
 
 import BodyWrapper from '../components/BodyWrapper';
 import MasterPassword from '../components/SignUp/MasterPassword';
 
 class MasterPasswordPage extends Component {
     shouldComponentUpdate(nextProps, nextState) {
-        if (nextProps.hasFailedSignUp) {
-            Router.push('/signup');
+        const { isAuthenticated, hasFailedSignUp, error } = nextProps;
+        if (hasFailedSignUp) {
+            // Wait for the toast to close and redirect
+            toast(`${error.msg} Redirecting...`, {
+                containerId: 'top__center',
+                onClose: prop => {
+                    return Router.push('/signup');
+                },
+            });
         }
-        if (nextProps.isAuthenticated) {
+        if (isAuthenticated) {
             Router.push('/vault');
         }
         return true;
@@ -24,12 +32,13 @@ class MasterPasswordPage extends Component {
     }
 }
 
-const mapStateToProps = state => {
-    const { signup, login } = state.auth;
+const mapStateToProps = ({ auth: { signup, login }, errors }) => {
+    const error = errors.signup.error !== undefined ? errors.signup.error : null;
     return {
         isAuthenticated: login.isAuthenticated,
         isVerified: signup.isVerified === undefined ? false : signup.isVerified,
         hasFailedSignUp: signup.hasFailedSignUp === undefined ? false : signup.hasFailedSignUp,
+        error,
     };
 };
 
