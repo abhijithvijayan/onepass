@@ -168,9 +168,41 @@ exports.addOrUpdateItemCriterias = [
         .exists()
         .withMessage('Missing Encrypted Details.'),
     validator
+        .body('encDetails.tag')
+        .exists()
+        .withMessage('Missing Encrypted Details Tag.'),
+    validator
+        .body('encDetails.data')
+        .exists()
+        .withMessage('Missing Encrypted Details Data Field.'),
+    validator
+        .body('encDetails.tagLength')
+        .exists()
+        .withMessage('Missing Encrypted Details Tag Length Field.'),
+    validator
+        .body('encDetails.iv')
+        .exists()
+        .withMessage('Missing Encrypted Details IV Field.'),
+    validator
         .body('encOverview')
         .exists()
         .withMessage('Missing Encrypted Overview.'),
+    validator
+        .body('encOverview.tag')
+        .exists()
+        .withMessage('Missing Encrypted Overview Tag.'),
+    validator
+        .body('encOverview.data')
+        .exists()
+        .withMessage('Missing Encrypted Overview Data Field.'),
+    validator
+        .body('encOverview.tagLength')
+        .exists()
+        .withMessage('Missing Encrypted Overview Tag Length Field.'),
+    validator
+        .body('encOverview.iv')
+        .exists()
+        .withMessage('Missing Encrypted Overview IV Field.'),
     validator
         .body('itemId')
         .exists()
@@ -186,12 +218,34 @@ exports.addOrUpdateItemBody = (req, res, next) => {
     if (!errors.isEmpty()) {
         const errorsObj = errors.mapped();
         const encDetailsError = errorsObj.encDetails && errorsObj.encDetails.msg;
+        const encDetailsTagError = errorsObj['encDetails.tag'] && errorsObj['encDetails.tag'].msg;
+        const encDetailsDataError = errorsObj['encDetails.data'] && errorsObj['encDetails.data'].msg;
+        const encDetailsTagLengthError = errorsObj['encDetails.tagLength'] && errorsObj['encDetails.tagLength'].msg;
+        const encDetailsIVError = errorsObj['encDetails.iv'] && errorsObj['encDetails.iv'].msg;
+
         const encOverviewError = errorsObj.encOverview && errorsObj.encOverview.msg;
+        const encOverviewTagError = errorsObj['encOverview.tag'] && errorsObj['encOverview.tag'].msg;
+        const encOverviewDataError = errorsObj['encOverview.data'] && errorsObj['encOverview.data'].msg;
+        const encOverviewTagLengthError = errorsObj['encOverview.tagLength'] && errorsObj['encOverview.tagLength'].msg;
+        const encOverviewIVError = errorsObj['encOverview.iv'] && errorsObj['encOverview.iv'].msg;
+
         const itemIdError = errorsObj.itemId && errorsObj.itemId.msg;
         const modifiedAtError = errorsObj.modifiedAt && errorsObj.modifiedAt.msg;
         return res.status(400).json({
             error: {
-                msg: encDetailsError || encOverviewError || itemIdError || modifiedAtError,
+                msg:
+                    encDetailsError ||
+                    encDetailsTagError ||
+                    encDetailsDataError ||
+                    encDetailsTagLengthError ||
+                    encDetailsIVError ||
+                    encOverviewError ||
+                    encOverviewTagError ||
+                    encOverviewDataError ||
+                    encOverviewTagLengthError ||
+                    encOverviewIVError ||
+                    itemIdError ||
+                    modifiedAtError,
                 reportedAt: new Date().getTime(),
             },
         });
