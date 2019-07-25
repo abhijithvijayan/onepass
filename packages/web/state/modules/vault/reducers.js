@@ -56,10 +56,12 @@ function onDeleteItemSuccess(state, { payload }) {
     const {
         item: { itemId },
         status,
+        msg,
+        reportedAt,
     } = payload;
     // https://link.medium.com/wblJY3lRoY
     const { [itemId]: deleted, ...remaining } = state.items;
-    return { ...state, response: status, items: { ...remaining } };
+    return { ...state, response: { status, msg, reportedAt }, items: { ...remaining } };
 }
 
 function clearEncVaultData() {

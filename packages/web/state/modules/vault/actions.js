@@ -236,7 +236,7 @@ export const deleteVaultItem = ({ itemId }) => {
                     itemId,
                 },
             });
-            const { item, status } = data;
+            const { item, status, msg, reportedAt } = data;
             dispatch({
                 type: types.TOGGLE_CONFIRM_DELETE_MODAL,
                 payload: {
@@ -246,7 +246,12 @@ export const deleteVaultItem = ({ itemId }) => {
             });
             dispatch({
                 type: types.DELETE_VAULT_ITEM_SUCCEEDED,
-                payload: { item, status },
+                payload: {
+                    item,
+                    status,
+                    msg,
+                    reportedAt,
+                },
             });
             dispatch({
                 type: types.REMOVE_DELETED_FROM_VAULT,

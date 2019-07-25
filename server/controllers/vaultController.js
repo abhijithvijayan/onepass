@@ -69,11 +69,11 @@ exports.deleteVaultItem = async (req, res) => {
     const { email } = req.user;
     const response = await deleteEncVaultItem({ email, itemId });
     if (response.status) {
-        const { status, item, message } = response;
+        const { status, item, msg } = response;
         return res.status(200).json({
             status,
             item,
-            message,
+            msg,
             reportedAt: new Date().getTime(),
         });
     }
