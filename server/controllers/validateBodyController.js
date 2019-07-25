@@ -46,7 +46,11 @@ exports.emailVerificationCriterias = [
     validator
         .body('verificationToken')
         .exists()
-        .withMessage('No valid verification token.'),
+        .withMessage('No valid verification token.')
+        .matches(/^[0-9]+$/)
+        .withMessage('Verification token must be a 6-digit number.')
+        .isLength({ min: 6, max: 6 })
+        .withMessage('Verification token must be 6 characters long.'),
 ];
 
 exports.emailVerificationBody = (req, res, next) => {
