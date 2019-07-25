@@ -109,7 +109,11 @@ exports.signup = async (req, res) => {
     //     html: verifyEmailTemplate.replace(/{{verification}}/gim, newUser.verificationToken),
     // });
     // if (mail.accepted.length) {
-    //     return res.status(201).json({ email, message: 'Verification email has been sent.' });
+    //     return res.status(201).json({
+    //         email,
+    //         msg: 'Verification email has been sent.',
+    //         reportedAt: new Date().getTime(),
+    //     });
     // }
     // return res.status(400).json({
     //     error: {
@@ -117,7 +121,11 @@ exports.signup = async (req, res) => {
     //         reportedAt: new Date().getTime(),
     //     },
     // });
-    return res.status(201).json({ email, message: 'Sending Email temporarily disabled.' });
+    return res.status(201).json({
+        email,
+        msg: 'Sending Email temporarily disabled.',
+        reportedAt: new Date().getTime(),
+    });
 };
 
 exports.verify = async (req, res) => {
@@ -132,7 +140,13 @@ exports.verify = async (req, res) => {
     }
     const user = await verifyUser({ email, verificationToken });
     if (user) {
-        return res.status(201).json({ userId: user.userId, email: user.email, versionCode: user.versionCode });
+        const { userId, versionCode } = user;
+        return res.status(201).json({
+            userId,
+            email: user.email,
+            versionCode,
+            reportedAt: new Date().getTime(),
+        });
     }
     return res.status(403).json({
         error: {
@@ -146,7 +160,10 @@ exports.finalizeAccount = async (req, res) => {
     const { verifier, salt, email, userId, encryptionKeys } = req.body;
     const serverResponse = await saveAccountAuthCredentials({ verifier, salt, email, userId, encryptionKeys });
     if (serverResponse.status) {
-        return res.status(201).json({ status: 'Account signup successful.' });
+        return res.status(201).json({
+            status: 'Account signup successful.',
+            reportedAt: new Date().getTime(),
+        });
     }
     return res.status(403).json({
         error: {

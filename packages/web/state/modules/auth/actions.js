@@ -121,9 +121,7 @@ export const submitSignUpData = ({ email, name }) => {
 
             dispatch({
                 type: types.VALID_SIGNUP_FORM_SUBMISSION,
-                payload: {
-                    data,
-                },
+                payload: data,
             });
         } catch ({ response }) {
             dispatch({
@@ -150,7 +148,7 @@ export const submitVerificationToken = ({ email, verificationToken }) => {
                 type: uiTypes.SHOW_PAGE_LOADER,
             });
 
-            const response = await api({
+            const { data } = await api({
                 method: 'POST',
                 url: endpoints.TOKEN_VERIFICATION_ENDPOINT,
                 data: {
@@ -161,7 +159,7 @@ export const submitVerificationToken = ({ email, verificationToken }) => {
 
             dispatch({
                 type: types.VALID_VERIFICATION_TOKEN_SUBMISSION,
-                payload: response.data,
+                payload: data,
             });
         } catch ({ response }) {
             dispatch({
