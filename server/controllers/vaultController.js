@@ -6,7 +6,13 @@ exports.fetchVaultData = async (req, res) => {
     if (response.status) {
         return res.status(200).json({ encVaultData: response.encVaultData });
     }
-    return res.status(403).json({ error: response.error, id: 'vault' });
+    return res.status(403).json({
+        error: {
+            msg: response.error,
+            reportedAt: new Date().getTime(),
+        },
+        id: 'vault',
+    });
 };
 
 exports.addOrUpdateVaultItem = async (req, res) => {
@@ -21,8 +27,11 @@ exports.addOrUpdateVaultItem = async (req, res) => {
         if (receivedItemModifiedAt !== existingItemModifiedAt) {
             return res.status(403).json({
                 status: false,
-                error:
-                    'Failed to save item. You have an outdated version of vault. Try making changes again after refreshing the vault.',
+                error: {
+                    msg:
+                        'Failed to save item. You have an outdated version of vault. Try making changes again after refreshing the vault.',
+                    reportedAt: new Date().getTime(),
+                },
             });
         }
     }
@@ -31,7 +40,13 @@ exports.addOrUpdateVaultItem = async (req, res) => {
         const { status, item, message } = response;
         return res.status(200).json({ status, item, message });
     }
-    return res.status(403).json({ status: response.status, error: response.error });
+    return res.status(403).json({
+        status: response.status,
+        error: {
+            msg: response.error,
+            reportedAt: new Date().getTime(),
+        },
+    });
 };
 
 exports.deleteVaultItem = async (req, res) => {
@@ -42,5 +57,11 @@ exports.deleteVaultItem = async (req, res) => {
         const { status, item, message } = response;
         return res.status(200).json({ status, item, message });
     }
-    return res.status(403).json({ status: response.status, error: response.error });
+    return res.status(403).json({
+        status: response.status,
+        error: {
+            msg: response.error,
+            reportedAt: new Date().getTime(),
+        },
+    });
 };
