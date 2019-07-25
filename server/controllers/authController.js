@@ -90,7 +90,7 @@ exports.signup = async (req, res) => {
         });
     }
     const user = await getUserDetails({ email });
-    if (user && user.isVerified && user.hasCompletedSignUp) {
+    if (user && user.isVerified && user.hasCompletedSignUp && user.hasDownloadedEmergencyKit) {
         return res.status(403).json({
             error: {
                 msg: 'This email is already registered',
