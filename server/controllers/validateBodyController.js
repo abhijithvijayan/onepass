@@ -7,6 +7,8 @@ exports.signUpValidationCriterias = [
         .body('email')
         .exists()
         .withMessage('You must provide a valid email address.')
+        .isLength({ max: 254 })
+        .withMessage('Email must be 254 characters or less.')
         .isEmail()
         .withMessage('Email address you entered is not valid.')
         .trim()
@@ -14,7 +16,9 @@ exports.signUpValidationCriterias = [
     validator
         .body('name')
         .exists()
-        .withMessage('You must provide your name.'),
+        .withMessage('You must provide your name.')
+        .isLength({ max: 64 })
+        .withMessage('Name must be 64 characters or less.'),
 ];
 
 exports.signUpValidationBody = (req, res, next) => {
@@ -39,8 +43,10 @@ exports.emailVerificationCriterias = [
         .body('email')
         .exists()
         .withMessage('No email address found.')
+        .isLength({ max: 254 })
+        .withMessage('Email must be 254 characters or less.')
         .isEmail()
-        .withMessage('Invalid email address.')
+        .withMessage('Email address you entered is not valid.')
         .trim()
         .normalizeEmail(),
     validator
@@ -74,14 +80,18 @@ exports.finalizeAccountValidationCriterias = [
         .body('email')
         .exists()
         .withMessage('No email address found.')
+        .isLength({ max: 254 })
+        .withMessage('Email must be 254 characters or less.')
         .isEmail()
-        .withMessage('Invalid email address.')
+        .withMessage('Email address you entered is not valid.')
         .trim()
         .normalizeEmail(),
     validator
         .body('userId')
         .exists()
-        .withMessage('No valid userId.'),
+        .withMessage('No valid userId.')
+        .isLength({ min: 13 })
+        .withMessage('User id must be 13 characters or more.'),
     validator
         .body('salt')
         .exists()
@@ -121,6 +131,8 @@ exports.loginValidationCriterias = [
         .body('email')
         .exists()
         .withMessage('You must provide a valid email address.')
+        .isLength({ max: 254 })
+        .withMessage('Email must be 254 characters or less.')
         .isEmail()
         .withMessage('Email address you entered is not valid.')
         .trim()
@@ -128,7 +140,9 @@ exports.loginValidationCriterias = [
     validator
         .body('stage')
         .exists()
-        .withMessage('No srp stage is specified.'),
+        .withMessage('No srp stage is specified.')
+        .isLength({ min: 4, max: 5 })
+        .withMessage('Stage must be 5 characters or less.'),
 ];
 
 exports.loginValidationBody = (req, res, next) => {
@@ -190,7 +204,9 @@ exports.deleteItemCriterias = [
     validator
         .body('itemId')
         .exists()
-        .withMessage('Missing item id.'),
+        .withMessage('Missing item id.')
+        .isLength({ min: 13 })
+        .withMessage('Item id must be 13 characters or more.'),
 ];
 
 exports.deleteItemBody = (req, res, next) => {
