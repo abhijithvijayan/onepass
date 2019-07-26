@@ -45,12 +45,12 @@ class ModalWrappedForm extends Component {
     render() {
         const { isItemModalOpen, selectedItemId, items } = this.props;
         // Initial Values for modalForm
-        let initialValues = { url: '', name: '', username: '', password: '' };
+        let initialValues = { url: '', name: '', username: '', password: '', folder: '' };
         const selectedItem = items[selectedItemId];
         // If item exist in store
         if (selectedItem) {
             const {
-                decOverview: { url, name },
+                decOverview: { url, name, folder },
                 decDetails: { username, password },
                 modifiedAt,
             } = selectedItem;
@@ -58,6 +58,7 @@ class ModalWrappedForm extends Component {
             initialValues = {
                 url,
                 name,
+                folder,
                 username,
                 password,
                 itemId: selectedItemId,

@@ -4,7 +4,9 @@ import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { Field, reset, reduxForm } from 'redux-form';
-import { Cascader, Col, Form, Icon, Input } from 'antd';
+import { Col, Form, Icon, Input, Select } from 'antd';
+
+const { Option } = Select;
 
 const FormHolder = styled(Form)`
     @media screen and (min-width: ${props => {
@@ -32,25 +34,8 @@ const renderField = ComponentToRender => ({ input, type, icon, label, meta: { to
     );
 };
 
-const cascaderOptions = [
-    {
-        value: 'business',
-        label: 'ABusiness',
-        children: [
-            {
-                value: 'company',
-                label: 'ACompany',
-            },
-        ],
-    },
-    {
-        value: 'social',
-        label: 'Social',
-    },
-];
-
 const renderInput = renderField(Input);
-const renderSelect = renderField(Cascader);
+const renderSelect = renderField(Select);
 
 const afterSubmit = (result, dispatch) => {
     return dispatch(reset('form_in_modal'));
@@ -65,15 +50,23 @@ class ModalForm extends Component {
                 <Col md={{ span: 12 }} className="form__split--component">
                     <Field label="Name" name="name" type="text" component={renderInput} />
                 </Col>
-                {/* To Be Fixed - ref: https://github.com/erikras/redux-form/issues/4503 */}
                 <Col md={{ span: 12 }} className="form__split--component">
                     <Field
-                        options={cascaderOptions}
                         placeholder="Please select"
+                        defaultValue={{ key: 'none' }}
                         label="Folder"
                         name="folder"
+                        showSearch
+                        filterOption={(input, option) => {
+                            return option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+                        }}
                         component={renderSelect}
-                    />
+                    >
+                        <Option value="none">None</Option>
+                        <Option value="social">Social</Option>
+                        <Option value="business">Business</Option>
+                        <Option value="other">Other</Option>
+                    </Field>
                 </Col>
                 <Col md={{ span: 12 }} className="form__split--component">
                     <Field label="Username" name="username" type="text" icon="user" component={renderInput} />
