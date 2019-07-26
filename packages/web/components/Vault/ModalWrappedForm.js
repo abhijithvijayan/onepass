@@ -43,7 +43,7 @@ class ModalWrappedForm extends Component {
     };
 
     render() {
-        const { isItemModalOpen, selectedItemId, items } = this.props;
+        const { isItemModalOpen, selectedItemId, items, folders } = this.props;
         // Initial Values for modalForm
         let initialValues = { url: '', name: '', username: '', password: '', folder: '' };
         const selectedItem = items[selectedItemId];
@@ -82,7 +82,7 @@ class ModalWrappedForm extends Component {
                         </Button>,
                     ]}
                 >
-                    <FormInModal onSubmit={this.onFormSubmit} initialValues={initialValues} />
+                    <FormInModal onSubmit={this.onFormSubmit} folders={folders} initialValues={initialValues} />
                 </Modal>
             </div>
         );
@@ -91,7 +91,7 @@ class ModalWrappedForm extends Component {
 
 const mapStateToProps = state => {
     const {
-        vault: { ui, decrypted },
+        vault: { ui, encrypted, decrypted },
     } = state;
     const {
         auth: { login },
@@ -100,6 +100,7 @@ const mapStateToProps = state => {
         isItemModalOpen: ui.isItemModalOpen,
         selectedItemId: ui.selectedItemId,
         items: decrypted.items,
+        folders: encrypted.folders,
         email: login.user && login.user.email,
         vaultKey: login.decrypted.keys && login.decrypted.keys.decVaultKey,
     };

@@ -42,6 +42,18 @@ const afterSubmit = (result, dispatch) => {
 };
 
 class ModalForm extends Component {
+    renderFolderSelectOptions = () => {
+        const { folders } = this.props;
+        return Object.values(folders).map(folder => {
+            const { folderId, folderName } = folder;
+            return (
+                <Option key={folderId} value={folderId}>
+                    {folderName}
+                </Option>
+            );
+        });
+    };
+
     render() {
         const { handleSubmit } = this.props;
         return (
@@ -52,7 +64,7 @@ class ModalForm extends Component {
                 </Col>
                 <Col md={{ span: 12 }} className="form__split--component">
                     <Field
-                        placeholder="Please select"
+                        placeholder="Choose folder"
                         label="Folder"
                         name="folder"
                         showSearch
@@ -61,10 +73,7 @@ class ModalForm extends Component {
                         }}
                         component={renderSelect}
                     >
-                        <Option value="none">None</Option>
-                        <Option value="social">Social</Option>
-                        <Option value="business">Business</Option>
-                        <Option value="other">Other</Option>
+                        {this.renderFolderSelectOptions()}
                     </Field>
                 </Col>
                 <Col md={{ span: 12 }} className="form__split--component">
@@ -88,7 +97,8 @@ const validate = values => {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        initialValues: ownProps.initialValues, // retrieve name from redux store
+        initialValues: ownProps.initialValues,
+        folders: ownProps.folders,
     };
 };
 
