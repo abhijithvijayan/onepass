@@ -71,7 +71,8 @@ exports.saveEncVaultItem = async ({ encDetails, encOverview, email, itemId }) =>
     const vaultItemRandomPrefix = generate('1245689abefklprtvxz', 6);
     const { records = [] } = await session.writeTransaction(tx => {
         return tx.run(
-            'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true })-[:VAULT]-(v: vault) ' +
+            'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true, hasDownloadedEmergencyKit: true })' +
+                '-[:VAULT]-(v: vault) ' +
                 'MERGE (v)-[:PASSWORDS]->(p: passwordCollection) ' +
                 'ON CREATE SET p.userId = v.userId, p.lastItem = 1, p.itemPrefix = $itemPrefixParam ' +
                 'ON MATCH SET p.lastItem = p.lastItem + 1 ' +
@@ -143,7 +144,7 @@ exports.deleteEncVaultItem = async ({ email, itemId }) => {
     const session = driver.session();
     const { records = [] } = await session.writeTransaction(tx => {
         return tx.run(
-            'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true }) ' +
+            'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true, hasDownloadedEmergencyKit: true }) ' +
                 'WITH u, u.userId AS uid ' +
                 'MATCH (p: passwordCollection { userId: uid })-[:Archive]->(e: entry { entryId : $itemIdParam }) ' +
                 'WITH e, e.entryId AS eid, e.createdAt AS createdAt ' +
