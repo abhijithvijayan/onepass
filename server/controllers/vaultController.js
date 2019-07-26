@@ -1,4 +1,4 @@
-const { getVaultData, saveEncVaultItem, deleteEncVaultItem, getVaultItem } = require('../db/vault');
+const { getVaultData, saveEncVaultItem, deleteEncVaultItem, getVaultItem, addOrUpdateFolder } = require('../db/vault');
 
 exports.fetchVaultData = async (req, res) => {
     const { email } = req.user;
@@ -73,6 +73,28 @@ exports.deleteVaultItem = async (req, res) => {
         return res.status(200).json({
             status,
             item,
+            msg,
+            reportedAt: new Date().getTime(),
+        });
+    }
+    return res.status(403).json({
+        status: response.status,
+        error: {
+            msg: response.error,
+            reportedAt: new Date().getTime(),
+        },
+    });
+};
+
+exports.addOrUpdateFolder = async (req, res) => {
+    const { folderName, folderId } = req.body;
+    const { email } = req.user;
+    const response = await addOrUpdateFolder({ email, folderName, folderId });
+    if (response.status) {
+        const { status, folder, msg } = response;
+        return res.status(200).json({
+            folder,
+            status,
             msg,
             reportedAt: new Date().getTime(),
         });

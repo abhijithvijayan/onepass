@@ -165,3 +165,45 @@ exports.deleteEncVaultItem = async ({ email, itemId }) => {
     }
     return { status: false, error: "Item doesn't exist or deletion failed" };
 };
+
+exports.addOrUpdateFolder = async ({ email, folderName, folderId }) => {
+    const session = driver.session();
+    const folderRandomPrefix = generate('1245689abefklprtvxz', 6);
+    const { records = [] } = await session.writeTransaction(tx => {
+        return tx.run(
+            'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true, hasDownloadedEmergencyKit: true })' +
+                '-[:VAULT]-(v: vault) ' +
+                'MERGE (v)-[:FOLDERS]->(fc: folderCollection) ' +
+                'ON CREATE SET fc.userId = v.userId, fc.lastItem = 1, fc.folderPrefix = $folderPrefixParam ' +
+                'ON MATCH SET fc.lastItem = fc.lastItem + 1 ' +
+                'WITH fc.folderPrefix + $folderRandomPrefixParam + fc.lastItem AS fid, fc ' +
+                'MERGE (f: folder { folderEntryId: $folderIdParam }) ' +
+                'ON CREATE SET f.folderEntryId = fid, f.folderName = $folderNameParam, f.createdAt = $timeParam, f.modifiedAt = $timeParam ' +
+                'ON MATCH SET fc.lastItem = fc.lastItem - 1, f.folderName = $folderNameParam, f.modifiedAt = $timeParam ' +
+                'MERGE (fc)-[a: Archive]->(f) ' +
+                'RETURN f',
+            {
+                emailParam: email,
+                folderPrefixParam: 'folder_',
+                folderIdParam: folderId !== null ? folderId : '',
+                folderRandomPrefixParam: `${folderRandomPrefix}_`,
+                folderNameParam: folderName !== null ? folderName : '',
+                timeParam: new Date().toJSON(),
+            }
+        );
+    });
+    session.close();
+    const folderEntry = records.length && records[0].get('f').properties;
+    if (folderEntry) {
+        const { folderEntryId, createdAt, modifiedAt } = folderEntry;
+        const folder = {
+            folderId: folderEntryId,
+            folderName,
+            createdAt: new Date(createdAt).getTime(),
+            modifiedAt: new Date(modifiedAt).getTime(),
+        };
+        const folderObj = Object.assign({}, { [folderEntryId]: folder });
+        return { status: true, folder: folderObj, msg: 'Folder created in vault.' };
+    }
+    return { status: false, error: 'Failed to add folder to vault' };
+};

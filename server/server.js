@@ -31,6 +31,8 @@ const {
     addOrUpdateItemBody,
     deleteItemCriterias,
     deleteItemBody,
+    createOrUpdateFolderCriterias,
+    createOrUpdateFolderBody,
 } = require('./controllers/validateBodyController');
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -117,13 +119,20 @@ nextApp.prepare().then(() => {
 
     server.get('/api/v1/vault/getVaultData', auth.authWithJWT, catchErrors(vault.fetchVaultData));
 
-    // ToDo: validate item(details and overview content)
     server.post(
         '/api/v1/vault/addOrUpdateItem',
         addOrUpdateItemCriterias,
         addOrUpdateItemBody,
         auth.authWithJWT,
         catchErrors(vault.addOrUpdateVaultItem)
+    );
+
+    server.post(
+        '/api/v1/vault/addOrUpdateFolder',
+        createOrUpdateFolderCriterias,
+        createOrUpdateFolderBody,
+        auth.authWithJWT,
+        catchErrors(vault.addOrUpdateFolder)
     );
 
     server.post(

@@ -416,6 +416,34 @@ exports.deleteItemBody = (req, res, next) => {
     return next();
 };
 
+/* Create or Update Folder */
+exports.createOrUpdateFolderCriterias = [
+    validator
+        .body('folderId')
+        .exists()
+        .withMessage('Missing folder id.'),
+    validator
+        .body('folderName')
+        .exists()
+        .withMessage('Missing folder name.'),
+];
+
+exports.createOrUpdateFolderBody = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const errorsObj = errors.mapped();
+        const folderIdError = errorsObj.folderId && errorsObj.folderId.msg;
+        const folderNameError = errorsObj.folderName && errorsObj.folderName.msg;
+        return res.status(400).json({
+            error: {
+                msg: folderIdError || folderNameError,
+                reportedAt: new Date().getTime(),
+            },
+        });
+    }
+    return next();
+};
+
 /* ------------------------------------------------------------- */
 /*                 // ToDo: REFACTOR Later
 /* ------------------------------------------------------------- */
