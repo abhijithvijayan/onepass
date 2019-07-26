@@ -426,6 +426,10 @@ exports.createOrUpdateFolderCriterias = [
         .body('folderName')
         .exists()
         .withMessage('Missing folder name.'),
+    validator
+        .body('modifiedAt')
+        .exists()
+        .withMessage('Missing last modified time.'),
 ];
 
 exports.createOrUpdateFolderBody = (req, res, next) => {
@@ -434,9 +438,10 @@ exports.createOrUpdateFolderBody = (req, res, next) => {
         const errorsObj = errors.mapped();
         const folderIdError = errorsObj.folderId && errorsObj.folderId.msg;
         const folderNameError = errorsObj.folderName && errorsObj.folderName.msg;
+        const modifiedAtError = errorsObj.modifiedAt && errorsObj.modifiedAt.msg;
         return res.status(400).json({
             error: {
-                msg: folderIdError || folderNameError,
+                msg: folderIdError || folderNameError || modifiedAtError,
                 reportedAt: new Date().getTime(),
             },
         });

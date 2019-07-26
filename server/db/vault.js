@@ -112,9 +112,9 @@ exports.saveEncVaultItem = async ({ encDetails, encOverview, email, itemId }) =>
 
 exports.getVaultItem = async ({ email, itemId }) => {
     const session = driver.session();
-    const { records = [] } = await session.writeTransaction(tx => {
+    const { records = [] } = await session.readTransaction(tx => {
         return tx.run(
-            'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true }) ' +
+            'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true, hasDownloadedEmergencyKit: true }) ' +
                 'WITH u, u.userId AS uid ' +
                 'MATCH (p: passwordCollection { userId: uid })-[:Archive]->(e: entry { entryId : $itemIdParam }) ' +
                 'RETURN e',
@@ -206,4 +206,32 @@ exports.addOrUpdateFolder = async ({ email, folderName, folderId }) => {
         return { status: true, folder: folderObj, msg: 'Folder created in vault.' };
     }
     return { status: false, error: 'Failed to add folder to vault' };
+};
+
+exports.getFolderEntry = async ({ email, folderId }) => {
+    const session = driver.session();
+    const { records = [] } = await session.readTransaction(tx => {
+        return tx.run(
+            'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true, hasDownloadedEmergencyKit: true }) ' +
+                'WITH u, u.userId AS uid ' +
+                'MATCH (fc: folderCollection { userId: uid })-[:Archive]->(f: folder { folderEntryId : $folderIdParam }) ' +
+                'RETURN f',
+            {
+                emailParam: email,
+                folderIdParam: folderId !== null ? folderId : '',
+            }
+        );
+    });
+    session.close();
+    const folderEntry = records.length && records[0].get('f').properties;
+    if (folderEntry) {
+        const { folderEntryId, createdAt, modifiedAt } = folderEntry;
+        const folder = {
+            folderId: folderEntryId,
+            createdAt: new Date(createdAt).getTime(),
+            modifiedAt: new Date(modifiedAt).getTime(),
+        };
+        return { status: true, folder, message: 'Folder found.' };
+    }
+    return { status: false, error: "Folder doesn't exist." };
 };

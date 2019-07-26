@@ -1,4 +1,11 @@
-const { getVaultData, saveEncVaultItem, deleteEncVaultItem, getVaultItem, addOrUpdateFolder } = require('../db/vault');
+const {
+    getVaultData,
+    saveEncVaultItem,
+    deleteEncVaultItem,
+    getVaultItem,
+    addOrUpdateFolder,
+    getFolderEntry,
+} = require('../db/vault');
 
 exports.fetchVaultData = async (req, res) => {
     const { email } = req.user;
@@ -87,11 +94,35 @@ exports.deleteVaultItem = async (req, res) => {
 };
 
 exports.addOrUpdateFolder = async (req, res) => {
-    const { folderName, folderId } = req.body;
+    const { folderName, folderId, modifiedAt } = req.body;
     const { email } = req.user;
+    const unitFolder = await getFolderEntry({ email, folderId });
+    // Folder already exist
+    if (unitFolder.status && modifiedAt) {
+        // Check if folder to be modified is synced to the recent in local vault
+        const receivedFolderModifiedAt = new Date(modifiedAt).getTime();
+        const existingFolderModifiedAt = new Date(unitFolder.folder.modifiedAt).getTime();
+        if (receivedFolderModifiedAt !== existingFolderModifiedAt) {
+            return res.status(403).json({
+                status: false,
+                error: {
+                    msg:
+                        'Failed to update folder. You have an outdated version of vault. Try making changes again after refreshing the vault.',
+                    reportedAt: new Date().getTime(),
+                },
+            });
+        }
+    }
     const response = await addOrUpdateFolder({ email, folderName, folderId });
     if (response.status) {
-        const { status, folder, msg } = response;
+        let msg;
+        const { status, folder } = response;
+        // New folder created
+        ({ msg } = response);
+        // Folder already exists
+        if (unitFolder.status) {
+            msg = 'Folder updated.';
+        }
         return res.status(200).json({
             folder,
             status,
