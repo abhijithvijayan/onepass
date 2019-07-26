@@ -99,7 +99,10 @@ exports.getVaultData = async ({ email }) => {
             encVaultKey: JSON.parse(encVaultKey),
             passwordCount,
             folderCount,
-            encArchiveList: { passwords: passwordObjectList, folders: folderObjectList },
+            encArchiveList: {
+                items: passwordObjectList,
+                folders: folderObjectList,
+            },
         };
         return { encVaultData, status: true };
     }

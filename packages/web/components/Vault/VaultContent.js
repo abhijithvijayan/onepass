@@ -95,7 +95,6 @@ class VaultContent extends Component {
                     <VaultItemsScroll>
                         <FolderWrapper>{!isVaultEmpty ? this.renderFolder() : <EmptyHolder />}</FolderWrapper>
                     </VaultItemsScroll>
-                    {/* <EmptyHolder /> */}
                 </MainContentHolder>
             </React.Fragment>
         );

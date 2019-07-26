@@ -43,8 +43,11 @@ const decryptionReducer = createReducer(initialDecryptedState)({
  */
 
 function onFetchVaultContents(state, { payload }) {
-    const { encVaultKey, encArchiveList } = payload;
-    return { ...state, keys: { encVaultKey }, items: encArchiveList };
+    const {
+        encVaultKey,
+        encArchiveList: { items, folders },
+    } = payload;
+    return { ...state, keys: { encVaultKey }, items, folders };
 }
 
 function onSaveItemSuccess(state, { payload }) {

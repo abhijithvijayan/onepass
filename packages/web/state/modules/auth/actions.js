@@ -409,10 +409,13 @@ export const submitLoginData = ({ email, password, secretKey }) => {
                  *   9. Decrypt Vault if not empty
                  */
                 let decVaultStatus = true;
-                const { encArchiveList, itemsCount } = encVaultData;
+                const {
+                    encArchiveList: { items },
+                    itemsCount,
+                } = encVaultData;
                 if (itemsCount !== 0) {
                     const response = await dispatch(
-                        performVaultArchiveDecryption({ encArchiveList, vaultKey: decryptedVaultKey })
+                        performVaultArchiveDecryption({ encArchiveList: items, vaultKey: decryptedVaultKey })
                     );
                     // destructuring
                     ({ decVaultStatus } = response);

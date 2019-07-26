@@ -53,7 +53,6 @@ class ModalForm extends Component {
                 <Col md={{ span: 12 }} className="form__split--component">
                     <Field
                         placeholder="Please select"
-                        defaultValue={{ key: 'none' }}
                         label="Folder"
                         name="folder"
                         showSearch
