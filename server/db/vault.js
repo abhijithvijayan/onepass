@@ -8,8 +8,8 @@ exports.getVaultData = async ({ email }) => {
             'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true })' +
                 '-[:VAULT]->(v: vault) ' +
                 'WITH v ' +
-                'OPTIONAL MATCH path = (v)-[:PASSWORDS]->()-[:Archive]->() ' +
-                'RETURN v, path',
+                'OPTIONAL MATCH fRoute = (v)-[r]->()-[:Archive]->(a) ' +
+                'RETURN v, r, a',
             {
                 emailParam: email,
             }
@@ -18,48 +18,88 @@ exports.getVaultData = async ({ email }) => {
     session.close();
 
     if (records.length) {
-        let itemsCount = 0;
-        let encArchiveObjectList = {};
+        let passwordCount = 0;
+        let folderCount = 0;
+        let passwordObjectList = {};
+        let folderObjectList = {};
         const { encVaultKey } = records[0].get('v').properties;
         const encArchiveList = records.map(record => {
-            const item = record._fields[1]
+            const items = record._fields[2]
                 ? {
-                      ...record._fields[1].end.properties,
+                      ...record._fields[2].labels,
+                      ...record._fields[2].properties,
                   }
                 : null;
-            if (item) {
-                itemsCount += 1;
-                return {
-                    encOverview: Object.prototype.hasOwnProperty.call(item, 'encOverview')
-                        ? JSON.parse(item.encOverview)
-                        : '',
-                    encDetails: Object.prototype.hasOwnProperty.call(item, 'encDetails')
-                        ? JSON.parse(item.encDetails)
-                        : '',
-                    createdAt: Object.prototype.hasOwnProperty.call(item, 'createdAt')
-                        ? new Date(item.createdAt).getTime()
-                        : '',
-                    modifiedAt: Object.prototype.hasOwnProperty.call(item, 'modifiedAt')
-                        ? new Date(item.modifiedAt).getTime()
-                        : '',
-                    itemId: Object.prototype.hasOwnProperty.call(item, 'entryId') ? item.entryId : '',
-                };
+            if (items) {
+                // Password
+                if (items['0'] === 'entry') {
+                    passwordCount += 1;
+                    return {
+                        encOverview: Object.prototype.hasOwnProperty.call(items, 'encOverview')
+                            ? JSON.parse(items.encOverview)
+                            : '',
+                        encDetails: Object.prototype.hasOwnProperty.call(items, 'encDetails')
+                            ? JSON.parse(items.encDetails)
+                            : '',
+                        createdAt: Object.prototype.hasOwnProperty.call(items, 'createdAt')
+                            ? new Date(items.createdAt).getTime()
+                            : '',
+                        modifiedAt: Object.prototype.hasOwnProperty.call(items, 'modifiedAt')
+                            ? new Date(items.modifiedAt).getTime()
+                            : '',
+                        itemId: Object.prototype.hasOwnProperty.call(items, 'entryId') ? items.entryId : '',
+                        type: 'password',
+                    };
+                }
+                // Folder
+                if (items['0'] === 'folder') {
+                    folderCount += 1;
+                    return {
+                        folderId: Object.prototype.hasOwnProperty.call(items, 'folderEntryId')
+                            ? items.folderEntryId
+                            : '',
+                        createdAt: Object.prototype.hasOwnProperty.call(items, 'createdAt')
+                            ? new Date(items.createdAt).getTime()
+                            : '',
+                        modifiedAt: Object.prototype.hasOwnProperty.call(items, 'modifiedAt')
+                            ? new Date(items.modifiedAt).getTime()
+                            : '',
+                        folderName: Object.prototype.hasOwnProperty.call(items, 'folderName') ? items.folderName : '',
+                        type: 'folder',
+                    };
+                }
             }
             return {};
         });
-        if (itemsCount !== 0) {
+        if (passwordCount !== 0) {
             // Array to object
-            encArchiveObjectList = Object.assign(
+            passwordObjectList = Object.assign(
                 {},
                 ...encArchiveList.map(item => {
-                    return { [item.itemId]: item };
+                    if (item.type === 'password') {
+                        return { [item.itemId]: item };
+                    }
+                    return {};
+                })
+            );
+        }
+        if (folderCount !== 0) {
+            // Array to object
+            folderObjectList = Object.assign(
+                {},
+                ...encArchiveList.map(item => {
+                    if (item.type === 'folder') {
+                        return { [item.folderId]: item };
+                    }
+                    return {};
                 })
             );
         }
         const encVaultData = {
             encVaultKey: JSON.parse(encVaultKey),
-            itemsCount,
-            encArchiveList: encArchiveObjectList,
+            passwordCount,
+            folderCount,
+            encArchiveList: { passwords: passwordObjectList, folders: folderObjectList },
         };
         return { encVaultData, status: true };
     }
