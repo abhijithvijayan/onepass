@@ -35,6 +35,7 @@ const renderField = ComponentToRender => ({ input, type, icon, label, meta: { to
 };
 
 const renderInput = renderField(Input);
+const renderPasswordInput = renderField(Input.Password);
 const renderSelect = renderField(Select);
 
 const afterSubmit = (result, dispatch) => {
@@ -67,6 +68,7 @@ class ModalForm extends Component {
                         placeholder="Choose folder"
                         label="Folder"
                         name="folder"
+                        allowClear
                         showSearch
                         filterOption={(input, option) => {
                             return option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
@@ -80,7 +82,13 @@ class ModalForm extends Component {
                     <Field label="Username" name="username" type="text" icon="user" component={renderInput} />
                 </Col>
                 <Col md={{ span: 12 }} className="form__split--component">
-                    <Field label="Password" name="password" type="password" icon="lock" component={renderInput} />
+                    <Field
+                        label="Password"
+                        name="password"
+                        type="password"
+                        icon="lock"
+                        component={renderPasswordInput}
+                    />
                 </Col>
             </FormHolder>
         );
