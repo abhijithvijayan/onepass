@@ -8,7 +8,7 @@ exports.getVaultData = async ({ email }) => {
             'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true })' +
                 '-[:VAULT]->(v: vault) ' +
                 'WITH v ' +
-                'OPTIONAL MATCH fRoute = (v)-[r]->()-[:Archive]->(a) ' +
+                'OPTIONAL MATCH (v)-[r]->()-[:Archive]->(a) ' +
                 'RETURN v, r, a',
             {
                 emailParam: email,
@@ -32,7 +32,7 @@ exports.getVaultData = async ({ email }) => {
                 : null;
             if (items) {
                 // Password
-                if (items['0'] === 'entry') {
+                if (items['0'] === 'password') {
                     passwordCount += 1;
                     return {
                         encOverview: Object.prototype.hasOwnProperty.call(items, 'encOverview')
@@ -47,8 +47,10 @@ exports.getVaultData = async ({ email }) => {
                         modifiedAt: Object.prototype.hasOwnProperty.call(items, 'modifiedAt')
                             ? new Date(items.modifiedAt).getTime()
                             : '',
-                        itemId: Object.prototype.hasOwnProperty.call(items, 'entryId') ? items.entryId : '',
-                        type: 'password',
+                        itemId: Object.prototype.hasOwnProperty.call(items, 'passwordEntryId')
+                            ? items.passwordEntryId
+                            : '',
+                        type: items['0'],
                     };
                 }
                 // Folder
@@ -65,7 +67,7 @@ exports.getVaultData = async ({ email }) => {
                             ? new Date(items.modifiedAt).getTime()
                             : '',
                         folderName: Object.prototype.hasOwnProperty.call(items, 'folderName') ? items.folderName : '',
-                        type: 'folder',
+                        type: items['0'],
                     };
                 }
             }
@@ -111,25 +113,25 @@ exports.getVaultData = async ({ email }) => {
 
 exports.saveEncVaultItem = async ({ encDetails, encOverview, email, itemId }) => {
     const session = driver.session();
-    const vaultItemRandomPrefix = generate('1245689abefklprtvxz', 6);
+    const passwordRandomPrefix = generate('1245689abefklprtvxz', 6);
     const { records = [] } = await session.writeTransaction(tx => {
         return tx.run(
             'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true, hasDownloadedEmergencyKit: true })' +
                 '-[:VAULT]-(v: vault) ' +
-                'MERGE (v)-[:PASSWORDS]->(p: passwordCollection) ' +
-                'ON CREATE SET p.userId = v.userId, p.lastItem = 1, p.itemPrefix = $itemPrefixParam ' +
-                'ON MATCH SET p.lastItem = p.lastItem + 1 ' +
-                'WITH p.itemPrefix + $vaultItemRandomPrefixParam + p.lastItem AS eid, p ' +
-                'MERGE (e: entry { entryId: $entryIdParam }) ' +
-                'ON CREATE SET e.entryId = eid, e.encDetails = $encDetails, e.encOverview = $encOverview, e.createdAt = $timeParam, e.modifiedAt = $timeParam ' +
-                'ON MATCH SET p.lastItem = p.lastItem - 1, e.encDetails = $encDetails, e.encOverview = $encOverview, e.modifiedAt = $timeParam ' +
-                'MERGE (p)-[a: Archive]->(e) ' +
-                'RETURN e',
+                'MERGE (v)-[:PASSWORDS]->(pc: passwordCollection) ' +
+                'ON CREATE SET pc.userId = v.userId, pc.lastItem = 1, pc.itemPrefix = $itemPrefixParam ' +
+                'ON MATCH SET pc.lastItem = pc.lastItem + 1 ' +
+                'WITH pc, pc.itemPrefix + $passwordRandomPrefixParam + pc.lastItem AS eid ' +
+                'MERGE (p: password { passwordEntryId: $passwordEntryIdParam }) ' +
+                'ON CREATE SET p.passwordEntryId = eid, p.encDetails = $encDetails, p.encOverview = $encOverview, p.createdAt = $timeParam, p.modifiedAt = $timeParam ' +
+                'ON MATCH SET pc.lastItem = pc.lastItem - 1, p.encDetails = $encDetails, p.encOverview = $encOverview, p.modifiedAt = $timeParam ' +
+                'MERGE (pc)-[a: Archive]->(p) ' +
+                'RETURN p',
             {
                 emailParam: email,
                 itemPrefixParam: 'item_',
-                vaultItemRandomPrefixParam: `${vaultItemRandomPrefix}_`,
-                entryIdParam: itemId !== null ? itemId : '',
+                passwordRandomPrefixParam: `${passwordRandomPrefix}_`,
+                passwordEntryIdParam: itemId !== null ? itemId : '',
                 encDetails: JSON.stringify(encDetails),
                 encOverview: JSON.stringify(encOverview),
                 timeParam: new Date().toJSON(),
@@ -137,17 +139,17 @@ exports.saveEncVaultItem = async ({ encDetails, encOverview, email, itemId }) =>
         );
     });
     session.close();
-    const entry = records.length && records[0].get('e').properties;
+    const entry = records.length && records[0].get('p').properties;
     if (entry) {
-        const { entryId, createdAt, modifiedAt } = entry;
+        const { passwordEntryId, createdAt, modifiedAt } = entry;
         const item = {
-            itemId: entryId,
+            itemId: passwordEntryId,
             createdAt: new Date(createdAt).getTime(),
             modifiedAt: new Date(modifiedAt).getTime(),
             encDetails,
             encOverview,
         };
-        const itemObj = Object.assign({}, { [entryId]: item });
+        const itemObj = Object.assign({}, { [passwordEntryId]: item });
         return { status: true, item: itemObj, msg: 'Item saved to vault.' };
     }
     return { status: false, error: 'Failed to save or update item.' };
@@ -159,20 +161,20 @@ exports.getVaultItem = async ({ email, itemId }) => {
         return tx.run(
             'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true, hasDownloadedEmergencyKit: true }) ' +
                 'WITH u, u.userId AS uid ' +
-                'MATCH (p: passwordCollection { userId: uid })-[:Archive]->(e: entry { entryId : $itemIdParam }) ' +
-                'RETURN e',
+                'MATCH (pc: passwordCollection { userId: uid })-[:Archive]->(p: password { passwordEntryId : $passwordEntryIdParam }) ' +
+                'RETURN p',
             {
                 emailParam: email,
-                itemIdParam: itemId !== null ? itemId : '',
+                passwordEntryIdParam: itemId !== null ? itemId : '',
             }
         );
     });
     session.close();
-    const entry = records.length && records[0].get('e').properties;
+    const entry = records.length && records[0].get('p').properties;
     if (entry) {
-        const { entryId, createdAt, modifiedAt, encDetails, encOverview } = entry;
+        const { passwordEntryId, createdAt, modifiedAt, encDetails, encOverview } = entry;
         const item = {
-            itemId: entryId,
+            itemId: passwordEntryId,
             createdAt: new Date(createdAt).getTime(),
             modifiedAt: new Date(modifiedAt).getTime(),
             encDetails: JSON.parse(encDetails),
@@ -189,18 +191,18 @@ exports.deleteEncVaultItem = async ({ email, itemId }) => {
         return tx.run(
             'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true, hasDownloadedEmergencyKit: true }) ' +
                 'WITH u, u.userId AS uid ' +
-                'MATCH (p: passwordCollection { userId: uid })-[:Archive]->(e: entry { entryId : $itemIdParam }) ' +
-                'WITH e, e.entryId AS eid, e.createdAt AS createdAt ' +
-                'DETACH DELETE e ' +
-                'RETURN eid, createdAt',
+                'MATCH (pc: passwordCollection { userId: uid })-[:Archive]->(p: password { passwordEntryId : $passwordEntryIdParam }) ' +
+                'WITH p, p.passwordEntryId AS pid, p.createdAt AS createdAt ' +
+                'DETACH DELETE p ' +
+                'RETURN pid, createdAt',
             {
                 emailParam: email,
-                itemIdParam: itemId,
+                passwordEntryIdParam: itemId,
             }
         );
     });
     session.close();
-    const delEntryId = records.length && records[0].get('eid');
+    const delEntryId = records.length && records[0].get('pid');
     if (delEntryId) {
         const delCreatedAt = records.length && records[0].get('createdAt');
         const item = { itemId: delEntryId, createdAt: delCreatedAt };
@@ -219,7 +221,7 @@ exports.addOrUpdateFolder = async ({ email, folderName, folderId }) => {
                 'MERGE (v)-[:FOLDERS]->(fc: folderCollection) ' +
                 'ON CREATE SET fc.userId = v.userId, fc.lastItem = 1, fc.folderPrefix = $folderPrefixParam ' +
                 'ON MATCH SET fc.lastItem = fc.lastItem + 1 ' +
-                'WITH fc.folderPrefix + $folderRandomPrefixParam + fc.lastItem AS fid, fc ' +
+                'WITH fc, fc.folderPrefix + $folderRandomPrefixParam + fc.lastItem AS fid ' +
                 'MERGE (f: folder { folderEntryId: $folderIdParam }) ' +
                 'ON CREATE SET f.folderEntryId = fid, f.folderName = $folderNameParam, f.createdAt = $timeParam, f.modifiedAt = $timeParam ' +
                 'ON MATCH SET fc.lastItem = fc.lastItem - 1, f.folderName = $folderNameParam, f.modifiedAt = $timeParam ' +
