@@ -343,7 +343,7 @@ exports.addOrUpdateItemCriterias = [
         .exists()
         .withMessage('Missing item id.'),
     validator
-        .body('modifiedAt')
+        .body('_modified')
         .exists()
         .withMessage('Missing last modified time.'),
 ];
@@ -368,7 +368,7 @@ exports.addOrUpdateItemBody = (req, res, next) => {
         const encOverviewIVError = errorsObj['encOverview.iv'] && errorsObj['encOverview.iv'].msg;
 
         const itemIdError = errorsObj.itemId && errorsObj.itemId.msg;
-        const modifiedAtError = errorsObj.modifiedAt && errorsObj.modifiedAt.msg;
+        const modifiedTimeError = errorsObj._modified && errorsObj._modified.msg;
         return res.status(400).json({
             error: {
                 msg:
@@ -383,7 +383,7 @@ exports.addOrUpdateItemBody = (req, res, next) => {
                     encOverviewTagLengthError ||
                     encOverviewIVError ||
                     itemIdError ||
-                    modifiedAtError,
+                    modifiedTimeError,
                 reportedAt: new Date().getTime(),
             },
         });
@@ -427,7 +427,7 @@ exports.createOrUpdateFolderCriterias = [
         .exists()
         .withMessage('Missing folder name.'),
     validator
-        .body('modifiedAt')
+        .body('_modified')
         .exists()
         .withMessage('Missing last modified time.'),
 ];
@@ -438,10 +438,10 @@ exports.createOrUpdateFolderBody = (req, res, next) => {
         const errorsObj = errors.mapped();
         const folderIdError = errorsObj.folderId && errorsObj.folderId.msg;
         const folderNameError = errorsObj.folderName && errorsObj.folderName.msg;
-        const modifiedAtError = errorsObj.modifiedAt && errorsObj.modifiedAt.msg;
+        const modifiedTimeError = errorsObj._modified && errorsObj._modified.msg;
         return res.status(400).json({
             error: {
-                msg: folderIdError || folderNameError || modifiedAtError,
+                msg: folderIdError || folderNameError || modifiedTimeError,
                 reportedAt: new Date().getTime(),
             },
         });

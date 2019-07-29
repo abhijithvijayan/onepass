@@ -14,8 +14,8 @@ exports.saveEncVaultItem = async ({ encDetails, encOverview, email, itemId }) =>
                 'ON MATCH SET pc.lastItem = pc.lastItem + 1 ' +
                 'WITH pc, pc.itemPrefix + $passwordRandomPrefixParam + pc.lastItem AS eid ' +
                 'MERGE (p: password { passwordEntryId: $passwordEntryIdParam }) ' +
-                'ON CREATE SET p.passwordEntryId = eid, p.encDetails = $encDetails, p.encOverview = $encOverview, p._created = $timeParam, p.modifiedAt = $timeParam ' +
-                'ON MATCH SET pc.lastItem = pc.lastItem - 1, p.encDetails = $encDetails, p.encOverview = $encOverview, p.modifiedAt = $timeParam ' +
+                'ON CREATE SET p.passwordEntryId = eid, p.encDetails = $encDetails, p.encOverview = $encOverview, p._created = $timeParam, p._modified = $timeParam ' +
+                'ON MATCH SET pc.lastItem = pc.lastItem - 1, p.encDetails = $encDetails, p.encOverview = $encOverview, p._modified = $timeParam ' +
                 'MERGE (pc)-[a: Archive]->(p) ' +
                 'RETURN p',
             {
@@ -32,11 +32,11 @@ exports.saveEncVaultItem = async ({ encDetails, encOverview, email, itemId }) =>
     session.close();
     const entry = records.length && records[0].get('p').properties;
     if (entry) {
-        const { passwordEntryId, _created, modifiedAt } = entry;
+        const { passwordEntryId, _created, _modified } = entry;
         const item = {
             itemId: passwordEntryId,
             _created: new Date(_created).getTime(),
-            _modified: new Date(modifiedAt).getTime(),
+            _modified: new Date(_modified).getTime(),
             encDetails,
             encOverview,
         };
@@ -64,11 +64,11 @@ exports.getVaultItem = async ({ email, itemId }) => {
     session.close();
     const entry = records.length && records[0].get('p').properties;
     if (entry) {
-        const { passwordEntryId, _created, modifiedAt, encDetails, encOverview } = entry;
+        const { passwordEntryId, _created, _modified, encDetails, encOverview } = entry;
         const item = {
             itemId: passwordEntryId,
             _created: new Date(_created).getTime(),
-            _modified: new Date(modifiedAt).getTime(),
+            _modified: new Date(_modified).getTime(),
             encDetails: JSON.parse(encDetails),
             encOverview: JSON.parse(encOverview),
         };
@@ -117,8 +117,8 @@ exports.addOrUpdateFolder = async ({ email, folderName, folderId }) => {
                 'ON MATCH SET fc.lastItem = fc.lastItem + 1 ' +
                 'WITH fc, fc.folderPrefix + $folderRandomPrefixParam + fc.lastItem AS fid ' +
                 'MERGE (f: folder { folderEntryId: $folderIdParam }) ' +
-                'ON CREATE SET f.folderEntryId = fid, f.folderName = $folderNameParam, f._created = $timeParam, f.modifiedAt = $timeParam ' +
-                'ON MATCH SET fc.lastItem = fc.lastItem - 1, f.folderName = $folderNameParam, f.modifiedAt = $timeParam ' +
+                'ON CREATE SET f.folderEntryId = fid, f.folderName = $folderNameParam, f._created = $timeParam, f._modified = $timeParam ' +
+                'ON MATCH SET fc.lastItem = fc.lastItem - 1, f.folderName = $folderNameParam, f._modified = $timeParam ' +
                 'MERGE (fc)-[a: Archive]->(f) ' +
                 'RETURN f',
             {
@@ -134,12 +134,12 @@ exports.addOrUpdateFolder = async ({ email, folderName, folderId }) => {
     session.close();
     const folderEntry = records.length && records[0].get('f').properties;
     if (folderEntry) {
-        const { folderEntryId, _created, modifiedAt } = folderEntry;
+        const { folderEntryId, _created, _modified } = folderEntry;
         const folder = {
             folderId: folderEntryId,
             folderName,
             _created: new Date(_created).getTime(),
-            _modified: new Date(modifiedAt).getTime(),
+            _modified: new Date(_modified).getTime(),
         };
         const folderObj = Object.assign({}, { [folderEntryId]: folder });
         return { status: true, folder: folderObj, msg: 'Folder created in vault.' };
@@ -165,11 +165,11 @@ exports.getFolderEntry = async ({ email, folderId }) => {
     session.close();
     const folderEntry = records.length && records[0].get('f').properties;
     if (folderEntry) {
-        const { folderEntryId, _created, modifiedAt } = folderEntry;
+        const { folderEntryId, _created, _modified } = folderEntry;
         const folder = {
             folderId: folderEntryId,
             _created: new Date(_created).getTime(),
-            _modified: new Date(modifiedAt).getTime(),
+            _modified: new Date(_modified).getTime(),
         };
         return { status: true, folder, message: 'Folder found.' };
     }
@@ -220,8 +220,8 @@ exports.getVaultData = async ({ email }) => {
                         _created: Object.prototype.hasOwnProperty.call(items, '_created')
                             ? new Date(items._created).getTime()
                             : '',
-                        _modified: Object.prototype.hasOwnProperty.call(items, 'modifiedAt')
-                            ? new Date(items.modifiedAt).getTime()
+                        _modified: Object.prototype.hasOwnProperty.call(items, '_modified')
+                            ? new Date(items._modified).getTime()
                             : '',
                         itemId: Object.prototype.hasOwnProperty.call(items, 'passwordEntryId')
                             ? items.passwordEntryId
@@ -239,8 +239,8 @@ exports.getVaultData = async ({ email }) => {
                         _created: Object.prototype.hasOwnProperty.call(items, '_created')
                             ? new Date(items._created).getTime()
                             : '',
-                        _modified: Object.prototype.hasOwnProperty.call(items, 'modifiedAt')
-                            ? new Date(items.modifiedAt).getTime()
+                        _modified: Object.prototype.hasOwnProperty.call(items, '_modified')
+                            ? new Date(items._modified).getTime()
                             : '',
                         folderName: Object.prototype.hasOwnProperty.call(items, 'folderName') ? items.folderName : '',
                         _type: items['0'],

@@ -23,12 +23,12 @@ class ModalWrappedForm extends Component {
 
     onFormSubmit = formValues => {
         let itemId = null;
-        let modifiedAt = null;
+        let _modified = null;
         const { vaultKey, email } = this.props;
         const { url = '', name, folder = '', username = '', password = '' } = formValues;
         // If the form is in edit mode, initial values will have fields
-        if (this.hasProperty(formValues, 'itemId') && this.hasProperty(formValues, 'modifiedAt')) {
-            ({ itemId, modifiedAt } = formValues);
+        if (this.hasProperty(formValues, 'itemId') && this.hasProperty(formValues, '_modified')) {
+            ({ itemId, _modified } = formValues);
         }
         const overview = {
             url,
@@ -39,7 +39,7 @@ class ModalWrappedForm extends Component {
             username,
             password,
         };
-        this.props.encryptVaultItem({ overview, details, vaultKey, email, itemId, modifiedAt });
+        this.props.encryptVaultItem({ overview, details, vaultKey, email, itemId, _modified });
     };
 
     render() {
@@ -52,7 +52,7 @@ class ModalWrappedForm extends Component {
             const {
                 decOverview: { url, name, folder },
                 decDetails: { username, password },
-                modifiedAt,
+                _modified,
             } = selectedItem;
 
             initialValues = {
@@ -62,7 +62,7 @@ class ModalWrappedForm extends Component {
                 username,
                 password,
                 itemId: selectedItemId,
-                modifiedAt,
+                _modified,
             };
         }
         return (
