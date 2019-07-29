@@ -24,9 +24,9 @@ class VaultPage extends Component {
             // if both error & response exist
             if (error && error.msg && (response && response.msg)) {
                 // show the latest response/error based on reported time
-                if (error.reportedAt > response.reportedAt) {
+                if (error._reported > response._reported) {
                     this.notify(error.msg);
-                } else if (error.reportedAt < response.reportedAt) {
+                } else if (error._reported < response._reported) {
                     this.notify(response.msg);
                 } else {
                     // show both toasts

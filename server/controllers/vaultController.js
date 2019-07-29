@@ -13,34 +13,34 @@ exports.fetchVaultData = async (req, res) => {
     if (response.status) {
         return res.status(200).json({
             encVaultData: response.encVaultData,
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         });
     }
     return res.status(403).json({
         error: {
             msg: response.error,
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         },
         id: 'vault',
     });
 };
 
 exports.addOrUpdateVaultItem = async (req, res) => {
-    const { encDetails, encOverview, itemId, modifiedAt } = req.body;
+    const { encDetails, encOverview, itemId, _modified } = req.body;
     const { email } = req.user;
     const unitItem = await getVaultItem({ email, itemId });
     // Item exists
-    if (unitItem.status && modifiedAt) {
+    if (unitItem.status && _modified) {
         // Check if item to be modified is synced to the recent in local vault
-        const receivedItemModifiedAt = new Date(modifiedAt).getTime();
-        const existingItemModifiedAt = new Date(unitItem.item.modifiedAt).getTime();
-        if (receivedItemModifiedAt !== existingItemModifiedAt) {
+        const receivedItemModified = new Date(_modified).getTime();
+        const existingItemModified = new Date(unitItem.item._modified).getTime();
+        if (receivedItemModified !== existingItemModified) {
             return res.status(403).json({
                 status: false,
                 error: {
                     msg:
                         'Failed to save item. You have an outdated version of vault. Try making changes again after refreshing the vault.',
-                    reportedAt: new Date().getTime(),
+                    _reported: new Date().getTime(),
                 },
             });
         }
@@ -59,14 +59,14 @@ exports.addOrUpdateVaultItem = async (req, res) => {
             item,
             status,
             msg,
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         });
     }
     return res.status(403).json({
         status: response.status,
         error: {
             msg: response.error,
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         },
     });
 };
@@ -81,34 +81,34 @@ exports.deleteVaultItem = async (req, res) => {
             status,
             item,
             msg,
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         });
     }
     return res.status(403).json({
         status: response.status,
         error: {
             msg: response.error,
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         },
     });
 };
 
 exports.addOrUpdateFolder = async (req, res) => {
-    const { folderName, folderId, modifiedAt } = req.body;
+    const { folderName, folderId, _modified } = req.body;
     const { email } = req.user;
     const unitFolder = await getFolderEntry({ email, folderId });
     // Folder already exist
-    if (unitFolder.status && modifiedAt) {
+    if (unitFolder.status && _modified) {
         // Check if folder to be modified is synced to the recent in local vault
-        const receivedFolderModifiedAt = new Date(modifiedAt).getTime();
-        const existingFolderModifiedAt = new Date(unitFolder.folder.modifiedAt).getTime();
-        if (receivedFolderModifiedAt !== existingFolderModifiedAt) {
+        const receivedFolderModified = new Date(_modified).getTime();
+        const existingFolderModified = new Date(unitFolder.folder._modified).getTime();
+        if (receivedFolderModified !== existingFolderModified) {
             return res.status(403).json({
                 status: false,
                 error: {
                     msg:
                         'Failed to update folder. You have an outdated version of vault. Try making changes again after refreshing the vault.',
-                    reportedAt: new Date().getTime(),
+                    _reported: new Date().getTime(),
                 },
             });
         }
@@ -127,14 +127,14 @@ exports.addOrUpdateFolder = async (req, res) => {
             folder,
             status,
             msg,
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         });
     }
     return res.status(403).json({
         status: response.status,
         error: {
             msg: response.error,
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         },
     });
 };

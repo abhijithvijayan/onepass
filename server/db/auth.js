@@ -11,11 +11,11 @@ exports.saveAccountAuthCredentials = async ({ verifier, salt, email, userId, enc
         return tx.run(
             'MATCH (u: User { email: $emailParam, userId : $userIdParam, isVerified: true, hasCompletedSignUp: false }) ' +
                 'MERGE (a: auth { userId : $userIdParam })<-[:SRP]-(u) ' +
-                'SET u.hasCompletedSignUp = true, u.pubKey = $pubKeyParam, a.createdAt = $createdAtParam, a.verifier = $verifierParam, a.salt = $saltParam ' +
+                'SET u.hasCompletedSignUp = true, u.pubKey = $pubKeyParam, a._created = $_createdParam, a.verifier = $verifierParam, a.salt = $saltParam ' +
                 'MERGE (v: vault { userId : $userIdParam })<-[:VAULT]-(u) ' +
-                'SET v.encVaultKey = $encVaultKeyParam, v.createdAt = $createdAtParam ' +
+                'SET v.encVaultKey = $encVaultKeyParam, v._created = $_createdParam ' +
                 'MERGE (k: keySet { userId : $userIdParam })<-[:KEYSET]-(u) ' +
-                'SET k.encPriKey = $encPriKeyParam, k.encSymKey = $encSymKeyParam, k.createdAt = $createdAtParam ' +
+                'SET k.encPriKey = $encPriKeyParam, k.encSymKey = $encSymKeyParam, k._created = $_createdParam ' +
                 'RETURN a',
             {
                 emailParam: email,
@@ -24,7 +24,7 @@ exports.saveAccountAuthCredentials = async ({ verifier, salt, email, userId, enc
                 encPriKeyParam: JSON.stringify(encPriKey),
                 encSymKeyParam: JSON.stringify(encSymKey),
                 encVaultKeyParam: JSON.stringify(encVaultKey),
-                createdAtParam: new Date().toJSON(),
+                _createdParam: new Date().toJSON(),
                 verifierParam: verifier,
                 saltParam: salt,
             }

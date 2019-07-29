@@ -83,7 +83,7 @@ export const fetchDataAndKeys = () => {
  *  Encrypt & Store Item to Vault
  */
 
-export const performVaultItemEncryption = ({ overview, details, vaultKey, email, itemId, modifiedAt }) => {
+export const performVaultItemEncryption = ({ overview, details, vaultKey, email, itemId, _modified }) => {
     return async dispatch => {
         try {
             const { encDetails, encOverview } = await encryptVaultItem({ overview, details, vaultKey, email });
@@ -98,19 +98,19 @@ export const performVaultItemEncryption = ({ overview, details, vaultKey, email,
                     encDetails,
                     encOverview,
                     itemId,
-                    modifiedAt,
+                    _modified,
                 },
             });
 
             // Add to DB successful
-            const { item, msg, status, reportedAt } = data;
+            const { item, msg, status, _reported } = data;
             dispatch({
                 type: types.SAVE_VAULT_ITEM_SUCCEEDED,
                 payload: {
                     item,
                     status,
                     msg,
-                    reportedAt,
+                    _reported,
                 },
             });
             // Decrypt item
@@ -174,7 +174,7 @@ export const performVaultArchiveDecryption = ({ encArchiveList, vaultKey }) => {
             // Iterate through object
             const decVaultData = await Promise.all(
                 Object.entries(encArchiveList).map(async item => {
-                    const { encOverview, encDetails, itemId, modifiedAt } = item[1];
+                    const { encOverview, encDetails, itemId, _modified } = item[1];
 
                     // ToDo: Handle decryption failure
                     const decOverview = await performItemOverviewDecryption({ overview: encOverview, vaultKey });
@@ -186,7 +186,7 @@ export const performVaultArchiveDecryption = ({ encArchiveList, vaultKey }) => {
                             decOverview: decOverview.decrypted,
                             decDetails: decDetails.decrypted,
                             itemId,
-                            modifiedAt,
+                            _modified,
                         };
                     }
                     // Vault decryption was unsuccessful
@@ -236,7 +236,7 @@ export const deleteVaultItem = ({ itemId }) => {
                     itemId,
                 },
             });
-            const { item, status, msg, reportedAt } = data;
+            const { item, status, msg, _reported } = data;
             dispatch({
                 type: types.TOGGLE_CONFIRM_DELETE_MODAL,
                 payload: {
@@ -250,7 +250,7 @@ export const deleteVaultItem = ({ itemId }) => {
                     item,
                     status,
                     msg,
-                    reportedAt,
+                    _reported,
                 },
             });
             dispatch({

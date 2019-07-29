@@ -30,7 +30,7 @@ exports.signUpValidationBody = (req, res, next) => {
         return res.status(400).json({
             error: {
                 msg: emailError || nameError,
-                reportedAt: new Date().getTime(),
+                _reported: new Date().getTime(),
             },
         });
     }
@@ -68,7 +68,7 @@ exports.emailVerificationBody = (req, res, next) => {
         return res.status(400).json({
             error: {
                 msg: emailError || tokenError,
-                reportedAt: new Date().getTime(),
+                _reported: new Date().getTime(),
             },
         });
     }
@@ -253,7 +253,7 @@ exports.finalizeAccountValidationBody = (req, res, next) => {
                     vaultKeyBodyAlgError ||
                     vaultKeyBodyKtyError ||
                     vaultKeyBodyKeyError,
-                reportedAt: new Date().getTime(),
+                _reported: new Date().getTime(),
             },
         });
     }
@@ -289,7 +289,7 @@ exports.loginValidationBody = (req, res, next) => {
         return res.status(400).json({
             error: {
                 msg: emailError || stageError,
-                reportedAt: new Date().getTime(),
+                _reported: new Date().getTime(),
             },
         });
     }
@@ -343,7 +343,7 @@ exports.addOrUpdateItemCriterias = [
         .exists()
         .withMessage('Missing item id.'),
     validator
-        .body('modifiedAt')
+        .body('_modified')
         .exists()
         .withMessage('Missing last modified time.'),
 ];
@@ -368,7 +368,7 @@ exports.addOrUpdateItemBody = (req, res, next) => {
         const encOverviewIVError = errorsObj['encOverview.iv'] && errorsObj['encOverview.iv'].msg;
 
         const itemIdError = errorsObj.itemId && errorsObj.itemId.msg;
-        const modifiedAtError = errorsObj.modifiedAt && errorsObj.modifiedAt.msg;
+        const modifiedTimeError = errorsObj._modified && errorsObj._modified.msg;
         return res.status(400).json({
             error: {
                 msg:
@@ -383,8 +383,8 @@ exports.addOrUpdateItemBody = (req, res, next) => {
                     encOverviewTagLengthError ||
                     encOverviewIVError ||
                     itemIdError ||
-                    modifiedAtError,
-                reportedAt: new Date().getTime(),
+                    modifiedTimeError,
+                _reported: new Date().getTime(),
             },
         });
     }
@@ -409,7 +409,7 @@ exports.deleteItemBody = (req, res, next) => {
         return res.status(400).json({
             error: {
                 msg: itemIdError,
-                reportedAt: new Date().getTime(),
+                _reported: new Date().getTime(),
             },
         });
     }
@@ -427,7 +427,7 @@ exports.createOrUpdateFolderCriterias = [
         .exists()
         .withMessage('Missing folder name.'),
     validator
-        .body('modifiedAt')
+        .body('_modified')
         .exists()
         .withMessage('Missing last modified time.'),
 ];
@@ -438,11 +438,11 @@ exports.createOrUpdateFolderBody = (req, res, next) => {
         const errorsObj = errors.mapped();
         const folderIdError = errorsObj.folderId && errorsObj.folderId.msg;
         const folderNameError = errorsObj.folderName && errorsObj.folderName.msg;
-        const modifiedAtError = errorsObj.modifiedAt && errorsObj.modifiedAt.msg;
+        const modifiedTimeError = errorsObj._modified && errorsObj._modified.msg;
         return res.status(400).json({
             error: {
-                msg: folderIdError || folderNameError || modifiedAtError,
-                reportedAt: new Date().getTime(),
+                msg: folderIdError || folderNameError || modifiedTimeError,
+                _reported: new Date().getTime(),
             },
         });
     }
@@ -473,7 +473,7 @@ exports.resetPasswordFormBody = (req, res, next) => {
         return res.status(400).json({
             error: {
                 msg: emailError,
-                reportedAt: new Date().getTime(),
+                _reported: new Date().getTime(),
             },
         });
     }
@@ -505,7 +505,7 @@ exports.emailPasswordResetBody = (req, res, next) => {
         return res.status(400).json({
             error: {
                 msg: emailError || tokenError,
-                reportedAt: new Date().getTime(),
+                _reported: new Date().getTime(),
             },
         });
     }
@@ -528,7 +528,7 @@ exports.changePasswordBody = (req, res, next) => {
         return res.status(400).json({
             error: {
                 msg: passwordError,
-                reportedAt: new Date().getTime(),
+                _reported: new Date().getTime(),
             },
         });
     }
