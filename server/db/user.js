@@ -13,8 +13,8 @@ exports.createUser = async ({ email, name }) => {
                 'ON MATCH SET id.count = id.count + 1, id.userRandomPrefix = $userRandomPrefixParam ' +
                 'WITH id.userFixedPrefix + id.userRandomPrefix + id.count AS uid, id ' +
                 'MERGE (u:User { email : $emailParam }) ' +
-                'ON CREATE SET u.userId = uid, u.hasDownloadedEmergencyKit = false, u.hasCompletedSignUp = false, u.versionCode = $versionCodeParam, u.name = $nameParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.server = $serverParam, u.createdAt = $createdAtParam ' +
-                'ON MATCH SET id.count = id.count - 1, u.pubKey = null, u.hasDownloadedEmergencyKit = false, u.hasCompletedSignUp = false, u.versionCode = $versionCodeParam, u.name = $nameParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.server = $serverParam, u.createdAt = $createdAtParam ' +
+                'ON CREATE SET u.userId = uid, u.hasDownloadedEmergencyKit = false, u.hasCompletedSignUp = false, u.versionCode = $versionCodeParam, u.name = $nameParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.server = $serverParam, u._created = $_createdParam ' +
+                'ON MATCH SET id.count = id.count - 1, u.pubKey = null, u.hasDownloadedEmergencyKit = false, u.hasCompletedSignUp = false, u.versionCode = $versionCodeParam, u.name = $nameParam, u.verificationToken = $verificationTokenParam, u.isVerified = $isVerifiedParam, u.server = $serverParam, u._created = $_createdParam ' +
                 'RETURN u',
             {
                 identifierParam: 'User_Counter',
@@ -26,7 +26,7 @@ exports.createUser = async ({ email, name }) => {
                 verificationTokenParam: verificationToken,
                 isVerifiedParam: false,
                 serverParam: process.env.DEFAULT_DOMAIN,
-                createdAtParam: new Date().toJSON(),
+                _createdParam: new Date().toJSON(),
             }
         );
     });
