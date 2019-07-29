@@ -59,7 +59,7 @@ exports.authWithJWT = (req, res, next) => {
                 error: {
                     msg:
                         'Your email address is not verified. Please check you mailbox or Sign Up again to get the verification link',
-                    reportedAt: new Date().getTime(),
+                    _reported: new Date().getTime(),
                 },
             });
         }
@@ -77,7 +77,7 @@ exports.signup = async (req, res) => {
         return res.status(400).json({
             error: {
                 msg: 'Maximum length of email id is 64 characters',
-                reportedAt: new Date().getTime(),
+                _reported: new Date().getTime(),
             },
         });
     }
@@ -85,7 +85,7 @@ exports.signup = async (req, res) => {
         return res.status(400).json({
             error: {
                 msg: 'Maximum length of name is 64 characters',
-                reportedAt: new Date().getTime(),
+                _reported: new Date().getTime(),
             },
         });
     }
@@ -94,7 +94,7 @@ exports.signup = async (req, res) => {
         return res.status(403).json({
             error: {
                 msg: 'This email is already registered',
-                reportedAt: new Date().getTime(),
+                _reported: new Date().getTime(),
             },
         });
     }
@@ -112,19 +112,19 @@ exports.signup = async (req, res) => {
     //     return res.status(201).json({
     //         email,
     //         msg: 'Verification email has been sent.',
-    //         reportedAt: new Date().getTime(),
+    //         _reported: new Date().getTime(),
     //     });
     // }
     // return res.status(400).json({
     //     error: {
     //         msg: "Couldn't send verification email. Try again.",
-    //         reportedAt: new Date().getTime(),
+    //         _reported: new Date().getTime(),
     //     },
     // });
     return res.status(201).json({
         email,
         msg: 'Sending Email temporarily disabled.',
-        reportedAt: new Date().getTime(),
+        _reported: new Date().getTime(),
     });
 };
 
@@ -134,7 +134,7 @@ exports.verify = async (req, res) => {
         return res.status(400).json({
             error: {
                 msg: 'Verification code must be 6 characters',
-                reportedAt: new Date().getTime(),
+                _reported: new Date().getTime(),
             },
         });
     }
@@ -145,13 +145,13 @@ exports.verify = async (req, res) => {
             userId,
             email: user.email,
             versionCode,
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         });
     }
     return res.status(403).json({
         error: {
             msg: 'Invalid email id or verification code. Please try again.',
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         },
     });
 };
@@ -162,13 +162,13 @@ exports.finalizeAccount = async (req, res) => {
     if (serverResponse.status) {
         return res.status(201).json({
             status: 'Account signup successful.',
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         });
     }
     return res.status(403).json({
         error: {
             msg: 'Account signup failed.',
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         },
     });
 };
@@ -189,13 +189,13 @@ exports.login = async (req, res) => {
                         userId,
                         salt,
                         serverPublicEphemeral: serverEphemeral.public,
-                        reportedAt: new Date().getTime(),
+                        _reported: new Date().getTime(),
                     });
                 } catch (err) {
                     return res.status(403).json({
                         error: {
                             msg: 'Invalid SRP Verifier.',
-                            reportedAt: new Date().getTime(),
+                            _reported: new Date().getTime(),
                         },
                     });
                 }
@@ -203,7 +203,7 @@ exports.login = async (req, res) => {
             return res.status(403).json({
                 error: {
                     msg: 'Account signup for this account was left incomplete. Please sign up again.',
-                    reportedAt: new Date().getTime(),
+                    _reported: new Date().getTime(),
                 },
             });
         }
@@ -227,13 +227,13 @@ exports.login = async (req, res) => {
                         serverSessionProof,
                         token,
                         user,
-                        reportedAt: new Date().getTime(),
+                        _reported: new Date().getTime(),
                     });
                 } catch (err) {
                     return res.status(403).json({
                         error: {
                             msg: 'Invalid secret key or master password',
-                            reportedAt: new Date().getTime(),
+                            _reported: new Date().getTime(),
                         },
                     });
                 }
@@ -241,7 +241,7 @@ exports.login = async (req, res) => {
             return res.status(403).json({
                 error: {
                     msg: 'Account signup for this account was left incomplete. Please sign up again.',
-                    reportedAt: new Date().getTime(),
+                    _reported: new Date().getTime(),
                 },
             });
         }
@@ -249,7 +249,7 @@ exports.login = async (req, res) => {
             return res.status(403).json({
                 error: {
                     msg: 'Invalid Request',
-                    reportedAt: new Date().getTime(),
+                    _reported: new Date().getTime(),
                 },
             });
         }
@@ -263,13 +263,13 @@ exports.fetchEncKeys = async (req, res) => {
         const { encPriKey, encSymKey } = response;
         return res.status(200).json({
             encKeySet: { encPriKey, encSymKey },
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         });
     }
     return res.status(403).json({
         error: {
             msg: response.error,
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         },
         id: 'keys',
     });
@@ -284,7 +284,7 @@ exports.getEmergencyKit = async (req, res) => {
         return res.status(201).json({
             status,
             message,
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         });
     }
     const { error } = response;
@@ -292,7 +292,7 @@ exports.getEmergencyKit = async (req, res) => {
         status,
         error: {
             msg: error,
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         },
     });
 };
@@ -315,7 +315,7 @@ exports.requestPasswordReset = async (req, res) => {
         return res.status(400).json({
             error: {
                 msg: 'No account found for this email.',
-                reportedAt: new Date().getTime(),
+                _reported: new Date().getTime(),
             },
         });
     }
@@ -331,13 +331,13 @@ exports.requestPasswordReset = async (req, res) => {
         return res.status(201).json({
             email,
             message: 'Password reset email has been sent.',
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         });
     }
     return res.status(400).json({
         error: {
             msg: "Couldn't send password reset email. Try again.",
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         },
     });
 };
@@ -357,7 +357,7 @@ exports.resetPasswordValidation = async (req, res, next) => {
     return res.status(403).json({
         error: {
             msg: 'Invalid email id or password reset token',
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         },
     });
 };

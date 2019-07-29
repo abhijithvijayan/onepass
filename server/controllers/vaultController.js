@@ -13,13 +13,13 @@ exports.fetchVaultData = async (req, res) => {
     if (response.status) {
         return res.status(200).json({
             encVaultData: response.encVaultData,
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         });
     }
     return res.status(403).json({
         error: {
             msg: response.error,
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         },
         id: 'vault',
     });
@@ -40,7 +40,7 @@ exports.addOrUpdateVaultItem = async (req, res) => {
                 error: {
                     msg:
                         'Failed to save item. You have an outdated version of vault. Try making changes again after refreshing the vault.',
-                    reportedAt: new Date().getTime(),
+                    _reported: new Date().getTime(),
                 },
             });
         }
@@ -59,14 +59,14 @@ exports.addOrUpdateVaultItem = async (req, res) => {
             item,
             status,
             msg,
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         });
     }
     return res.status(403).json({
         status: response.status,
         error: {
             msg: response.error,
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         },
     });
 };
@@ -81,14 +81,14 @@ exports.deleteVaultItem = async (req, res) => {
             status,
             item,
             msg,
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         });
     }
     return res.status(403).json({
         status: response.status,
         error: {
             msg: response.error,
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         },
     });
 };
@@ -108,7 +108,7 @@ exports.addOrUpdateFolder = async (req, res) => {
                 error: {
                     msg:
                         'Failed to update folder. You have an outdated version of vault. Try making changes again after refreshing the vault.',
-                    reportedAt: new Date().getTime(),
+                    _reported: new Date().getTime(),
                 },
             });
         }
@@ -127,14 +127,14 @@ exports.addOrUpdateFolder = async (req, res) => {
             folder,
             status,
             msg,
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         });
     }
     return res.status(403).json({
         status: response.status,
         error: {
             msg: response.error,
-            reportedAt: new Date().getTime(),
+            _reported: new Date().getTime(),
         },
     });
 };

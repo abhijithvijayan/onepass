@@ -51,8 +51,8 @@ function onFetchVaultContents(state, { payload }) {
 }
 
 function onSaveItemSuccess(state, { payload }) {
-    const { item, status, msg, reportedAt } = payload;
-    return { ...state, response: { status, msg, reportedAt }, items: { ...state.items, ...item } };
+    const { item, status, msg, _reported } = payload;
+    return { ...state, response: { status, msg, _reported }, items: { ...state.items, ...item } };
 }
 
 function onDeleteItemSuccess(state, { payload }) {
@@ -60,11 +60,11 @@ function onDeleteItemSuccess(state, { payload }) {
         item: { itemId },
         status,
         msg,
-        reportedAt,
+        _reported,
     } = payload;
     // https://link.medium.com/wblJY3lRoY
     const { [itemId]: deleted, ...remaining } = state.items;
-    return { ...state, response: { status, msg, reportedAt }, items: { ...remaining } };
+    return { ...state, response: { status, msg, _reported }, items: { ...remaining } };
 }
 
 function clearEncVaultData() {

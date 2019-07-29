@@ -103,14 +103,14 @@ export const performVaultItemEncryption = ({ overview, details, vaultKey, email,
             });
 
             // Add to DB successful
-            const { item, msg, status, reportedAt } = data;
+            const { item, msg, status, _reported } = data;
             dispatch({
                 type: types.SAVE_VAULT_ITEM_SUCCEEDED,
                 payload: {
                     item,
                     status,
                     msg,
-                    reportedAt,
+                    _reported,
                 },
             });
             // Decrypt item
@@ -236,7 +236,7 @@ export const deleteVaultItem = ({ itemId }) => {
                     itemId,
                 },
             });
-            const { item, status, msg, reportedAt } = data;
+            const { item, status, msg, _reported } = data;
             dispatch({
                 type: types.TOGGLE_CONFIRM_DELETE_MODAL,
                 payload: {
@@ -250,7 +250,7 @@ export const deleteVaultItem = ({ itemId }) => {
                     item,
                     status,
                     msg,
-                    reportedAt,
+                    _reported,
                 },
             });
             dispatch({
