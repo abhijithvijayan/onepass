@@ -6,8 +6,8 @@
   "dependencies": {
     "crypto-random-string": "^3.0.1",
     "fast-sha256": "^1.1.0",
-    "js-crypto-hkdf": "^0.6.2",
-    "js-encoding-utils": "^0.5.2",
+    "js-crypto-hkdf": "^0.6.3",
+    "js-encoding-utils": "^0.5.3",
     "node-forge": "^0.8.5",
     "secure-remote-password": "^0.3.1",
     "trim-left": "^1.0.1",
