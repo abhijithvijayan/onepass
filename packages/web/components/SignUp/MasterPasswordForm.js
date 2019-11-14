@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import React, { Component } from 'react';
+import React from 'react';
 import { bindActionCreators } from 'redux';
 import { Field, reduxForm } from 'redux-form';
 import { Button, Form } from 'antd';
@@ -67,24 +67,26 @@ const renderInputField = ({ input, label, meta: { touched, invalid, error } }) =
     );
 };
 
-class MasterPasswordForm extends Component {
-    onSubmit = ({ password }) => {
-        const { userId, versionCode, email } = this.props;
-        this.props.completeSignUp({ email, userId, versionCode, password });
+const MasterPasswordForm = ({
+    completeSignUp,
+    userId,
+    versionCode,
+    email,
+    handleSubmit
+}) => {
+    const onSubmit = ({ password }) => {
+        completeSignUp({ email, userId, versionCode, password });
     };
 
-    render() {
-        const { handleSubmit } = this.props;
-        return (
-            <Form onSubmit={handleSubmit(this.onSubmit)}>
-                <Field name="password" icon="lock" component={renderInputField} label="Enter a password" />
-                <Field name="confirmpassword" icon="lock" component={renderInputField} label="Confirm your password" />
-                <Button type="primary" htmlType="submit">
-                    Create OnePass account
-                </Button>
-            </Form>
-        );
-    }
+    return (
+        <Form onSubmit={handleSubmit(onSubmit)}>
+            <Field name="password" icon="lock" component={renderInputField} label="Enter a password" />
+            <Field name="confirmpassword" icon="lock" component={renderInputField} label="Confirm your password" />
+            <Button type="primary" htmlType="submit">
+                Create OnePass account
+            </Button>
+        </Form>
+    );
 }
 
 const validate = values => {
