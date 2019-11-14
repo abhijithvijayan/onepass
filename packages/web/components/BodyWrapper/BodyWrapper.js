@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
@@ -17,21 +17,23 @@ const ContentWrapper = styled.div`
     width: 100%;
 `;
 
-class BodyWrapper extends Component {
-    componentDidMount() {
-        this.props.hidePageLoader();
-    }
+const BodyWrapper = ({
+    children,
+    isPageLoading,
+    hidePageLoader
+}) => {
+    useEffect(() => {
+        hidePageLoader();
+    });
 
-    render() {
-        const { children, isPageLoading } = this.props;
-        const renderContent = isPageLoading ? <Loader /> : children;
-        return (
-            <Wrapper>
-                <ToastNotifier />
-                <ContentWrapper>{renderContent}</ContentWrapper>
-            </Wrapper>
-        );
-    }
+    const renderContent = isPageLoading ? <Loader /> : children;
+
+    return (
+        <Wrapper>
+            <ToastNotifier />
+            <ContentWrapper>{renderContent}</ContentWrapper>
+        </Wrapper>
+    );
 }
 
 const mapStateToProps = ({ ui }) => {
