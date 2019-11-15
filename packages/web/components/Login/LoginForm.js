@@ -23,41 +23,41 @@ const renderField = ComponentToRender => ({ input, type, icon, label, meta: { to
 const renderInput = renderField(Input);
 const renderPasswordInput = renderField(Input.Password);
 
-class LoginForm extends Component {
-    onSubmit = ({ email, password, secretKey }) => {
-        this.props.submitLoginData({ email, password, secretKey: secretKey.toUpperCase() });
+const LoginForm = ({
+    submitLoginData,
+    handleSubmit
+}) => {
+    const onSubmit = ({ email, password, secretKey }) => {
+        submitLoginData({ email, password, secretKey: secretKey.toUpperCase() });
     };
 
-    render() {
-        const { handleSubmit } = this.props;
-        return (
-            <Form onSubmit={handleSubmit(this.onSubmit)}>
-                <Field name="email" type="email" icon="mail" component={renderInput} label="Email" />
-                <Field
-                    name="secretKey"
-                    type="text"
-                    icon="key"
-                    component={renderInput}
-                    suffix={
-                        <Tooltip title="This is your 34 digit secret key">
-                            <Icon type="info-circle" style={{ color: 'rgba(0,0,0,.45)' }} />
-                        </Tooltip>
-                    }
-                    label="Secret Key"
-                />
-                <Field
-                    name="password"
-                    type="password"
-                    icon="lock"
-                    component={renderPasswordInput}
-                    label="Master Password"
-                />
-                <Button type="primary" htmlType="submit">
-                    Login
-                </Button>
-            </Form>
-        );
-    }
+    return (
+        <Form onSubmit={handleSubmit(onSubmit)}>
+            <Field name="email" type="email" icon="mail" component={renderInput} label="Email" />
+            <Field
+                name="secretKey"
+                type="text"
+                icon="key"
+                component={renderInput}
+                suffix={
+                    <Tooltip title="This is your 34 digit secret key">
+                        <Icon type="info-circle" style={{ color: 'rgba(0,0,0,.45)' }} />
+                    </Tooltip>
+                }
+                label="Secret Key"
+            />
+            <Field
+                name="password"
+                type="password"
+                icon="lock"
+                component={renderPasswordInput}
+                label="Master Password"
+            />
+            <Button type="primary" htmlType="submit">
+                Login
+            </Button>
+        </Form>
+    );
 }
 
 const validate = values => {
