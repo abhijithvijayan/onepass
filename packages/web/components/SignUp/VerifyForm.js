@@ -15,29 +15,28 @@ const renderInputField = ({ input, type, icon, label, meta: { touched, invalid, 
     );
 };
 
-class VerifyForm extends Component {
-    onSubmit = ({ verificationToken }) => {
-        const { email } = this.props;
-        this.props.submitVerificationToken({ email, verificationToken });
-    };
+const VerifyForm = ({
+    email,
+    submitVerificationToken,
+    handleSubmit
+}) => {
+    const onSubmit = ({ verificationToken }) =>
+        submitVerificationToken({ email, verificationToken });
 
-    render() {
-        const { handleSubmit } = this.props;
-        return (
-            <Form onSubmit={handleSubmit(this.onSubmit)}>
-                <Field
-                    name="verificationToken"
-                    type="number"
-                    icon="number"
-                    component={renderInputField}
-                    label="Token"
-                />
-                <Button type="primary" htmlType="submit">
-                    Submit
-                </Button>
-            </Form>
-        );
-    }
+    return (
+        <Form onSubmit={handleSubmit(onSubmit)}>
+            <Field
+                name="verificationToken"
+                type="number"
+                icon="number"
+                component={renderInputField}
+                label="Token"
+            />
+            <Button type="primary" htmlType="submit">
+                Submit
+            </Button>
+        </Form>
+    );
 }
 
 const validate = values => {
