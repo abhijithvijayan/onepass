@@ -16,23 +16,22 @@ const renderInputField = ({ input, type, icon, label, meta: { touched, invalid, 
     );
 };
 
-class SignUpForm extends Component {
-    onSubmit = ({ email, name }) => {
-        this.props.submitSignUpData({ email, name });
-    };
+const SignUpForm = ({
+    submitSignUpData,
+    handleSubmit
+}) => {
+    const onSubmit = ({ email, name }) =>
+        submitSignUpData({ email, name })
 
-    render() {
-        const { handleSubmit } = this.props;
-        return (
-            <Form onSubmit={handleSubmit(this.onSubmit)}>
-                <Field name="name" type="text" icon="user" component={renderInputField} label="Name" />
-                <Field name="email" type="email" icon="mail" component={renderInputField} label="Email" />
-                <Button type="primary" htmlType="submit">
-                    Submit
-                </Button>
-            </Form>
-        );
-    }
+    return (
+        <Form onSubmit={handleSubmit(onSubmit)}>
+            <Field name="name" type="text" icon="user" component={renderInputField} label="Name" />
+            <Field name="email" type="email" icon="mail" component={renderInputField} label="Email" />
+            <Button type="primary" htmlType="submit">
+                Submit
+            </Button>
+        </Form>
+    )
 }
 
 const validate = values => {
