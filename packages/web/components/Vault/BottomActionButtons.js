@@ -44,45 +44,36 @@ const ActionButton = styled(Button)`
     }
 `;
 
-class BottomActionButtons extends Component {
-    renderAddFolderButton = () => {
-        return (
-            <ButtonWrapper>
-                <div>Add Folder</div>
-                <ActionButton type="primary" shape="circle" icon="folder-add" />
-            </ButtonWrapper>
-        );
-    };
+const BottomActionButtons = ({
+    hoverOverActionButtons,
+    toggleItemModal,
+    expandActionButtons
+}) => {
+    const renderAddFolderButton = () =>
+        <ButtonWrapper>
+            <div>Add Folder</div>
+            <ActionButton type="primary" shape="circle" icon="folder-add" />
+        </ButtonWrapper>
 
-    showRow = () => {
-        this.props.expandActionButtons(true);
-    };
-
-    hideRow = () => {
-        this.props.expandActionButtons(false);
-    };
-
-    render() {
-        return (
-            <ActionBarHolder onMouseEnter={this.showRow} onMouseLeave={this.hideRow}>
-                <ul>
-                    {this.props.hoverOverActionButtons ? this.renderAddFolderButton() : null}
-                    <ButtonWrapper>
-                        {this.props.hoverOverActionButtons ? <div>Add Item</div> : null}
-                        <ActionButton
-                            onClick={() => {
-                                // ToDo: pass id -> Refactor
-                                return this.props.toggleItemModal(true, '');
-                            }}
-                            type="primary"
-                            shape="circle"
-                            icon="plus"
-                        />
-                    </ButtonWrapper>
-                </ul>
-            </ActionBarHolder>
-        );
-    }
+    return (
+        <ActionBarHolder onMouseEnter={() => expandActionButtons(true)} onMouseLeave={() => expandActionButtons(false)}>
+            <ul>
+                {hoverOverActionButtons ? renderAddFolderButton() : null}
+                <ButtonWrapper>
+                    {hoverOverActionButtons ? <div>Add Item</div> : null}
+                    <ActionButton
+                        onClick={() => {
+                            // ToDo: pass id -> Refactor
+                            return toggleItemModal(true, '');
+                        }}
+                        type="primary"
+                        shape="circle"
+                        icon="plus"
+                    />
+                </ButtonWrapper>
+            </ul>
+        </ActionBarHolder>
+    );
 }
 
 const mapStateToProps = ({ vault: { ui } }) => {
