@@ -21,22 +21,19 @@ const dropdownMenu = (
     </Menu>
 );
 
-class VaultHeader extends Component {
-    render() {
-        return (
-            <Header
-                style={{ background: '#fff', padding: '0px 15px', display: 'flex', justifyContent: 'space-between' }}
-            >
-                <HeaderTitle>OnePass Vault</HeaderTitle>
-                <Dropdown overlay={dropdownMenu}>
-                    <span>
-                        {this.props.name} <Icon type="down" />
-                    </span>
-                </Dropdown>
-            </Header>
-        );
-    }
-}
+const VaultHeader = ({
+    name
+}) =>
+    <Header
+    style={{ background: '#fff', padding: '0px 15px', display: 'flex', justifyContent: 'space-between' }}
+    >
+        <HeaderTitle>OnePass Vault</HeaderTitle>
+        <Dropdown overlay={dropdownMenu}>
+            <span>
+                {name} <Icon type="down" />
+            </span>
+        </Dropdown>
+    </Header>
 
 const mapStateToProps = ({ auth: { login } }) => {
     return {
