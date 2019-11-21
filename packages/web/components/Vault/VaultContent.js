@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import React, { Component } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { Empty } from 'antd';
@@ -65,40 +65,34 @@ const EmptyHolder = styled(Empty)`
     flex-direction: column;
 `;
 
-class VaultContent extends Component {
-    renderItemCard(key, item) {
-        return <VaultItemCard item={item} key={key} />;
-    }
+const VaultContent = ({
+    items,
+    isVaultEmpty
+}) => {
+    const renderItemCard = (key, item) => <VaultItemCard item={item} key={key} />;
 
-    renderFolder() {
-        const { items } = this.props;
-        return (
-            <Folder>
-                <FolderHead>
-                    {/* To Do some toggle button here */}
-                    <div>Social</div>
-                </FolderHead>
-                <FolderContents>
-                    {Object.entries(items).map(item => {
-                        return this.renderItemCard(item[0], item[1]);
-                    })}
-                </FolderContents>
-            </Folder>
-        );
-    }
+    const renderFolder = () =>
+        <Folder>
+            <FolderHead>
+                {/* To Do some toggle button here */}
+                <div>Social</div>
+            </FolderHead>
+            <FolderContents>
+                {Object.entries(items).map(item => {
+                    return renderItemCard(item[0], item[1]);
+                })}
+            </FolderContents>
+        </Folder>
 
-    render() {
-        const { isVaultEmpty } = this.props;
-        return (
-            <React.Fragment>
-                <MainContentHolder>
-                    <VaultItemsScroll>
-                        <FolderWrapper>{!isVaultEmpty ? this.renderFolder() : <EmptyHolder />}</FolderWrapper>
-                    </VaultItemsScroll>
-                </MainContentHolder>
-            </React.Fragment>
-        );
-    }
+    return (
+        <React.Fragment>
+            <MainContentHolder>
+                <VaultItemsScroll>
+                    <FolderWrapper>{!isVaultEmpty ? renderFolder() : <EmptyHolder />}</FolderWrapper>
+                </VaultItemsScroll>
+            </MainContentHolder>
+        </React.Fragment>
+    )
 }
 
 const mapStateToProps = ({ vault: { decrypted } }) => {
