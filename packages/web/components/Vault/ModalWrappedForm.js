@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { submit } from 'redux-form';
@@ -7,86 +7,79 @@ import { Button, Modal } from 'antd';
 import FormInModal from './FormInModal';
 import { toggleItemModal, performVaultItemEncryption } from '../../state/modules/vault/operations';
 
-class ModalWrappedForm extends Component {
-    handleSubmit = () => {
-        // Manually submit redux-form
-        this.props.submitForm('form_in_modal');
-    };
+const ModalWrappedForm = ({
+    toggleItemModal,
+    submitForm,
+    vaultKey,
+    email,
+    encryptVaultItem,
+    isItemModalOpen,
+    selectedItemId,
+    items,
+    folders
+}) => {
+    const handleSubmit = () => submitForm('form_in_modal');
 
-    handleReturn = () => {
-        this.props.toggleItemModal(false, '');
-    };
+    const handleReturn = () => toggleItemModal(false, '');
 
-    hasProperty = (formValues, property) => {
-        return Object.prototype.hasOwnProperty.call(formValues, property);
-    };
+    const hasProperty = (formValues, property) =>
+        Object.prototype.hasOwnProperty.call(formValues, property);
 
-    onFormSubmit = formValues => {
+    const onFormSubmit = formValues => {
         let itemId = null;
         let _modified = null;
-        const { vaultKey, email } = this.props;
         const { url = '', name, folder = '', username = '', password = '' } = formValues;
         // If the form is in edit mode, initial values will have fields
-        if (this.hasProperty(formValues, 'itemId') && this.hasProperty(formValues, '_modified')) {
+        if (hasProperty(formValues, 'itemId') && hasProperty(formValues, '_modified')) {
             ({ itemId, _modified } = formValues);
         }
-        const overview = {
+        const overview = { url, name, folder, };
+        const details = { username, password, };
+        encryptVaultItem({ overview, details, vaultKey, email, itemId, _modified });
+    };
+
+    let initialValues = { url: '', name: '', username: '', password: '', folder: '' };
+    const selectedItem = items[selectedItemId];
+    
+    if (selectedItem) {
+        const {
+            decOverview: { url, name, folder },
+            decDetails: { username, password },
+            _modified,
+        } = selectedItem;
+
+        initialValues = {
             url,
             name,
             folder,
-        };
-        const details = {
             username,
             password,
+            itemId: selectedItemId,
+            _modified,
         };
-        this.props.encryptVaultItem({ overview, details, vaultKey, email, itemId, _modified });
-    };
-
-    render() {
-        const { isItemModalOpen, selectedItemId, items, folders } = this.props;
-        // Initial Values for modalForm
-        let initialValues = { url: '', name: '', username: '', password: '', folder: '' };
-        const selectedItem = items[selectedItemId];
-        // If item exist in store
-        if (selectedItem) {
-            const {
-                decOverview: { url, name, folder },
-                decDetails: { username, password },
-                _modified,
-            } = selectedItem;
-
-            initialValues = {
-                url,
-                name,
-                folder,
-                username,
-                password,
-                itemId: selectedItemId,
-                _modified,
-            };
-        }
-        return (
-            <div>
-                <Modal
-                    width={750}
-                    centered
-                    visible={isItemModalOpen}
-                    onOk={this.handleSubmit}
-                    onCancel={this.handleReturn}
-                    footer={[
-                        <Button key="back" onClick={this.handleReturn}>
-                            Cancel
-                        </Button>,
-                        <Button key="submit" type="primary" loading={false} onClick={this.handleSubmit}>
-                            Submit
-                        </Button>,
-                    ]}
-                >
-                    <FormInModal onSubmit={this.onFormSubmit} folders={folders} initialValues={initialValues} />
-                </Modal>
-            </div>
-        );
     }
+
+    return (
+        <div>
+            <Modal
+                width={750}
+                centered
+                visible={isItemModalOpen}
+                onOk={handleSubmit}
+                onCancel={handleReturn}
+                footer={[
+                    <Button key="back" onClick={handleReturn}>
+                        Cancel
+                    </Button>,
+                    <Button key="submit" type="primary" loading={false} onClick={handleSubmit}>
+                        Submit
+                    </Button>,
+                ]}
+            >
+                <FormInModal onSubmit={onFormSubmit} folders={folders} initialValues={initialValues} />
+            </Modal>
+        </div>
+    );
 }
 
 const mapStateToProps = state => {
