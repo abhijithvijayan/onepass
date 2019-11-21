@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-for */
 /* eslint-disable react/display-name */
 import { connect } from 'react-redux';
-import React, { Component } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Field, reset, reduxForm } from 'redux-form';
 import { Col, Form, Icon, Input, Select } from 'antd';
@@ -42,57 +42,53 @@ const afterSubmit = (result, dispatch) => {
     return dispatch(reset('form_in_modal'));
 };
 
-class ModalForm extends Component {
-    renderFolderSelectOptions = () => {
-        const { folders } = this.props;
-        return Object.values(folders).map(folder => {
-            const { folderId, folderName } = folder;
-            return (
-                <Option key={folderId} value={folderId}>
-                    {folderName}
-                </Option>
-            );
+const ModalForm = ({
+    folders,
+    onSubmit,
+    handleSubmit
+}) => {
+    const renderFolderSelectOptions = () =>
+        Object.values(folders).map(({ folderId, folderName }) =>
+            <Option key={folderId} value={folderId}>
+                {folderName}
+            </Option>
         });
-    };
 
-    render() {
-        const { handleSubmit } = this.props;
-        return (
-            <FormHolder onSubmit={handleSubmit(this.props.onSubmit)}>
-                <Field label="URL" name="url" type="text" icon="link" component={renderInput} />
-                <Col md={{ span: 12 }} className="form__split--component">
-                    <Field label="Name" name="name" type="text" component={renderInput} />
-                </Col>
-                <Col md={{ span: 12 }} className="form__split--component">
-                    <Field
-                        placeholder="Choose folder"
-                        label="Folder"
-                        name="folder"
-                        allowClear
-                        showSearch
-                        filterOption={(input, option) => {
-                            return option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-                        }}
-                        component={renderSelect}
-                    >
-                        {this.renderFolderSelectOptions()}
-                    </Field>
-                </Col>
-                <Col md={{ span: 12 }} className="form__split--component">
-                    <Field label="Username" name="username" type="text" icon="user" component={renderInput} />
-                </Col>
-                <Col md={{ span: 12 }} className="form__split--component">
-                    <Field
-                        label="Password"
-                        name="password"
-                        type="password"
-                        icon="lock"
-                        component={renderPasswordInput}
-                    />
-                </Col>
-            </FormHolder>
-        );
-    }
+    return (
+        <FormHolder onSubmit={handleSubmit(onSubmit)}>
+            <Field label="URL" name="url" type="text" icon="link" component={renderInput} />
+            <Col md={{ span: 12 }} className="form__split--component">
+                <Field label="Name" name="name" type="text" component={renderInput} />
+            </Col>
+            <Col md={{ span: 12 }} className="form__split--component">
+                <Field
+                    placeholder="Choose folder"
+                    label="Folder"
+                    name="folder"
+                    allowClear
+                    showSearch
+                    filterOption={(input, option) => {
+                        return option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+                    }}
+                    component={renderSelect}
+                >
+                    {renderFolderSelectOptions()}
+                </Field>
+            </Col>
+            <Col md={{ span: 12 }} className="form__split--component">
+                <Field label="Username" name="username" type="text" icon="user" component={renderInput} />
+            </Col>
+            <Col md={{ span: 12 }} className="form__split--component">
+                <Field
+                    label="Password"
+                    name="password"
+                    type="password"
+                    icon="lock"
+                    component={renderPasswordInput}
+                />
+            </Col>
+        </FormHolder>
+    )
 }
 
 const validate = values => {
