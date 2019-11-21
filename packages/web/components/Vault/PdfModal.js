@@ -24,48 +24,46 @@ const SecretKeyHolder = styled.div`
     letter-spacing: 0.1em;
 `;
 
-class PdfModal extends Component {
-    handleDownloadClick() {
-        const { email, secretKey, server, name } = this.props;
+const PdfModal = ({
+    email,
+    secretKey,
+    server,
+    name,
+    getEmergencyKit,
+    hasDownloadedEmergencyKit
+}) => {
+    const handleDownloadClick() {
         const string = renderToString(<PdfContent email={email} name={name} secretKey={secretKey} server={server} />);
         const pdf = new JSPDF('p', 'mm', 'a4');
         pdf.fromHTML(string);
         pdf.save('OnePass Emergency Kit');
         // ToDo: Check status of download
         // Send server request
-        this.props.getEmergencyKit();
+        getEmergencyKit();
     }
 
-    renderModal() {
-        const { hasDownloadedEmergencyKit, secretKey } = this.props;
-
-        return (
-            <Modal style={{ top: 200 }} closable={false} visible={!hasDownloadedEmergencyKit} footer={null}>
-                <h2>Meet your Secret Key</h2>
-                <p>You’ll need it to sign in on new devices.</p>
-                <div>
-                    <SecretKeyHolder>{beautifySecretKey(secretKey)}</SecretKeyHolder>
-                    <Button
-                        type="button"
-                        onClick={() => {
-                            return this.handleDownloadClick();
-                        }}
-                    >
-                        Download
-                    </Button>
-                </div>
-                <h3>Click Download to save an Emergency Kit which contains your Secret Key.</h3>
-                <p>
-                    We can’t recover your Secret Key for you. If you lose it, you won’t be able to sign in to your
-                    account
-                </p>
-            </Modal>
-        );
-    }
-
-    render() {
-        return this.renderModal();
-    }
+    return (
+        <Modal style={{ top: 200 }} closable={false} visible={!hasDownloadedEmergencyKit} footer={null}>
+            <h2>Meet your Secret Key</h2>
+            <p>You’ll need it to sign in on new devices.</p>
+            <div>
+                <SecretKeyHolder>{beautifySecretKey(secretKey)}</SecretKeyHolder>
+                <Button
+                    type="button"
+                    onClick={() => {
+                        return handleDownloadClick();
+                    }}
+                >
+                    Download
+                </Button>
+            </div>
+            <h3>Click Download to save an Emergency Kit which contains your Secret Key.</h3>
+            <p>
+                We can’t recover your Secret Key for you. If you lose it, you won’t be able to sign in to your
+                account
+            </p>
+        </Modal>
+    );
 }
 
 const mapStateToProps = ({ auth: { login } }) => {
