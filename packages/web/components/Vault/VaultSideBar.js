@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Layout } from 'antd';
@@ -20,27 +20,18 @@ const SideBar = styled(Sider)`
     }
 `;
 
-class VaultSideBar extends Component {
-    toggleSideBar = toggleStatus => {
-        this.props.toggleSideBar(toggleStatus);
-    };
-
-    render() {
-        const { isSideBarOpen } = this.props;
-        return (
-            <SideBar
-                collapsible
-                collapsed={!isSideBarOpen}
-                onCollapse={() => {
-                    return this.toggleSideBar(!isSideBarOpen);
-                }}
-            >
-                <SideBarHeader />
-                <SideBarMenu />
-            </SideBar>
-        );
-    }
-}
+const VaultSideBar = ({
+    toggleSideBar,
+    isSideBarOpen
+}) =>
+    <SideBar
+        collapsible
+        collapsed={!isSideBarOpen}
+        onCollapse={() => toggleSideBar(!isSideBarOpen)}
+    >
+        <SideBarHeader />
+        <SideBarMenu />
+    </SideBar>
 
 const mapStateToProps = ({ vault: { ui } }) => {
     return {
