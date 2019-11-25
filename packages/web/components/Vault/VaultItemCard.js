@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import React, { Component } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { bindActionCreators } from 'redux';
 import { Icon, Tooltip } from 'antd';
@@ -71,12 +71,8 @@ const DataHolder = styled.div`
         div {
             margin-left: 22px;
             h2 {
-                color: ${props => {
-                    return props.theme.lightPink;
-                }};
-                font-weight: ${props => {
-                    return props.theme.bold;
-                }};
+                color: ${props => props.theme.lightPink};
+                font-weight: ${props => props.theme.bold};
                 font-size: 1.1rem;
                 margin-bottom: 0;
                 pointer-events: none;
@@ -99,9 +95,7 @@ const IconHolder = styled.div`
         cursor: pointer;
         color: rgba(0, 0, 0, 0.5);
         &:hover {
-            color: ${props => {
-                return props.theme.pink;
-            }};
+            color: ${props => props.theme.pink};
         }
     }
     .anticon-rocket {
@@ -111,79 +105,69 @@ const IconHolder = styled.div`
     }
 `;
 
-class VaultItemCard extends Component {
-    renderCardHeader = (name, url) => {
-        return (
-            <React.Fragment>
+const VaultItemCard = ({
+    item,
+    toggleConfirmDeleteModal,
+    toggleItemModal
+}) => {
+    const renderCardHeader = (name, url) =>
+        <React.Fragment>
+            <div>
+                <SiteName>{name}</SiteName>
+            </div>
+            <SiteUrl>{url}</SiteUrl>
+        </React.Fragment>
+
+    const renderDataHolder = username =>
+        <DataHolder>
+            <div className="data__column">
                 <div>
-                    <SiteName>{name}</SiteName>
+                    <h2>Username</h2>
+                    <p>{username}</p>
                 </div>
-                <SiteUrl>{url}</SiteUrl>
-            </React.Fragment>
-        );
-    };
-
-    renderDataHolder = username => {
-        return (
-            <DataHolder>
-                <div className="data__column">
-                    <div>
-                        <h2>Username</h2>
-                        <p>{username}</p>
-                    </div>
+            </div>
+            <div className="data__column">
+                <div>
+                    <h2>Password</h2>
+                    <p>***********</p>
                 </div>
-                <div className="data__column">
-                    <div>
-                        <h2>Password</h2>
-                        <p>***********</p>
-                    </div>
-                </div>
-            </DataHolder>
-        );
-    };
+            </div>
+        </DataHolder>
 
-    renderIconHolder = itemId => {
-        return (
-            <IconHolder>
-                <Tooltip placement="bottomLeft" title="Delete">
-                    <Icon
-                        id={itemId}
-                        onClick={e => {
-                            return this.props.toggleConfirmDeleteModal(true, e.currentTarget.id);
-                        }}
-                        type="delete"
-                    />
-                </Tooltip>
-                <Tooltip placement="bottom" title="Edit">
-                    <Icon
-                        id={itemId}
-                        onClick={e => {
-                            return this.props.toggleItemModal(true, e.currentTarget.id);
-                        }}
-                        type="edit"
-                    />
-                </Tooltip>
-                <Tooltip placement="bottomRight" title="Launch">
-                    <Icon id={itemId} type="rocket" />
-                </Tooltip>
-            </IconHolder>
-        );
-    };
+    const renderIconHolder = itemId =>
+        <IconHolder>
+            <Tooltip placement="bottomLeft" title="Delete">
+                <Icon
+                    id={itemId}
+                    onClick={e => toggleConfirmDeleteModal(true, e.currentTarget.id)}
+                    type="delete"
+                />
+            </Tooltip>
+            <Tooltip placement="bottom" title="Edit">
+                <Icon
+                    id={itemId}
+                    onClick={e => toggleItemModal(true, e.currentTarget.id)}
+                    type="edit"
+                />
+            </Tooltip>
+            <Tooltip placement="bottomRight" title="Launch">
+                <Icon id={itemId} type="rocket" />
+            </Tooltip>
+        </IconHolder>
 
-    render() {
-        const {
-            decDetails: { username },
-            decOverview: { url, name },
-            itemId,
-        } = this.props.item;
-        return (
-            <Card>
-                {this.renderCardHeader(name, url)}
-                {this.renderDataHolder(username)}
-                {this.renderIconHolder(itemId)}
-            </Card>
-        );
-    }
+    const {
+        decDetails: { username },
+        decOverview: { url, name },
+        itemId,
+    } = item;
+
+    return (
+        <Card>
+            {renderCardHeader(name, url)}
+            {renderDataHolder(username)}
+            {renderIconHolder(itemId)}
+        </Card>
+    );
 }
 
 const mapDispatchToProps = dispatch => {
