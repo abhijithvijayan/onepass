@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
@@ -45,60 +45,49 @@ const ModalBody = styled.div`
     }
 `;
 
-class DeleteConfirmModal extends Component {
-    handleOk = () => {
-        const { selectedItemId } = this.props;
-        this.props.deleteVaultItem({ itemId: selectedItemId });
-    };
+const DeleteConfirmModal = (props) => {
+    const handleOk = () => props.deleteVaultItem({ itemId: props.selectedItemId });
 
-    handleCancel = () => {
-        this.props.toggleConfirmDeleteModal(false, '');
-    };
+    const handleCancel = () => props.toggleConfirmDeleteModal(false, '');
 
-    renderModalBody = currentItemName => {
-        return (
-            <React.Fragment>
-                <ModalHeader>
-                    <Icon type="exclamation-circle" />
-                    <ModalWarningMessage>Are you sure you want to delete the site?</ModalWarningMessage>
-                </ModalHeader>
-                <ModalBody>
-                    <p>{currentItemName}</p>
-                </ModalBody>
-            </React.Fragment>
-        );
-    };
+    const renderModalBody = currentItemName =>
+        <React.Fragment>
+            <ModalHeader>
+                <Icon type="exclamation-circle" />
+                <ModalWarningMessage>Are you sure you want to delete the site?</ModalWarningMessage>
+            </ModalHeader>
+            <ModalBody>
+                <p>{currentItemName}</p>
+            </ModalBody>
+        </React.Fragment>
 
-    renderModalFooter = () => {
-        return [
-            <Button key="back" onClick={this.handleCancel}>
+    const renderModalFooter = () =>
+        [
+            <Button key="back" onClick={handleCancel}>
                 Cancel
             </Button>,
-            <Button key="submit" type="primary" loading={false} onClick={this.handleOk}>
+            <Button key="submit" type="primary" loading={false} onClick={handleOk}>
                 Delete
             </Button>,
         ];
-    };
 
-    renderModal = ({ isDeleteModalOpen, currentItemName }) => {
-        return (
-            <ModalContentWrapper
-                closable={false}
-                visible={isDeleteModalOpen}
-                centered
-                onOk={this.handleOk}
-                onCancel={this.handleCancel}
-                footer={this.renderModalFooter()}
-            >
-                {this.renderModalBody(currentItemName)}
-            </ModalContentWrapper>
-        );
-    };
+    const renderModal = ({ isDeleteModalOpen, currentItemName }) =>
+        <ModalContentWrapper
+            closable={false}
+            visible={isDeleteModalOpen}
+            centered
+            onOk={handleOk}
+            onCancel={handleCancel}
+            footer={renderModalFooter()}
+        >
+            {renderModalBody(currentItemName)}
+        </ModalContentWrapper>
 
-    render() {
-        const { isDeleteModalOpen } = this.props;
-        return <ModalWrapper>{isDeleteModalOpen ? this.renderModal(this.props) : null}</ModalWrapper>;
-    }
+    return (
+        <ModalWrapper>
+            {props.isDeleteModalOpen ? renderModal(props) : null}
+        </ModalWrapper>
+    )
 }
 
 const mapStateToProps = state => {
