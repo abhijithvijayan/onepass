@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import browser from 'webextension-polyfill';
 
 import Home from '@onepass/web/components/Home';
 import BodyWrapper from '@onepass/web/components/BodyWrapper';
 
-class IndexPage extends Component {
-    componentDidMount() {
+const IndexPage = () => {
+    useEffect(() => {
         /* eslint-disable no-undef */
         browser.tabs.query({ active: true, currentWindow: true }, tabs => {
             browser.tabs.sendMessage(tabs[0].id, { greeting: 'hello' }, function(response) {
@@ -13,15 +13,13 @@ class IndexPage extends Component {
                 console.log(response);
             });
         });
-    }
+    }, [browser]);
 
-    render() {
-        return (
-            <BodyWrapper>
-                <Home />
-            </BodyWrapper>
-        );
-    }
+    return (
+        <BodyWrapper>
+            <Home />
+        </BodyWrapper>
+    );
 }
 
 export default IndexPage;
