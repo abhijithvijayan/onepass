@@ -1,25 +1,24 @@
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import Vault from '@onepass/web/components/Vault';
 import BodyWrapper from '@onepass/web/components/BodyWrapper';
 
-class VaultPage extends Component {
-    componentDidMount() {
-        if (!this.props.isAuthenticated) {
-            this.props.history.push('/login');
-        }
-    }
+const VaultPage = ({
+    isAuthenticated,
+    history
+}) => {
+    useEffect(() => {
+        if (!isAuthenticated) history.push('/login');
+    }, [isAuthenticated, history]);
 
-    render() {
-        return (
-            this.props.isAuthenticated && (
-                <BodyWrapper>
-                    <Vault />
-                </BodyWrapper>
-            )
-        );
-    }
+    return (
+        isAuthenticated && (
+            <BodyWrapper>
+                <Vault />
+            </BodyWrapper>
+        )
+    );
 }
 
 const mapStateToProps = ({ auth: { login } }) => {
