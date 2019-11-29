@@ -13,7 +13,7 @@ class MasterPasswordPage extends Component {
             // Wait for the toast to close and redirect
             toast(`${error.msg} Redirecting...`, {
                 containerId: 'top__center',
-                onClose: prop => Router.push('/signup'),
+                onClose: () => Router.push('/signup'),
             });
         }
         if (isAuthenticated) {

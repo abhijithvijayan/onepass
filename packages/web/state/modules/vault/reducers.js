@@ -57,14 +57,13 @@ function onSaveItemSuccess(state, { payload }) {
 
 function onDeleteItemSuccess(state, { payload }) {
     const {
-        item: { itemId },
         status,
         msg,
         _reported,
     } = payload;
     // https://link.medium.com/wblJY3lRoY
-    const { [itemId]: deleted, ...remaining } = state.items;
-    return { ...state, response: { status, msg, _reported }, items: { ...remaining } };
+    const { items } = state;
+    return { ...state, response: { status, msg, _reported }, items };
 }
 
 function clearEncVaultData() {
@@ -80,13 +79,10 @@ function saveDecryptedVault(state, { payload }) {
     return { ...state, items: { ...state.items, ...decVaultData }, isVaultEmpty };
 }
 
-function removeDeletedItem(state, { payload }) {
-    const {
-        item: { itemId },
-    } = payload;
-    const { [itemId]: deleted, ...remaining } = state.items;
-    const isVaultEmpty = Object.keys(remaining).length === 0;
-    return { ...state, items: { ...remaining }, isVaultEmpty };
+function removeDeletedItem(state) {
+    const { items } = state;
+    const isVaultEmpty = Object.keys(items).length === 0;
+    return { ...state, items: { ...items }, isVaultEmpty };
 }
 
 function removeVaultData() {

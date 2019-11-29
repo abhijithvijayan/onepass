@@ -5,7 +5,6 @@ const passport = require('passport');
 const srp = require('secure-remote-password/server');
 
 const {
-    createUser,
     getUserDetails,
     verifyUser,
     getEncKeySet,
@@ -23,10 +22,10 @@ const { isAdmin } = require('../utils');
 
 /* Email Template and Options */
 const transporter = require('../mail/mail');
-const { verifyMailText, resetMailText } = require('../mail/text');
+const { resetMailText } = require('../mail/text');
 
-const verifyEmailTemplatePath = path.join(__dirname, '../mail/template-verify.html');
-const verifyEmailTemplate = fs.readFileSync(verifyEmailTemplatePath, { encoding: 'utf-8' });
+// const verifyEmailTemplatePath = path.join(__dirname, '../mail/template-verify.html');
+// const verifyEmailTemplate = fs.readFileSync(verifyEmailTemplatePath, { encoding: 'utf-8' });
 const resetEmailTemplatePath = path.join(__dirname, '../mail/template-reset.html');
 const resetEmailTemplate = fs.readFileSync(resetEmailTemplatePath, { encoding: 'utf-8' });
 
@@ -95,7 +94,7 @@ exports.signup = async (req, res) => {
             },
         });
     }
-    const newUser = await createUser({ email, name });
+    // const newUser = await createUser({ email, name });
     // ToDo: Restore
     /* Handle Verification email */
     // const mail = await transporter.sendMail({

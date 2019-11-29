@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { connect } from 'react-redux';
 import { Layout, Dropdown, Icon, Menu } from 'antd';

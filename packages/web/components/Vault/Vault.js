@@ -1,11 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Layout } from 'antd';
 import styled from 'styled-components';
 
 import VaultHeader from './VaultHeader';
 import VaultSideBar from './VaultSideBar';
 import VaultContent from './VaultContent';
-import VaultFooter from './VaultFooter';
 import PdfModal from './PdfModal';
 import ModalWrappedForm from './ModalWrappedForm';
 import BottomActionButtons from './BottomActionButtons';
