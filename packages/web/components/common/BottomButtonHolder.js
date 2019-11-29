@@ -10,19 +10,11 @@ const ButtonHolder = styled.div`
     align-items: baseline;
 `;
 
-const BottomButtonHolder = props => {
-    return (
-        <ButtonHolder>
-            <p>{props.text}</p>
-            <Button
-                onClick={() => {
-                    return Router.push(`${props.route}`);
-                }}
-            >
-                {props.buttonText}
-            </Button>
-        </ButtonHolder>
-    );
-};
+const BottomButtonHolder = props => (
+    <ButtonHolder>
+        <p>{props.text}</p>
+        <Button onClick={() => Router.push(`${props.route}`)}>{props.buttonText}</Button>
+    </ButtonHolder>
+);
 
 export default BottomButtonHolder;

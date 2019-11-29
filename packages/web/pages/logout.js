@@ -16,12 +16,10 @@ class LogoutPage extends Component {
     }
 }
 
-const mapDispatchToProps = dispatch => {
-    return {
-        logoutUser: bindActionCreators(logoutUser, dispatch),
-        authUser: bindActionCreators(authUser, dispatch),
-    };
-};
+const mapDispatchToProps = dispatch => ({
+    logoutUser: bindActionCreators(logoutUser, dispatch),
+    authUser: bindActionCreators(authUser, dispatch),
+});
 
 export default connect(
     null,

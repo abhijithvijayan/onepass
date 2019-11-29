@@ -1,7 +1,4 @@
-exports.isAdmin = email => {
-    return process.env.ADMIN_EMAILS.split(',')
-        .map(e => {
-            return e.trim();
-        })
+exports.isAdmin = email =>
+    process.env.ADMIN_EMAILS.split(',')
+        .map(e => e.trim())
         .includes(email);
-};

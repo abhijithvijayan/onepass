@@ -6,22 +6,18 @@ import MasterPasswordForm from './MasterPasswordForm';
 
 const MasterPasswordContentsHolder = styled.div`
     height: 100vh;
-    color: ${props => {
-        return props.theme.pink;
-    }};
+    color: ${props => props.theme.pink};
 `;
 
-const MasterPassword = () => {
-    return (
-        <MasterPasswordContentsHolder>
-            <Row>
-                <Col md={{ span: 8, offset: 8 }} className="pt-20">
-                    <h2 className="text-center">Choose your Master Password</h2>
-                    <MasterPasswordForm />
-                </Col>
-            </Row>
-        </MasterPasswordContentsHolder>
-    );
-};
+const MasterPassword = () => (
+    <MasterPasswordContentsHolder>
+        <Row>
+            <Col md={{ span: 8, offset: 8 }} className="pt-20">
+                <h2 className="text-center">Choose your Master Password</h2>
+                <MasterPasswordForm />
+            </Col>
+        </Row>
+    </MasterPasswordContentsHolder>
+);
 
 export default MasterPassword;

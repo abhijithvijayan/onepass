@@ -6,6 +6,4 @@ import jseu from 'js-encoding-utils';
  * @param {String} string
  */
 
-export const stringToUint8Array = string => {
-    return jseu.encoder.stringToArrayBuffer(string);
-};
+export const stringToUint8Array = string => jseu.encoder.stringToArrayBuffer(string);

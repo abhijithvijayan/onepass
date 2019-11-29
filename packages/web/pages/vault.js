@@ -42,9 +42,7 @@ class VaultPage extends Component {
         return true;
     }
 
-    notify = message => {
-        return toast(message, { containerId: 'top__right' });
-    };
+    notify = message => toast(message, { containerId: 'top__right' });
 
     render() {
         return (

@@ -31,9 +31,7 @@ Router.events.on('routeChangeComplete', () => {
     return NProgress.done();
 });
 
-Router.events.on('routeChangeError', () => {
-    return NProgress.done();
-});
+Router.events.on('routeChangeError', () => NProgress.done());
 
 // eslint-disable-next-line import/no-webpack-loader-syntax
 const theme = require('sass-extract-loader?{"plugins": ["sass-extract-js"]}!../styles/base/_variables.scss');

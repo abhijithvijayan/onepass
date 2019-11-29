@@ -31,9 +31,9 @@ const resetEmailTemplatePath = path.join(__dirname, '../mail/template-reset.html
 const resetEmailTemplate = fs.readFileSync(resetEmailTemplatePath, { encoding: 'utf-8' });
 
 /* Function to generate JWT Token */
-const genJWTtoken = ({ email, name }) => {
+const genJWTtoken = ({ email, name }) =>
     // ToDo: verify the expiry time
-    return JWT.sign(
+    JWT.sign(
         {
             iss: 'ApiAuth',
             id: email,
@@ -44,10 +44,8 @@ const genJWTtoken = ({ email, name }) => {
         process.env.JWT_SECRET,
         { expiresIn: '1h' }
     );
-};
-
-exports.authWithJWT = (req, res, next) => {
-    return passport.authenticate('jwt', { session: false }, (err, user, info) => {
+exports.authWithJWT = (req, res, next) =>
+    passport.authenticate('jwt', { session: false }, (err, user, info) => {
         if (err) {
             return res.status(400);
         }
@@ -68,7 +66,6 @@ exports.authWithJWT = (req, res, next) => {
         }
         return next();
     })(req, res, next);
-};
 
 exports.signup = async (req, res) => {
     // ToDo: refactor this to a user object (and collect device object)

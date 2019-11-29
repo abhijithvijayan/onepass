@@ -63,29 +63,17 @@ nextApp.prepare().then(() => {
 
     server.get('/api/v1/', auth.authWithJWT, api.sendStatus);
 
-    server.get('/', (req, res) => {
-        return nextApp.render(req, res, '/');
-    });
+    server.get('/', (req, res) => nextApp.render(req, res, '/'));
 
-    server.get('/login', (req, res) => {
-        return nextApp.render(req, res, '/login');
-    });
+    server.get('/login', (req, res) => nextApp.render(req, res, '/login'));
 
-    server.get('/signup', (req, res) => {
-        return nextApp.render(req, res, '/signup');
-    });
+    server.get('/signup', (req, res) => nextApp.render(req, res, '/signup'));
 
-    server.get('/vault', (req, res) => {
-        return nextApp.render(req, res, '/vault');
-    });
+    server.get('/vault', (req, res) => nextApp.render(req, res, '/vault'));
 
-    server.get('/about', (req, res) => {
-        return nextApp.render(req, res, '/about');
-    });
+    server.get('/about', (req, res) => nextApp.render(req, res, '/about'));
 
-    server.get('/logout', (req, res) => {
-        return nextApp.render(req, res, '/logout');
-    });
+    server.get('/logout', (req, res) => nextApp.render(req, res, '/logout'));
 
     /* ---------------------------------------- */
     /* ---- User and Authentication routes ---- */
@@ -176,9 +164,7 @@ nextApp.prepare().then(() => {
     /* ---------- Ends Custom Routes ---------- */
     /* ---------------------------------------- */
 
-    server.get('*', (req, res) => {
-        return handle(req, res);
-    });
+    server.get('*', (req, res) => handle(req, res));
 
     server.listen(port, err => {
         if (err) throw err;

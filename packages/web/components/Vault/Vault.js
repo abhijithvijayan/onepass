@@ -19,21 +19,19 @@ const VaultLayout = styled(Layout)`
     left: 0;
 `;
 
-const Vault = () => {
-    return (
-        <VaultLayout className="mh-100">
-            <VaultSideBar />
-            <Layout>
-                <VaultHeader />
-                <VaultContent />
-                <BottomActionButtons />
-                {/* <VaultFooter /> */}
-                <PdfModal />
-            </Layout>
-            <ModalWrappedForm />
-            <DeleteConfirmModal />
-        </VaultLayout>
-    );
-};
+const Vault = () => (
+    <VaultLayout className="mh-100">
+        <VaultSideBar />
+        <Layout>
+            <VaultHeader />
+            <VaultContent />
+            <BottomActionButtons />
+            {/* <VaultFooter /> */}
+            <PdfModal />
+        </Layout>
+        <ModalWrappedForm />
+        <DeleteConfirmModal />
+    </VaultLayout>
+);
 
 export default Vault;

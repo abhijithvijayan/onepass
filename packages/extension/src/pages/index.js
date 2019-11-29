@@ -20,6 +20,6 @@ const IndexPage = () => {
             <Home />
         </BodyWrapper>
     );
-}
+};
 
 export default IndexPage;

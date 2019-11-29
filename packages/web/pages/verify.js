@@ -17,9 +17,7 @@ class VerifyPage extends Component {
         return true;
     }
 
-    notify = message => {
-        return toast(message, { containerId: 'top__center' });
-    };
+    notify = message => toast(message, { containerId: 'top__center' });
 
     render() {
         const { isAuthenticated, isVerificationSent, isVerified } = this.props;

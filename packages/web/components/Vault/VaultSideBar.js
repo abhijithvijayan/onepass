@@ -13,37 +13,25 @@ const { Sider } = Layout;
 const SideBar = styled(Sider)`
     z-index: 2;
     position: relative;
-    @media screen and (max-width: ${props => {
-            return props.theme.screenXxsMax;
-        }}) {
+    @media screen and (max-width: ${props => props.theme.screenXxsMax}) {
         display: none;
     }
 `;
 
-const VaultSideBar = ({
-    toggleSideBar,
-    isSideBarOpen
-}) =>
-    <SideBar
-        collapsible
-        collapsed={!isSideBarOpen}
-        onCollapse={() => toggleSideBar(!isSideBarOpen)}
-    >
+const VaultSideBar = ({ toggleSideBar, isSideBarOpen }) => (
+    <SideBar collapsible collapsed={!isSideBarOpen} onCollapse={() => toggleSideBar(!isSideBarOpen)}>
         <SideBarHeader />
         <SideBarMenu />
     </SideBar>
+);
 
-const mapStateToProps = ({ vault: { ui } }) => {
-    return {
-        isSideBarOpen: ui.isSideBarOpen,
-    };
-};
+const mapStateToProps = ({ vault: { ui } }) => ({
+    isSideBarOpen: ui.isSideBarOpen,
+});
 
-const mapDispatchToProps = dispatch => {
-    return {
-        toggleSideBar: bindActionCreators(toggleSideBar, dispatch),
-    };
-};
+const mapDispatchToProps = dispatch => ({
+    toggleSideBar: bindActionCreators(toggleSideBar, dispatch),
+});
 
 export default connect(
     mapStateToProps,

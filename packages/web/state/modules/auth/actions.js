@@ -82,18 +82,16 @@ const generateSymmetricKey = () => {
 
 /** ------------------------------------------------------ */
 
-export const clearErrorState = () => {
-    return async dispatch => {
-        dispatch({
-            type: errorTypes.CLEAR_SIGNUP_ERRORS,
-        });
-        dispatch({
-            type: errorTypes.CLEAR_LOGIN_ERRORS,
-        });
-        dispatch({
-            type: errorTypes.CLEAR_VAULT_ERRORS,
-        });
-    };
+export const clearErrorState = () => async dispatch => {
+    dispatch({
+        type: errorTypes.CLEAR_SIGNUP_ERRORS,
+    });
+    dispatch({
+        type: errorTypes.CLEAR_LOGIN_ERRORS,
+    });
+    dispatch({
+        type: errorTypes.CLEAR_VAULT_ERRORS,
+    });
 };
 
 /** ------------------------------------------------------ */
@@ -141,38 +139,36 @@ export const submitSignUpData = ({ email, name }) => {
  *  Token Verification step
  */
 
-export const submitVerificationToken = ({ email, verificationToken }) => {
-    return async dispatch => {
-        try {
-            dispatch({
-                type: uiTypes.SHOW_PAGE_LOADER,
-            });
+export const submitVerificationToken = ({ email, verificationToken }) => async dispatch => {
+    try {
+        dispatch({
+            type: uiTypes.SHOW_PAGE_LOADER,
+        });
 
-            const { data } = await api({
-                method: 'POST',
-                url: endpoints.TOKEN_VERIFICATION_ENDPOINT,
-                data: {
-                    verificationToken,
-                    email,
-                },
-            });
+        const { data } = await api({
+            method: 'POST',
+            url: endpoints.TOKEN_VERIFICATION_ENDPOINT,
+            data: {
+                verificationToken,
+                email,
+            },
+        });
 
-            dispatch({
-                type: types.VALID_VERIFICATION_TOKEN_SUBMISSION,
-                payload: data,
-            });
-        } catch ({ response }) {
-            dispatch({
-                type: errorTypes.USER_SIGNUP_FAILED,
-                payload: {
-                    error: response.data && response.data.error,
-                },
-            });
-            dispatch({
-                type: uiTypes.HIDE_PAGE_LOADER,
-            });
-        }
-    };
+        dispatch({
+            type: types.VALID_VERIFICATION_TOKEN_SUBMISSION,
+            payload: data,
+        });
+    } catch ({ response }) {
+        dispatch({
+            type: errorTypes.USER_SIGNUP_FAILED,
+            payload: {
+                error: response.data && response.data.error,
+            },
+        });
+        dispatch({
+            type: uiTypes.HIDE_PAGE_LOADER,
+        });
+    }
 };
 
 /**
@@ -484,157 +480,147 @@ export const submitLoginData = ({ email, password, secretKey }) => {
  *  Decryption of Vault Key
  */
 
-export const decryptTheVaultKey = ({ normPassword, secretKey, userId, encKeySet, encVaultData }) => {
-    return async dispatch => {
-        try {
-            /**
-             * 1. Compute Master Unlock Key
-             */
-            const { encPriKey, encSymKey } = encKeySet;
-            const encryptionKeySalt = await base64uriToArray(encSymKey.salt);
-            const hashedKeySet = await generateHashedKeySet({ normPassword, encryptionKeySalt });
-            const intermediateKey = await deriveIntermediateKey({ secretKey, userId });
-            const masterUnlockKey = genMasterUnlockKey({ hashedKey: hashedKeySet.key, intermediateKey });
+export const decryptTheVaultKey = ({ normPassword, secretKey, userId, encKeySet, encVaultData }) => async dispatch => {
+    try {
+        /**
+         * 1. Compute Master Unlock Key
+         */
+        const { encPriKey, encSymKey } = encKeySet;
+        const encryptionKeySalt = await base64uriToArray(encSymKey.salt);
+        const hashedKeySet = await generateHashedKeySet({ normPassword, encryptionKeySalt });
+        const intermediateKey = await deriveIntermediateKey({ secretKey, userId });
+        const masterUnlockKey = genMasterUnlockKey({ hashedKey: hashedKeySet.key, intermediateKey });
+
+        /**
+         *  2. Decrypt Symmetric Key with MUK
+         */
+        const encryptedSymmetricKey = encSymKey.key;
+        const decSymKeyOutput = await decryptSymmetricKey({
+            encryptedSymmetricKey,
+            masterUnlockKey,
+            iv: encSymKey.iv,
+            tag: encSymKey.tag,
+            tagLength: encSymKey.tagLength,
+        });
+
+        /** Successful decryption of Symmetric Key */
+        if (decSymKeyOutput.status) {
+            const { decryptedSymmetricKey } = decSymKeyOutput;
 
             /**
-             *  2. Decrypt Symmetric Key with MUK
+             *  3. Decrypt Private Key with Symmetric Key
              */
-            const encryptedSymmetricKey = encSymKey.key;
-            const decSymKeyOutput = await decryptSymmetricKey({
-                encryptedSymmetricKey,
-                masterUnlockKey,
-                iv: encSymKey.iv,
-                tag: encSymKey.tag,
-                tagLength: encSymKey.tagLength,
+            const { decryptedPrivateKey } = await decryptPrivateKey({
+                encryptedPrivateKey: encPriKey.key,
+                decryptedSymmetricKey,
             });
 
-            /** Successful decryption of Symmetric Key */
-            if (decSymKeyOutput.status) {
-                const { decryptedSymmetricKey } = decSymKeyOutput;
-
-                /**
-                 *  3. Decrypt Private Key with Symmetric Key
-                 */
-                const { decryptedPrivateKey } = await decryptPrivateKey({
-                    encryptedPrivateKey: encPriKey.key,
-                    decryptedSymmetricKey,
-                });
-
-                /**
-                 *  4. Decrypt Vault Key with Private Key
-                 */
-                const { encVaultKey } = encVaultData;
-                const decryptedVaultKey = await decryptVaultKey({
-                    encryptedVaultKey: encVaultKey.key,
-                    decryptedPrivateKey,
-                });
-
-                return { decryptedVaultKey, vaultKeyDecStatus: true };
-            }
-            // Decryption Failed
-            dispatch({
-                type: errorTypes.USER_AUTH_FAILED,
-                payload: {
-                    error: 'Invalid secret key or master password',
-                },
+            /**
+             *  4. Decrypt Vault Key with Private Key
+             */
+            const { encVaultKey } = encVaultData;
+            const decryptedVaultKey = await decryptVaultKey({
+                encryptedVaultKey: encVaultKey.key,
+                decryptedPrivateKey,
             });
-            dispatch({
-                type: uiTypes.HIDE_PAGE_LOADER,
-            });
-            return { vaultKeyDecStatus: false };
-        } catch (err) {
-            // ToDo: handle decryption errors
-            console.log(err);
+
+            return { decryptedVaultKey, vaultKeyDecStatus: true };
         }
-    };
+        // Decryption Failed
+        dispatch({
+            type: errorTypes.USER_AUTH_FAILED,
+            payload: {
+                error: 'Invalid secret key or master password',
+            },
+        });
+        dispatch({
+            type: uiTypes.HIDE_PAGE_LOADER,
+        });
+        return { vaultKeyDecStatus: false };
+    } catch (err) {
+        // ToDo: handle decryption errors
+        console.log(err);
+    }
 };
 
 /**
  *  Generate Initial Emergency Kit (Disable popup on login)
  */
 
-export const getEmergencyKit = () => {
-    return async dispatch => {
-        try {
-            const { data } = await api({
-                method: 'GET',
-                url: endpoints.GET_EMERGENCY_KIT_ENDPOINT,
-                headers: { Authorization: cookie.get('token') },
-            });
-            dispatch({
-                type: types.DOWNLOAD_EMERGENCY_KIT_SUCCEEDED,
-                payload: {
-                    status: data.status,
-                },
-            });
-        } catch ({ response }) {
-            dispatch({
-                type: errorTypes.DOWNLOAD_EMERGENCY_KIT_FAILED,
-                payload: {
-                    error: response.data.error,
-                },
-            });
-            dispatch({
-                type: uiTypes.HIDE_PAGE_LOADER,
-            });
-        }
-    };
+export const getEmergencyKit = () => async dispatch => {
+    try {
+        const { data } = await api({
+            method: 'GET',
+            url: endpoints.GET_EMERGENCY_KIT_ENDPOINT,
+            headers: { Authorization: cookie.get('token') },
+        });
+        dispatch({
+            type: types.DOWNLOAD_EMERGENCY_KIT_SUCCEEDED,
+            payload: {
+                status: data.status,
+            },
+        });
+    } catch ({ response }) {
+        dispatch({
+            type: errorTypes.DOWNLOAD_EMERGENCY_KIT_FAILED,
+            payload: {
+                error: response.data.error,
+            },
+        });
+        dispatch({
+            type: uiTypes.HIDE_PAGE_LOADER,
+        });
+    }
 };
 
 /**
  *  Logout & remove localStorage data
  */
 
-export const logoutUser = () => {
-    return dispatch => {
-        cookie.remove('token');
-        // fetch userId & remove accordingly
-        localStorage.removeItem(localStorage.getItem('lastUser'));
-        localStorage.removeItem('lastUser');
-        dispatch({
-            type: vaultTypes.CLEAR_DECRYPTED_VAULT_DATA,
-        });
-        dispatch({
-            type: vaultTypes.CLEAR_FETCHED_VAULT_DATA,
-        });
-        dispatch(clearErrorState());
-        dispatch({
-            type: types.USER_DE_AUTH_SUCCEEDED,
-        });
-    };
+export const logoutUser = () => dispatch => {
+    cookie.remove('token');
+    // fetch userId & remove accordingly
+    localStorage.removeItem(localStorage.getItem('lastUser'));
+    localStorage.removeItem('lastUser');
+    dispatch({
+        type: vaultTypes.CLEAR_DECRYPTED_VAULT_DATA,
+    });
+    dispatch({
+        type: vaultTypes.CLEAR_FETCHED_VAULT_DATA,
+    });
+    dispatch(clearErrorState());
+    dispatch({
+        type: types.USER_DE_AUTH_SUCCEEDED,
+    });
 };
 
 /* ----------------------------------------------------------- */
 /*                        REFACTOR                             */
 /* ----------------------------------------------------------- */
 
-export const authUser = payload => {
-    return dispatch => {
-        dispatch({
-            type: types.USER_AUTH_SUCCEEDED,
-            payload,
-        });
-    };
+export const authUser = payload => dispatch => {
+    dispatch({
+        type: types.USER_AUTH_SUCCEEDED,
+        payload,
+    });
 };
 
-export const renewAuthUser = () => {
-    return async dispatch => {
-        // ToDo: Check if renew is needed from state
-        try {
-            const {
-                data: { token },
-            } = await api({
-                method: 'POST',
-                headers: { Authorization: cookie.get('token') },
-                url: endpoints.TOKEN_RENEWAL_ENDPOINT,
-            });
-            const in1Hour = 1 / 24;
-            cookie.set('token', token, { expires: in1Hour });
-            // ToDo: Dispatch renew action
-            dispatch(authUser(decodeJwt(token)));
-        } catch (error) {
-            cookie.remove('token');
-            // ToDo: Dispatch action to de-auth user
-        }
-    };
+export const renewAuthUser = () => async dispatch => {
+    // ToDo: Check if renew is needed from state
+    try {
+        const {
+            data: { token },
+        } = await api({
+            method: 'POST',
+            headers: { Authorization: cookie.get('token') },
+            url: endpoints.TOKEN_RENEWAL_ENDPOINT,
+        });
+        const in1Hour = 1 / 24;
+        cookie.set('token', token, { expires: in1Hour });
+        // ToDo: Dispatch renew action
+        dispatch(authUser(decodeJwt(token)));
+    } catch (error) {
+        cookie.remove('token');
+        // ToDo: Dispatch action to de-auth user
+    }
 };

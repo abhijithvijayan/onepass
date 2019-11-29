@@ -6,8 +6,8 @@ exports.createUser = async ({ email, name }) => {
     const session = driver.session();
     const verificationToken = generate('1234567890', 6);
     const userRandomPrefix = generate('1245689abefklprtvxz', 6);
-    const { records = [] } = await session.writeTransaction(tx => {
-        return tx.run(
+    const { records = [] } = await session.writeTransaction(tx =>
+        tx.run(
             'MERGE (id:UniqueId { identifier: $identifierParam, userFixedPrefix: $userFixedPrefixParam }) ' +
                 'ON CREATE SET id.count = 1, id.userRandomPrefix = $userRandomPrefixParam ' +
                 'ON MATCH SET id.count = id.count + 1, id.userRandomPrefix = $userRandomPrefixParam ' +
@@ -28,8 +28,8 @@ exports.createUser = async ({ email, name }) => {
                 serverParam: process.env.DEFAULT_DOMAIN,
                 _createdParam: new Date().toJSON(),
             }
-        );
-    });
+        )
+    );
     session.close();
     const user = records[0].get('u').properties;
     return user;
@@ -37,11 +37,11 @@ exports.createUser = async ({ email, name }) => {
 
 exports.getUserDetails = async ({ email }) => {
     const session = driver.session();
-    const { records = [] } = await session.readTransaction(tx => {
-        return tx.run('MATCH (u:User { email : $emailParam }) RETURN u', {
+    const { records = [] } = await session.readTransaction(tx =>
+        tx.run('MATCH (u:User { email : $emailParam }) RETURN u', {
             emailParam: email,
-        });
-    });
+        })
+    );
     session.close();
     const user = records.length && records[0].get('u').properties;
     return user;
@@ -49,8 +49,8 @@ exports.getUserDetails = async ({ email }) => {
 
 exports.verifyUser = async ({ email, verificationToken }) => {
     const session = driver.session();
-    const { records = [] } = await session.writeTransaction(tx => {
-        return tx.run(
+    const { records = [] } = await session.writeTransaction(tx =>
+        tx.run(
             'MATCH (u:User { email: $emailParam, verificationToken: $verificationTokenParam, isVerified: false  }) ' +
                 'SET u.isVerified = true, u.verificationToken = NULL ' +
                 'RETURN u',
@@ -58,8 +58,8 @@ exports.verifyUser = async ({ email, verificationToken }) => {
                 emailParam: email,
                 verificationTokenParam: verificationToken,
             }
-        );
-    });
+        )
+    );
     session.close();
     const user = records.length && records[0].get('u').properties;
     return user;
@@ -67,16 +67,16 @@ exports.verifyUser = async ({ email, verificationToken }) => {
 
 exports.getEncKeySet = async ({ email }) => {
     const session = driver.session();
-    const { records = [] } = await session.readTransaction(tx => {
-        return tx.run(
+    const { records = [] } = await session.readTransaction(tx =>
+        tx.run(
             'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true })' +
                 '-[:KEYSET]->(keySet) ' +
                 'RETURN keySet',
             {
                 emailParam: email,
             }
-        );
-    });
+        )
+    );
     session.close();
     if (records.length) {
         const { encPriKey, encSymKey } = records[0].get('keySet').properties;
@@ -87,16 +87,16 @@ exports.getEncKeySet = async ({ email }) => {
 
 exports.genEmergencyKit = async ({ email }) => {
     const session = driver.session();
-    const { records = [] } = await session.writeTransaction(tx => {
-        return tx.run(
+    const { records = [] } = await session.writeTransaction(tx =>
+        tx.run(
             'MATCH (u: User { email: $emailParam, isVerified: true }) ' +
                 'SET u.hasDownloadedEmergencyKit = true ' +
                 'RETURN u',
             {
                 emailParam: email,
             }
-        );
-    });
+        )
+    );
     session.close();
     const { hasDownloadedEmergencyKit } = records.length && records[0].get('u').properties;
     if (hasDownloadedEmergencyKit) {
@@ -113,8 +113,8 @@ exports.requestResetPassword = async ({ email }) => {
     const session = driver.session();
     const passwordResetToken = generate('1234567890', 6);
     const passwordResetExpires = Date.now() + 3600000;
-    const { records = [] } = await session.writeTransaction(tx => {
-        return tx.run(
+    const { records = [] } = await session.writeTransaction(tx =>
+        tx.run(
             'MATCH (u:User { email: $emailParam }) ' +
                 'SET u.passwordResetToken = $passwordResetTokenParam, u.passwordResetExpires = $passwordResetExpiresParam ' +
                 'RETURN u',
@@ -123,8 +123,8 @@ exports.requestResetPassword = async ({ email }) => {
                 passwordResetTokenParam: passwordResetToken,
                 passwordResetExpiresParam: passwordResetExpires,
             }
-        );
-    });
+        )
+    );
     session.close();
     const user = records.length && records[0].get('u').properties;
     return user;
@@ -132,8 +132,8 @@ exports.requestResetPassword = async ({ email }) => {
 
 exports.validatePasswordRequest = async ({ email, passwordResetToken }) => {
     const session = driver.session();
-    const { records = [] } = await session.writeTransaction(tx => {
-        return tx.run(
+    const { records = [] } = await session.writeTransaction(tx =>
+        tx.run(
             'MATCH (u:User) ' +
                 'WHERE u.email = $emailParam AND u.passwordResetToken = $passwordResetTokenParam AND u.passwordResetExpires > $currentTime ' +
                 'SET u.passwordResetToken = NULL, u.passwordResetExpires = NULL ' +
@@ -143,8 +143,8 @@ exports.validatePasswordRequest = async ({ email, passwordResetToken }) => {
                 passwordResetTokenParam: passwordResetToken,
                 currentTime: Date.now(),
             }
-        );
-    });
+        )
+    );
     session.close();
     const user = records.length && records[0].get('u').properties;
     return user;

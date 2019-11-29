@@ -3,5 +3,8 @@
   "env": {
     "browser": true,
     "webextensions": true
+  },
+  "rules": {
+    "arrow-body-style": ["error", "as-needed"]
   }
 }

@@ -10,9 +10,7 @@ import { toggleItemModal, toggleConfirmDeleteModal } from '../../state/modules/v
 const Card = styled.div`
     user-select: none;
     transition: all 0.3s;
-    font-family: ${props => {
-        return props.theme.opensans;
-    }};
+    font-family: ${props => props.theme.opensans};
     border-radius: 12px;
     height: 100px;
     min-height: 300px;
@@ -29,16 +27,10 @@ const Card = styled.div`
 
 const SiteName = styled.h2`
     padding-bottom: 13px;
-    color: ${props => {
-        return props.theme.pink;
-    }};
+    color: ${props => props.theme.pink};
     font-size: 1.6rem;
-    font-family: ${props => {
-        return props.theme.nunito;
-    }};
-    font-weight: ${props => {
-        return props.theme.bold;
-    }};
+    font-family: ${props => props.theme.nunito};
+    font-weight: ${props => props.theme.bold};
     text-transform: capitalize;
     margin: 0px;
     letter-spacing: 1px;
@@ -105,20 +97,17 @@ const IconHolder = styled.div`
     }
 `;
 
-const VaultItemCard = ({
-    item,
-    toggleConfirmDeleteModal,
-    toggleItemModal
-}) => {
-    const renderCardHeader = (name, url) =>
-        <React.Fragment>
+const VaultItemCard = ({ item, toggleConfirmDeleteModal, toggleItemModal }) => {
+    const renderCardHeader = (name, url) => (
+        <>
             <div>
                 <SiteName>{name}</SiteName>
             </div>
             <SiteUrl>{url}</SiteUrl>
-        </React.Fragment>
+        </>
+    );
 
-    const renderDataHolder = username =>
+    const renderDataHolder = username => (
         <DataHolder>
             <div className="data__column">
                 <div>
@@ -133,27 +122,21 @@ const VaultItemCard = ({
                 </div>
             </div>
         </DataHolder>
+    );
 
-    const renderIconHolder = itemId =>
+    const renderIconHolder = itemId => (
         <IconHolder>
             <Tooltip placement="bottomLeft" title="Delete">
-                <Icon
-                    id={itemId}
-                    onClick={e => toggleConfirmDeleteModal(true, e.currentTarget.id)}
-                    type="delete"
-                />
+                <Icon id={itemId} onClick={e => toggleConfirmDeleteModal(true, e.currentTarget.id)} type="delete" />
             </Tooltip>
             <Tooltip placement="bottom" title="Edit">
-                <Icon
-                    id={itemId}
-                    onClick={e => toggleItemModal(true, e.currentTarget.id)}
-                    type="edit"
-                />
+                <Icon id={itemId} onClick={e => toggleItemModal(true, e.currentTarget.id)} type="edit" />
             </Tooltip>
             <Tooltip placement="bottomRight" title="Launch">
                 <Icon id={itemId} type="rocket" />
             </Tooltip>
         </IconHolder>
+    );
 
     const {
         decDetails: { username },
@@ -168,14 +151,12 @@ const VaultItemCard = ({
             {renderIconHolder(itemId)}
         </Card>
     );
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        toggleItemModal: bindActionCreators(toggleItemModal, dispatch),
-        toggleConfirmDeleteModal: bindActionCreators(toggleConfirmDeleteModal, dispatch),
-    };
 };
+
+const mapDispatchToProps = dispatch => ({
+    toggleItemModal: bindActionCreators(toggleItemModal, dispatch),
+    toggleConfirmDeleteModal: bindActionCreators(toggleConfirmDeleteModal, dispatch),
+});
 
 export default connect(
     null,

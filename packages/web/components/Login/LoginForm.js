@@ -1,12 +1,12 @@
 /* eslint-disable jsx-a11y/label-has-for */
 /* eslint-disable react/display-name */
 import { connect } from 'react-redux';
-import React, { Component } from 'react';
+import React from 'react';
 import { bindActionCreators } from 'redux';
 import { Field, reduxForm } from 'redux-form';
 import { Button, Form, Icon, Input, Tooltip } from 'antd';
 
-import { submitLoginData } from '../../state/modules/auth/operations';
+import { submitLoginData as submitLoginDataOperation } from '../../state/modules/auth/operations';
 
 /* eslint-disable-next-line arrow-body-style */
 const renderField = ComponentToRender => ({ input, type, icon, label, meta: { touched, invalid, error }, ...rest }) => {
@@ -23,10 +23,7 @@ const renderField = ComponentToRender => ({ input, type, icon, label, meta: { to
 const renderInput = renderField(Input);
 const renderPasswordInput = renderField(Input.Password);
 
-const LoginForm = ({
-    submitLoginData,
-    handleSubmit
-}) => {
+const LoginForm = ({ submitLoginData, handleSubmit }) => {
     const onSubmit = ({ email, password, secretKey }) => {
         submitLoginData({ email, password, secretKey: secretKey.toUpperCase() });
     };
@@ -58,7 +55,7 @@ const LoginForm = ({
             </Button>
         </Form>
     );
-}
+};
 
 const validate = values => {
     const errors = {};
@@ -82,11 +79,9 @@ const validate = values => {
     return errors;
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        submitLoginData: bindActionCreators(submitLoginData, dispatch),
-    };
-};
+const mapDispatchToProps = dispatch => ({
+    submitLoginData: bindActionCreators(submitLoginDataOperation, dispatch),
+});
 
 const LoginFormWrapper = connect(
     null,

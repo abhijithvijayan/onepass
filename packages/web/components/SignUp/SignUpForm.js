@@ -1,11 +1,11 @@
 /* eslint-disable jsx-a11y/label-has-for */
 import { connect } from 'react-redux';
-import React, { Component } from 'react';
+import React from 'react';
 import { bindActionCreators } from 'redux';
 import { Field, reduxForm } from 'redux-form';
 import { Button, Form, Icon, Input } from 'antd';
 
-import { submitSignUpData } from '../../state/modules/auth/operations';
+import { submitSignUpData as submitSignUpDataOperation } from '../../state/modules/auth/operations';
 
 const renderInputField = ({ input, type, icon, label, meta: { touched, invalid, error } }) => {
     const isInvalid = touched && invalid;
@@ -16,12 +16,8 @@ const renderInputField = ({ input, type, icon, label, meta: { touched, invalid, 
     );
 };
 
-const SignUpForm = ({
-    submitSignUpData,
-    handleSubmit
-}) => {
-    const onSubmit = ({ email, name }) =>
-        submitSignUpData({ email, name })
+const SignUpForm = ({ submitSignUpData, handleSubmit }) => {
+    const onSubmit = ({ email, name }) => submitSignUpData({ email, name });
 
     return (
         <Form onSubmit={handleSubmit(onSubmit)}>
@@ -31,8 +27,8 @@ const SignUpForm = ({
                 Submit
             </Button>
         </Form>
-    )
-}
+    );
+};
 
 const validate = values => {
     const errors = {};
@@ -47,11 +43,9 @@ const validate = values => {
     return errors;
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        submitSignUpData: bindActionCreators(submitSignUpData, dispatch),
-    };
-};
+const mapDispatchToProps = dispatch => ({
+    submitSignUpData: bindActionCreators(submitSignUpDataOperation, dispatch),
+});
 
 const SignUpFormWrapper = connect(
     null,

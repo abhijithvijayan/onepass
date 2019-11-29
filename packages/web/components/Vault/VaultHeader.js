@@ -21,12 +21,8 @@ const dropdownMenu = (
     </Menu>
 );
 
-const VaultHeader = ({
-    name
-}) =>
-    <Header
-    style={{ background: '#fff', padding: '0px 15px', display: 'flex', justifyContent: 'space-between' }}
-    >
+const VaultHeader = ({ name }) => (
+    <Header style={{ background: '#fff', padding: '0px 15px', display: 'flex', justifyContent: 'space-between' }}>
         <HeaderTitle>OnePass Vault</HeaderTitle>
         <Dropdown overlay={dropdownMenu}>
             <span>
@@ -34,11 +30,10 @@ const VaultHeader = ({
             </span>
         </Dropdown>
     </Header>
+);
 
-const mapStateToProps = ({ auth: { login } }) => {
-    return {
-        name: login.user.name,
-    };
-};
+const mapStateToProps = ({ auth: { login } }) => ({
+    name: login.user.name,
+});
 
 export default connect(mapStateToProps)(VaultHeader);

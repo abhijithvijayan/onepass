@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 
-import { hidePageLoader } from '../../state/modules/common/ui/operations';
+import { hidePageLoader as hidePageLoaderOperation } from '../../state/modules/common/ui/operations';
 import Loader from '../Loader';
 import ToastNotifier from '../common/ToastNotifier';
 
@@ -17,11 +17,7 @@ const ContentWrapper = styled.div`
     width: 100%;
 `;
 
-const BodyWrapper = ({
-    children,
-    isPageLoading,
-    hidePageLoader
-}) => {
+const BodyWrapper = ({ children, isPageLoading, hidePageLoader }) => {
     useEffect(() => {
         hidePageLoader();
     });
@@ -34,19 +30,15 @@ const BodyWrapper = ({
             <ContentWrapper>{renderContent}</ContentWrapper>
         </Wrapper>
     );
-}
-
-const mapStateToProps = ({ ui }) => {
-    return {
-        isPageLoading: ui.isPageLoading,
-    };
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        hidePageLoader: bindActionCreators(hidePageLoader, dispatch),
-    };
-};
+const mapStateToProps = ({ ui }) => ({
+    isPageLoading: ui.isPageLoading,
+});
+
+const mapDispatchToProps = dispatch => ({
+    hidePageLoader: bindActionCreators(hidePageLoaderOperation, dispatch),
+});
 
 export default connect(
     mapStateToProps,

@@ -1,10 +1,13 @@
-import React, { Component } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Button } from 'antd';
 
-import { toggleItemModal, expandActionButtons } from '../../state/modules/vault/operations';
+import {
+    toggleItemModal as toggleItemModalOperation,
+    expandActionButtons as expandActionButtonsOperation,
+} from '../../state/modules/vault/operations';
 
 const ActionBarHolder = styled.div`
     position: absolute;
@@ -23,9 +26,7 @@ const ButtonWrapper = styled.li`
     div {
         border: 1px solid rgba(0, 0, 0, 0.3);
         border-right: 0;
-        background: ${props => {
-            return props.theme.grayWhite;
-        }};
+        background: ${props => props.theme.grayWhite};
         margin-right: 10px;
         padding: 5px 10px;
         border-radius: 15px 0 0 15px;
@@ -44,16 +45,13 @@ const ActionButton = styled(Button)`
     }
 `;
 
-const BottomActionButtons = ({
-    hoverOverActionButtons,
-    toggleItemModal,
-    expandActionButtons
-}) => {
-    const renderAddFolderButton = () =>
+const BottomActionButtons = ({ hoverOverActionButtons, toggleItemModal, expandActionButtons }) => {
+    const renderAddFolderButton = () => (
         <ButtonWrapper>
             <div>Add Folder</div>
             <ActionButton type="primary" shape="circle" icon="folder-add" />
         </ButtonWrapper>
+    );
 
     return (
         <ActionBarHolder onMouseEnter={() => expandActionButtons(true)} onMouseLeave={() => expandActionButtons(false)}>
@@ -62,10 +60,10 @@ const BottomActionButtons = ({
                 <ButtonWrapper>
                     {hoverOverActionButtons ? <div>Add Item</div> : null}
                     <ActionButton
-                        onClick={() => {
+                        onClick={() =>
                             // ToDo: pass id -> Refactor
-                            return toggleItemModal(true, '');
-                        }}
+                            toggleItemModal(true, '')
+                        }
                         type="primary"
                         shape="circle"
                         icon="plus"
@@ -74,21 +72,17 @@ const BottomActionButtons = ({
             </ul>
         </ActionBarHolder>
     );
-}
-
-const mapStateToProps = ({ vault: { ui } }) => {
-    return {
-        isItemModalOpen: ui.isItemModalOpen,
-        hoverOverActionButtons: ui.hoverOverActionButtons,
-    };
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        toggleItemModal: bindActionCreators(toggleItemModal, dispatch),
-        expandActionButtons: bindActionCreators(expandActionButtons, dispatch),
-    };
-};
+const mapStateToProps = ({ vault: { ui } }) => ({
+    isItemModalOpen: ui.isItemModalOpen,
+    hoverOverActionButtons: ui.hoverOverActionButtons,
+});
+
+const mapDispatchToProps = dispatch => ({
+    toggleItemModal: bindActionCreators(toggleItemModalOperation, dispatch),
+    expandActionButtons: bindActionCreators(expandActionButtonsOperation, dispatch),
+});
 
 export default connect(
     mapStateToProps,

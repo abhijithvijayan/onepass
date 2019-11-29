@@ -3,11 +3,12 @@ import { Layout } from 'antd';
 
 import BodyWrapper from '../components/BodyWrapper';
 
-const AboutPage = () =>
+const AboutPage = () => (
     <BodyWrapper>
         <Layout className="layout">
             <div>About Page</div>
         </Layout>
     </BodyWrapper>
+);
 
 export default AboutPage;
