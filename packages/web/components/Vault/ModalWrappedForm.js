@@ -5,7 +5,7 @@ import { submit } from 'redux-form';
 import { Button, Modal } from 'antd';
 
 import FormInModal from './FormInModal';
-import { toggleItemModal, performVaultItemEncryption } from '../../state/modules/vault/operations';
+import { toggleItemModal as toggleItemModalOperation, performVaultItemEncryption } from '../../state/modules/vault/operations';
 
 const ModalWrappedForm = ({
     toggleItemModal,
@@ -99,7 +99,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-    toggleItemModal: bindActionCreators(toggleItemModal, dispatch),
+    toggleItemModal: bindActionCreators(toggleItemModalOperation, dispatch),
     submitForm: bindActionCreators(submit, dispatch),
     encryptVaultItem: bindActionCreators(performVaultItemEncryption, dispatch),
 });

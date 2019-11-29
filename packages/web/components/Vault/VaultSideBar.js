@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 import SideBarHeader from './SideBarHeader';
 import SideBarMenu from './SideBarMenu';
-import { toggleSideBar } from '../../state/modules/vault/operations';
+import { toggleSideBar as toggleSideBarOperations } from '../../state/modules/vault/operations';
 
 const { Sider } = Layout;
 
@@ -30,7 +30,7 @@ const mapStateToProps = ({ vault: { ui } }) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    toggleSideBar: bindActionCreators(toggleSideBar, dispatch),
+    toggleSideBar: bindActionCreators(toggleSideBarOperations, dispatch),
 });
 
 export default connect(

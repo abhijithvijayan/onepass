@@ -5,6 +5,7 @@
     "webextensions": true
   },
   "rules": {
-    "arrow-body-style": ["error", "as-needed"]
+    "arrow-body-style": ["error", "as-needed"],
+    "no-shadow": [2, { "hoist": "functions" }]
   }
 }
