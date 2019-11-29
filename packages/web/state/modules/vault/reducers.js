@@ -56,11 +56,7 @@ function onSaveItemSuccess(state, { payload }) {
 }
 
 function onDeleteItemSuccess(state, { payload }) {
-    const {
-        status,
-        msg,
-        _reported,
-    } = payload;
+    const { status, msg, _reported } = payload;
     // https://link.medium.com/wblJY3lRoY
     const { items } = state;
     return { ...state, response: { status, msg, _reported }, items };

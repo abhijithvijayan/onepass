@@ -5,7 +5,10 @@ import { bindActionCreators } from 'redux';
 import { Icon, Tooltip } from 'antd';
 import { connect } from 'react-redux';
 
-import { toggleItemModal as toggleItemModalOperation, toggleConfirmDeleteModal as toggleConfirmDeleteModalOperation } from '../../state/modules/vault/operations';
+import {
+    toggleItemModal as toggleItemModalOperation,
+    toggleConfirmDeleteModal as toggleConfirmDeleteModalOperation,
+} from '../../state/modules/vault/operations';
 
 const Card = styled.div`
     user-select: none;

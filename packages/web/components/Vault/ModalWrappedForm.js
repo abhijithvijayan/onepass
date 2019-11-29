@@ -5,7 +5,10 @@ import { submit } from 'redux-form';
 import { Button, Modal } from 'antd';
 
 import FormInModal from './FormInModal';
-import { toggleItemModal as toggleItemModalOperation, performVaultItemEncryption } from '../../state/modules/vault/operations';
+import {
+    toggleItemModal as toggleItemModalOperation,
+    performVaultItemEncryption,
+} from '../../state/modules/vault/operations';
 
 const ModalWrappedForm = ({
     toggleItemModal,
