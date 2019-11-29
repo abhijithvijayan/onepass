@@ -9,9 +9,7 @@ import { Col, Form, Icon, Input, Select } from 'antd';
 const { Option } = Select;
 
 const FormHolder = styled(Form)`
-    @media screen and (min-width: ${props => {
-            return props.theme.screenSmMin;
-        }}) {
+    @media screen and (min-width: ${props => props.theme.screenSmMin}) {
         display: inline-block;
         .form__split--component:nth-of-type(even) {
             padding-right: 10px;
@@ -38,21 +36,15 @@ const renderInput = renderField(Input);
 const renderPasswordInput = renderField(Input.Password);
 const renderSelect = renderField(Select);
 
-const afterSubmit = (result, dispatch) => {
-    return dispatch(reset('form_in_modal'));
-};
+const afterSubmit = (result, dispatch) => dispatch(reset('form_in_modal'));
 
-const ModalForm = ({
-    folders,
-    onSubmit,
-    handleSubmit
-}) => {
+const ModalForm = ({ folders, onSubmit, handleSubmit }) => {
     const renderFolderSelectOptions = () =>
-        Object.values(folders).map(({ folderId, folderName }) =>
+        Object.values(folders).map(({ folderId, folderName }) => (
             <Option key={folderId} value={folderId}>
                 {folderName}
             </Option>
-        );
+        ));
 
     return (
         <FormHolder onSubmit={handleSubmit(onSubmit)}>
@@ -67,9 +59,9 @@ const ModalForm = ({
                     name="folder"
                     allowClear
                     showSearch
-                    filterOption={(input, option) => {
-                        return option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-                    }}
+                    filterOption={(input, option) =>
+                        option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    }
                     component={renderSelect}
                 >
                     {renderFolderSelectOptions()}
@@ -79,17 +71,11 @@ const ModalForm = ({
                 <Field label="Username" name="username" type="text" icon="user" component={renderInput} />
             </Col>
             <Col md={{ span: 12 }} className="form__split--component">
-                <Field
-                    label="Password"
-                    name="password"
-                    type="password"
-                    icon="lock"
-                    component={renderPasswordInput}
-                />
+                <Field label="Password" name="password" type="password" icon="lock" component={renderPasswordInput} />
             </Col>
         </FormHolder>
-    )
-}
+    );
+};
 
 const validate = values => {
     const errors = {};
@@ -99,12 +85,10 @@ const validate = values => {
     return errors;
 };
 
-const mapStateToProps = (state, ownProps) => {
-    return {
-        initialValues: ownProps.initialValues,
-        folders: ownProps.folders,
-    };
-};
+const mapStateToProps = (state, ownProps) => ({
+    initialValues: ownProps.initialValues,
+    folders: ownProps.folders,
+});
 
 const FormInModal = connect(
     null,

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -6,7 +6,7 @@ import { Button, Modal } from 'antd';
 import styled from 'styled-components';
 
 import { beautifySecretKey } from '@onepass/core/common';
-import { getEmergencyKit } from '../../state/modules/auth/operations';
+import { getEmergencyKit as getEmergencyKitOperation } from '../../state/modules/auth/operations';
 import PdfContent from './PdfContent';
 
 // Do Not Import in Server
@@ -24,14 +24,7 @@ const SecretKeyHolder = styled.div`
     letter-spacing: 0.1em;
 `;
 
-const PdfModal = ({
-    email,
-    secretKey,
-    server,
-    name,
-    getEmergencyKit,
-    hasDownloadedEmergencyKit
-}) => {
+const PdfModal = ({ email, secretKey, server, name, getEmergencyKit, hasDownloadedEmergencyKit }) => {
     const handleDownloadClick = () => {
         const string = renderToString(<PdfContent email={email} name={name} secretKey={secretKey} server={server} />);
         const pdf = new JSPDF('p', 'mm', 'a4');
@@ -40,7 +33,7 @@ const PdfModal = ({
         // ToDo: Check status of download
         // Send server request
         getEmergencyKit();
-    }
+    };
 
     return (
         <Modal style={{ top: 200 }} closable={false} visible={!hasDownloadedEmergencyKit} footer={null}>
@@ -48,23 +41,17 @@ const PdfModal = ({
             <p>You’ll need it to sign in on new devices.</p>
             <div>
                 <SecretKeyHolder>{beautifySecretKey(secretKey)}</SecretKeyHolder>
-                <Button
-                    type="button"
-                    onClick={() => {
-                        return handleDownloadClick();
-                    }}
-                >
+                <Button type="button" onClick={() => handleDownloadClick()}>
                     Download
                 </Button>
             </div>
             <h3>Click Download to save an Emergency Kit which contains your Secret Key.</h3>
             <p>
-                We can’t recover your Secret Key for you. If you lose it, you won’t be able to sign in to your
-                account
+                We can’t recover your Secret Key for you. If you lose it, you won’t be able to sign in to your account
             </p>
         </Modal>
     );
-}
+};
 
 const mapStateToProps = ({ auth: { login } }) => {
     const { decrypted, user } = login;
@@ -77,11 +64,9 @@ const mapStateToProps = ({ auth: { login } }) => {
     };
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        getEmergencyKit: bindActionCreators(getEmergencyKit, dispatch),
-    };
-};
+const mapDispatchToProps = dispatch => ({
+    getEmergencyKit: bindActionCreators(getEmergencyKitOperation, dispatch),
+});
 
 export default connect(
     mapStateToProps,
