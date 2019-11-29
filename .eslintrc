@@ -6,6 +6,7 @@
   },
   "rules": {
     "arrow-body-style": ["error", "as-needed"],
-    "no-shadow": [2, { "hoist": "functions" }]
+    "no-shadow": [2, { "hoist": "functions" }],
+    "react/jsx-props-no-spreading": ["off"]
   }
 }
