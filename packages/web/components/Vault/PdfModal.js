@@ -32,7 +32,7 @@ const PdfModal = ({
     getEmergencyKit,
     hasDownloadedEmergencyKit
 }) => {
-    const handleDownloadClick() {
+    const handleDownloadClick = () => {
         const string = renderToString(<PdfContent email={email} name={name} secretKey={secretKey} server={server} />);
         const pdf = new JSPDF('p', 'mm', 'a4');
         pdf.fromHTML(string);

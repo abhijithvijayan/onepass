@@ -52,7 +52,7 @@ const ModalForm = ({
             <Option key={folderId} value={folderId}>
                 {folderName}
             </Option>
-        });
+        );
 
     return (
         <FormHolder onSubmit={handleSubmit(onSubmit)}>
