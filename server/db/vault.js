@@ -5,8 +5,8 @@ const driver = require('./neo4j');
 exports.saveEncVaultItem = async ({ encDetails, encOverview, email, itemId }) => {
     const session = driver.session();
     const passwordRandomPrefix = generate('1245689abefklprtvxz', 6);
-    const { records = [] } = await session.writeTransaction(tx => {
-        return tx.run(
+    const { records = [] } = await session.writeTransaction(tx =>
+        tx.run(
             'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true, hasDownloadedEmergencyKit: true })' +
                 '-[:VAULT]-(v: vault) ' +
                 'MERGE (v)-[:PASSWORDS]->(pc: passwordCollection) ' +
@@ -27,8 +27,8 @@ exports.saveEncVaultItem = async ({ encDetails, encOverview, email, itemId }) =>
                 encOverview: JSON.stringify(encOverview),
                 timeParam: new Date().toJSON(),
             }
-        );
-    });
+        )
+    );
     session.close();
     const entry = records.length && records[0].get('p').properties;
     if (entry) {
@@ -40,7 +40,7 @@ exports.saveEncVaultItem = async ({ encDetails, encOverview, email, itemId }) =>
             encDetails,
             encOverview,
         };
-        const itemObj = Object.assign({}, { [passwordEntryId]: item });
+        const itemObj = { [passwordEntryId]: item };
         return { status: true, item: itemObj, msg: 'Item saved to vault.' };
     }
     return { status: false, error: 'Failed to save or update item.' };
@@ -49,8 +49,8 @@ exports.saveEncVaultItem = async ({ encDetails, encOverview, email, itemId }) =>
 /** Checks if password item exist already */
 exports.getVaultItem = async ({ email, itemId }) => {
     const session = driver.session();
-    const { records = [] } = await session.readTransaction(tx => {
-        return tx.run(
+    const { records = [] } = await session.readTransaction(tx =>
+        tx.run(
             'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true, hasDownloadedEmergencyKit: true }) ' +
                 'WITH u, u.userId AS uid ' +
                 'MATCH (pc: passwordCollection { userId: uid })-[:Archive]->(p: password { passwordEntryId : $passwordEntryIdParam }) ' +
@@ -59,8 +59,8 @@ exports.getVaultItem = async ({ email, itemId }) => {
                 emailParam: email,
                 passwordEntryIdParam: itemId !== null ? itemId : '',
             }
-        );
-    });
+        )
+    );
     session.close();
     const entry = records.length && records[0].get('p').properties;
     if (entry) {
@@ -80,8 +80,8 @@ exports.getVaultItem = async ({ email, itemId }) => {
 /** Delete Password Item */
 exports.deleteEncVaultItem = async ({ email, itemId }) => {
     const session = driver.session();
-    const { records = [] } = await session.writeTransaction(tx => {
-        return tx.run(
+    const { records = [] } = await session.writeTransaction(tx =>
+        tx.run(
             'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true, hasDownloadedEmergencyKit: true }) ' +
                 'WITH u, u.userId AS uid ' +
                 'MATCH (pc: passwordCollection { userId: uid })-[:Archive]->(p: password { passwordEntryId : $passwordEntryIdParam }) ' +
@@ -92,8 +92,8 @@ exports.deleteEncVaultItem = async ({ email, itemId }) => {
                 emailParam: email,
                 passwordEntryIdParam: itemId,
             }
-        );
-    });
+        )
+    );
     session.close();
     const delEntryId = records.length && records[0].get('pid');
     if (delEntryId) {
@@ -108,8 +108,8 @@ exports.deleteEncVaultItem = async ({ email, itemId }) => {
 exports.addOrUpdateFolder = async ({ email, folderName, folderId }) => {
     const session = driver.session();
     const folderRandomPrefix = generate('1245689abefklprtvxz', 6);
-    const { records = [] } = await session.writeTransaction(tx => {
-        return tx.run(
+    const { records = [] } = await session.writeTransaction(tx =>
+        tx.run(
             'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true, hasDownloadedEmergencyKit: true })' +
                 '-[:VAULT]-(v: vault) ' +
                 'MERGE (v)-[:FOLDERS]->(fc: folderCollection) ' +
@@ -129,8 +129,8 @@ exports.addOrUpdateFolder = async ({ email, folderName, folderId }) => {
                 folderNameParam: folderName !== null ? folderName : '',
                 timeParam: new Date().toJSON(),
             }
-        );
-    });
+        )
+    );
     session.close();
     const folderEntry = records.length && records[0].get('f').properties;
     if (folderEntry) {
@@ -141,7 +141,7 @@ exports.addOrUpdateFolder = async ({ email, folderName, folderId }) => {
             _created: new Date(_created).getTime(),
             _modified: new Date(_modified).getTime(),
         };
-        const folderObj = Object.assign({}, { [folderEntryId]: folder });
+        const folderObj = { [folderEntryId]: folder };
         return { status: true, folder: folderObj, msg: 'Folder created in vault.' };
     }
     return { status: false, error: 'Failed to add folder to vault' };
@@ -150,8 +150,8 @@ exports.addOrUpdateFolder = async ({ email, folderName, folderId }) => {
 /** Check if folder already exist */
 exports.getFolderEntry = async ({ email, folderId }) => {
     const session = driver.session();
-    const { records = [] } = await session.readTransaction(tx => {
-        return tx.run(
+    const { records = [] } = await session.readTransaction(tx =>
+        tx.run(
             'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true, hasDownloadedEmergencyKit: true }) ' +
                 'WITH u, u.userId AS uid ' +
                 'MATCH (fc: folderCollection { userId: uid })-[:Archive]->(f: folder { folderEntryId : $folderIdParam }) ' +
@@ -160,8 +160,8 @@ exports.getFolderEntry = async ({ email, folderId }) => {
                 emailParam: email,
                 folderIdParam: folderId !== null ? folderId : '',
             }
-        );
-    });
+        )
+    );
     session.close();
     const folderEntry = records.length && records[0].get('f').properties;
     if (folderEntry) {
@@ -179,8 +179,8 @@ exports.getFolderEntry = async ({ email, folderId }) => {
 /** Fetch Vault Data */
 exports.getVaultData = async ({ email }) => {
     const session = driver.session();
-    const { records = [] } = await session.readTransaction(tx => {
-        return tx.run(
+    const { records = [] } = await session.readTransaction(tx =>
+        tx.run(
             'MATCH (u: User { email: $emailParam, isVerified: true, hasCompletedSignUp: true })' +
                 '-[:VAULT]->(v: vault) ' +
                 'WITH v ' +
@@ -189,8 +189,8 @@ exports.getVaultData = async ({ email }) => {
             {
                 emailParam: email,
             }
-        );
-    });
+        )
+    );
     session.close();
 
     if (records.length) {

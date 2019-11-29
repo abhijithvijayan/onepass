@@ -6,6 +6,4 @@ import jseu from 'js-encoding-utils';
  */
 
 // ToDo: use node-jose if JWK could be performed with it
-export const hexToUint8Array = hexString => {
-    return jseu.encoder.hexStringToArrayBuffer(hexString);
-};
+export const hexToUint8Array = hexString => jseu.encoder.hexStringToArrayBuffer(hexString);

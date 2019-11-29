@@ -6,44 +6,32 @@ import styled from 'styled-components';
 
 import SideBarHeader from './SideBarHeader';
 import SideBarMenu from './SideBarMenu';
-import { toggleSideBar } from '../../state/modules/vault/operations';
+import { toggleSideBar as toggleSideBarOperations } from '../../state/modules/vault/operations';
 
 const { Sider } = Layout;
 
 const SideBar = styled(Sider)`
     z-index: 2;
     position: relative;
-    @media screen and (max-width: ${props => {
-            return props.theme.screenXxsMax;
-        }}) {
+    @media screen and (max-width: ${props => props.theme.screenXxsMax}) {
         display: none;
     }
 `;
 
-const VaultSideBar = ({
-    toggleSideBar,
-    isSideBarOpen
-}) =>
-    <SideBar
-        collapsible
-        collapsed={!isSideBarOpen}
-        onCollapse={() => toggleSideBar(!isSideBarOpen)}
-    >
+const VaultSideBar = ({ toggleSideBar, isSideBarOpen }) => (
+    <SideBar collapsible collapsed={!isSideBarOpen} onCollapse={() => toggleSideBar(!isSideBarOpen)}>
         <SideBarHeader />
         <SideBarMenu />
     </SideBar>
+);
 
-const mapStateToProps = ({ vault: { ui } }) => {
-    return {
-        isSideBarOpen: ui.isSideBarOpen,
-    };
-};
+const mapStateToProps = ({ vault: { ui } }) => ({
+    isSideBarOpen: ui.isSideBarOpen,
+});
 
-const mapDispatchToProps = dispatch => {
-    return {
-        toggleSideBar: bindActionCreators(toggleSideBar, dispatch),
-    };
-};
+const mapDispatchToProps = dispatch => ({
+    toggleSideBar: bindActionCreators(toggleSideBarOperations, dispatch),
+});
 
 export default connect(
     mapStateToProps,

@@ -4,10 +4,7 @@ import { connect } from 'react-redux';
 import Vault from '@onepass/web/components/Vault';
 import BodyWrapper from '@onepass/web/components/BodyWrapper';
 
-const VaultPage = ({
-    isAuthenticated,
-    history
-}) => {
+const VaultPage = ({ isAuthenticated, history }) => {
     useEffect(() => {
         if (!isAuthenticated) history.push('/login');
     }, [isAuthenticated, history]);
@@ -19,7 +16,7 @@ const VaultPage = ({
             </BodyWrapper>
         )
     );
-}
+};
 
 const mapStateToProps = ({ auth: { login } }) => {
     return {

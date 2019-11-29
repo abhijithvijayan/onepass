@@ -37,8 +37,7 @@ function onSignUpRequest(state, { payload }) {
 
 function onVerifyTokenSubmission(state, { payload }) {
     // Delete hasFailedSignUp flag if exists
-    const { hasFailedSignUp: deleted, ...remaining } = state;
-    return { ...remaining, response: payload, isVerified: true };
+    return { ...state, response: payload, isVerified: true };
 }
 
 function finishSignUp() {

@@ -9,8 +9,6 @@ const FooterHolder = styled(Footer)`
     text-align: center;
 `;
 
-const VaultFooter = () => {
-    return <FooterHolder>OnePass © 2019</FooterHolder>;
-};
+const VaultFooter = () => <FooterHolder>OnePass © 2019</FooterHolder>;
 
 export default VaultFooter;

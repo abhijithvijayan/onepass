@@ -45,13 +45,13 @@ const ModalBody = styled.div`
     }
 `;
 
-const DeleteConfirmModal = (props) => {
+const DeleteConfirmModal = props => {
     const handleOk = () => props.deleteVaultItem({ itemId: props.selectedItemId });
 
     const handleCancel = () => props.toggleConfirmDeleteModal(false, '');
 
-    const renderModalBody = currentItemName =>
-        <React.Fragment>
+    const renderModalBody = currentItemName => (
+        <>
             <ModalHeader>
                 <Icon type="exclamation-circle" />
                 <ModalWarningMessage>Are you sure you want to delete the site?</ModalWarningMessage>
@@ -59,19 +59,19 @@ const DeleteConfirmModal = (props) => {
             <ModalBody>
                 <p>{currentItemName}</p>
             </ModalBody>
-        </React.Fragment>
+        </>
+    );
 
-    const renderModalFooter = () =>
-        [
-            <Button key="back" onClick={handleCancel}>
-                Cancel
-            </Button>,
-            <Button key="submit" type="primary" loading={false} onClick={handleOk}>
-                Delete
-            </Button>,
-        ];
+    const renderModalFooter = () => [
+        <Button key="back" onClick={handleCancel}>
+            Cancel
+        </Button>,
+        <Button key="submit" type="primary" loading={false} onClick={handleOk}>
+            Delete
+        </Button>,
+    ];
 
-    const renderModal = ({ isDeleteModalOpen, currentItemName }) =>
+    const renderModal = ({ isDeleteModalOpen, currentItemName }) => (
         <ModalContentWrapper
             closable={false}
             visible={isDeleteModalOpen}
@@ -82,13 +82,10 @@ const DeleteConfirmModal = (props) => {
         >
             {renderModalBody(currentItemName)}
         </ModalContentWrapper>
+    );
 
-    return (
-        <ModalWrapper>
-            {props.isDeleteModalOpen ? renderModal(props) : null}
-        </ModalWrapper>
-    )
-}
+    return <ModalWrapper>{props.isDeleteModalOpen ? renderModal(props) : null}</ModalWrapper>;
+};
 
 const mapStateToProps = state => {
     const {
@@ -102,12 +99,10 @@ const mapStateToProps = state => {
     };
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        deleteVaultItem: bindActionCreators(deleteVaultItem, dispatch),
-        toggleConfirmDeleteModal: bindActionCreators(toggleConfirmDeleteModal, dispatch),
-    };
-};
+const mapDispatchToProps = dispatch => ({
+    deleteVaultItem: bindActionCreators(deleteVaultItem, dispatch),
+    toggleConfirmDeleteModal: bindActionCreators(toggleConfirmDeleteModal, dispatch),
+});
 
 export default connect(
     mapStateToProps,

@@ -5,6 +5,5 @@ import cryptoRandomString from 'crypto-random-string';
  * @param {Integer} length
  */
 
-export const genCryptoRandomString = length => {
-    return cryptoRandomString({ length, characters: 'ABCDEFGHJKLMNPQRSTVWXYZ23456789' });
-};
+export const genCryptoRandomString = length =>
+    cryptoRandomString({ length, characters: 'ABCDEFGHJKLMNPQRSTVWXYZ23456789' });

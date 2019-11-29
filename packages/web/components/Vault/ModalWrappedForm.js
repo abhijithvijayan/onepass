@@ -5,7 +5,10 @@ import { submit } from 'redux-form';
 import { Button, Modal } from 'antd';
 
 import FormInModal from './FormInModal';
-import { toggleItemModal, performVaultItemEncryption } from '../../state/modules/vault/operations';
+import {
+    toggleItemModal as toggleItemModalOperation,
+    performVaultItemEncryption,
+} from '../../state/modules/vault/operations';
 
 const ModalWrappedForm = ({
     toggleItemModal,
@@ -16,14 +19,13 @@ const ModalWrappedForm = ({
     isItemModalOpen,
     selectedItemId,
     items,
-    folders
+    folders,
 }) => {
     const handleSubmit = () => submitForm('form_in_modal');
 
     const handleReturn = () => toggleItemModal(false, '');
 
-    const hasProperty = (formValues, property) =>
-        Object.prototype.hasOwnProperty.call(formValues, property);
+    const hasProperty = (formValues, property) => Object.prototype.hasOwnProperty.call(formValues, property);
 
     const onFormSubmit = formValues => {
         let itemId = null;
@@ -33,14 +35,14 @@ const ModalWrappedForm = ({
         if (hasProperty(formValues, 'itemId') && hasProperty(formValues, '_modified')) {
             ({ itemId, _modified } = formValues);
         }
-        const overview = { url, name, folder, };
-        const details = { username, password, };
+        const overview = { url, name, folder };
+        const details = { username, password };
         encryptVaultItem({ overview, details, vaultKey, email, itemId, _modified });
     };
 
     let initialValues = { url: '', name: '', username: '', password: '', folder: '' };
     const selectedItem = items[selectedItemId];
-    
+
     if (selectedItem) {
         const {
             decOverview: { url, name, folder },
@@ -80,7 +82,7 @@ const ModalWrappedForm = ({
             </Modal>
         </div>
     );
-}
+};
 
 const mapStateToProps = state => {
     const {
@@ -99,13 +101,11 @@ const mapStateToProps = state => {
     };
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        toggleItemModal: bindActionCreators(toggleItemModal, dispatch),
-        submitForm: bindActionCreators(submit, dispatch),
-        encryptVaultItem: bindActionCreators(performVaultItemEncryption, dispatch),
-    };
-};
+const mapDispatchToProps = dispatch => ({
+    toggleItemModal: bindActionCreators(toggleItemModalOperation, dispatch),
+    submitForm: bindActionCreators(submit, dispatch),
+    encryptVaultItem: bindActionCreators(performVaultItemEncryption, dispatch),
+});
 
 export default connect(
     mapStateToProps,

@@ -7,8 +7,6 @@ const LogoText = styled.div`
     padding: 10px 5px 20px 5px;
 `;
 
-const SideBarHeader = () => {
-    return <LogoText className="logo">OnePass</LogoText>;
-};
+const SideBarHeader = () => <LogoText className="logo">OnePass</LogoText>;
 
 export default SideBarHeader;

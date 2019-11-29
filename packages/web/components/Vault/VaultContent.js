@@ -25,9 +25,7 @@ const FolderWrapper = styled.div`
 
 const Folder = styled.div`
     margin: 0 15px 24px;
-    @media screen and (min-width: ${props => {
-            return props.theme.screenXsMax;
-        }}) {
+    @media screen and (min-width: ${props => props.theme.screenXsMax}) {
         margin: 0 75px 24px 48px;
     }
 `;
@@ -45,13 +43,9 @@ const FolderContents = styled.div`
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
     position: relative;
-    background: ${props => {
-        return props.theme.grayWhite;
-    }};
+    background: ${props => props.theme.grayWhite};
     padding: 10px;
-    @media screen and (min-width: ${props => {
-            return props.theme.screenXsMax;
-        }}) {
+    @media screen and (min-width: ${props => props.theme.screenXsMax}) {
         padding: 30px;
     }
 `;
@@ -65,35 +59,29 @@ const EmptyHolder = styled(Empty)`
     flex-direction: column;
 `;
 
-const VaultContent = ({
-    items,
-    isVaultEmpty
-}) => {
+const VaultContent = ({ items, isVaultEmpty }) => {
     const renderItemCard = (key, item) => <VaultItemCard item={item} key={key} />;
 
-    const renderFolder = () =>
+    const renderFolder = () => (
         <Folder>
             <FolderHead>
                 {/* To Do some toggle button here */}
                 <div>Social</div>
             </FolderHead>
-            <FolderContents>
-                {Object.entries(items).map(item => {
-                    return renderItemCard(item[0], item[1]);
-                })}
-            </FolderContents>
+            <FolderContents>{Object.entries(items).map(item => renderItemCard(item[0], item[1]))}</FolderContents>
         </Folder>
+    );
 
     return (
-        <React.Fragment>
+        <>
             <MainContentHolder>
                 <VaultItemsScroll>
                     <FolderWrapper>{!isVaultEmpty ? renderFolder() : <EmptyHolder />}</FolderWrapper>
                 </VaultItemsScroll>
             </MainContentHolder>
-        </React.Fragment>
-    )
-}
+        </>
+    );
+};
 
 const mapStateToProps = ({ vault: { decrypted } }) => {
     const { isVaultEmpty } = decrypted;

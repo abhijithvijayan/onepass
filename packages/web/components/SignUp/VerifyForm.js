@@ -1,10 +1,10 @@
 import { connect } from 'react-redux';
-import React, { Component } from 'react';
+import React from 'react';
 import { bindActionCreators } from 'redux';
 import { Field, reduxForm } from 'redux-form';
 import { Button, Form, Icon, Input } from 'antd';
 
-import { submitVerificationToken } from '../../state/modules/auth/operations';
+import { submitVerificationToken as submitVerificationTokenOperation } from '../../state/modules/auth/operations';
 
 const renderInputField = ({ input, type, icon, label, meta: { touched, invalid, error } }) => {
     const isInvalid = touched && invalid;
@@ -15,29 +15,18 @@ const renderInputField = ({ input, type, icon, label, meta: { touched, invalid, 
     );
 };
 
-const VerifyForm = ({
-    email,
-    submitVerificationToken,
-    handleSubmit
-}) => {
-    const onSubmit = ({ verificationToken }) =>
-        submitVerificationToken({ email, verificationToken });
+const VerifyForm = ({ email, submitVerificationToken, handleSubmit }) => {
+    const onSubmit = ({ verificationToken }) => submitVerificationToken({ email, verificationToken });
 
     return (
         <Form onSubmit={handleSubmit(onSubmit)}>
-            <Field
-                name="verificationToken"
-                type="number"
-                icon="number"
-                component={renderInputField}
-                label="Token"
-            />
+            <Field name="verificationToken" type="number" icon="number" component={renderInputField} label="Token" />
             <Button type="primary" htmlType="submit">
                 Submit
             </Button>
         </Form>
     );
-}
+};
 
 const validate = values => {
     const errors = {};
@@ -59,11 +48,9 @@ const mapStateToProps = state => {
     };
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        submitVerificationToken: bindActionCreators(submitVerificationToken, dispatch),
-    };
-};
+const mapDispatchToProps = dispatch => ({
+    submitVerificationToken: bindActionCreators(submitVerificationTokenOperation, dispatch),
+});
 
 const VerifyFormWrapper = connect(
     mapStateToProps,

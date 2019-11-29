@@ -7,7 +7,7 @@ import { history } from '../state/utils';
 
 const App = () => {
     return (
-        <React.Fragment>
+        <>
             <Router history={history}>
                 <div>
                     <Switch>
@@ -16,7 +16,7 @@ const App = () => {
                     </Switch>
                 </div>
             </Router>
-        </React.Fragment>
+        </>
     );
 };
 

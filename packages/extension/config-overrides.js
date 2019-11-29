@@ -12,23 +12,24 @@ const rewireYarnWorkspaces = require('react-app-rewire-yarn-workspaces');
  */
 
 // Development
-const cspConfigDevPolicy = {
-    'script-src': ["'unsafe-inline'", "'self'", "'unsafe-eval'"],
-    'style-src': ["'unsafe-inline'", "'self'", "'unsafe-eval'"],
-};
 
-const cspDevOptions = {
-    enabled: true,
-    hashingMethod: 'sha256',
-    hashEnabled: {
-        'script-src': false,
-        'style-src': false,
-    },
-    nonceEnabled: {
-        'script-src': true,
-        'style-src': false,
-    },
-};
+// const cspConfigDevPolicy = {
+//     'script-src': ["'unsafe-inline'", "'self'", "'unsafe-eval'"],
+//     'style-src': ["'unsafe-inline'", "'self'", "'unsafe-eval'"],
+// };
+
+// const cspDevOptions = {
+//     enabled: true,
+//     hashingMethod: 'sha256',
+//     hashEnabled: {
+//         'script-src': false,
+//         'style-src': false,
+//     },
+//     nonceEnabled: {
+//         'script-src': true,
+//         'style-src': false,
+//     },
+// };
 
 // Production
 const cspConfigProdPolicy = {

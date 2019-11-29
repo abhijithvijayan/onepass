@@ -10,8 +10,6 @@ const LoadingWrapper = styled.div`
     align-items: center;
 `;
 
-const Loader = () => {
-    return <LoadingWrapper>Loading...</LoadingWrapper>;
-};
+const Loader = () => <LoadingWrapper>Loading...</LoadingWrapper>;
 
 export default Loader;

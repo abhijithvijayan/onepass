@@ -1,11 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Layout } from 'antd';
 import styled from 'styled-components';
 
 import VaultHeader from './VaultHeader';
 import VaultSideBar from './VaultSideBar';
 import VaultContent from './VaultContent';
-import VaultFooter from './VaultFooter';
 import PdfModal from './PdfModal';
 import ModalWrappedForm from './ModalWrappedForm';
 import BottomActionButtons from './BottomActionButtons';
@@ -19,21 +18,19 @@ const VaultLayout = styled(Layout)`
     left: 0;
 `;
 
-const Vault = () => {
-    return (
-        <VaultLayout className="mh-100">
-            <VaultSideBar />
-            <Layout>
-                <VaultHeader />
-                <VaultContent />
-                <BottomActionButtons />
-                {/* <VaultFooter /> */}
-                <PdfModal />
-            </Layout>
-            <ModalWrappedForm />
-            <DeleteConfirmModal />
-        </VaultLayout>
-    );
-};
+const Vault = () => (
+    <VaultLayout className="mh-100">
+        <VaultSideBar />
+        <Layout>
+            <VaultHeader />
+            <VaultContent />
+            <BottomActionButtons />
+            {/* <VaultFooter /> */}
+            <PdfModal />
+        </Layout>
+        <ModalWrappedForm />
+        <DeleteConfirmModal />
+    </VaultLayout>
+);
 
 export default Vault;

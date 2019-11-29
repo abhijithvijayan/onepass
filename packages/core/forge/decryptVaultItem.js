@@ -2,9 +2,7 @@ import forge from 'node-forge';
 
 import { stringToUint8Array } from '../jseu';
 
-export const retrieveBufferFromBase64 = base64Value => {
-    return forge.util.createBuffer(forge.util.decode64(base64Value));
-};
+export const retrieveBufferFromBase64 = base64Value => forge.util.createBuffer(forge.util.decode64(base64Value));
 
 export const decryptVaultItem = ({ encData, vaultKey }) => {
     const { iv, tagLength, tag, data } = encData;

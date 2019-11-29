@@ -12,14 +12,12 @@ const HomeHolder = styled.div`
     }
 `;
 
-const Home = () => {
-    return (
-        <HomeHolder>
-            <h2>OnePass Password Manager</h2>
-            <a href="/signup">SignUp</a>
-            <a href="/login">Login</a>
-        </HomeHolder>
-    );
-};
+const Home = () => (
+    <HomeHolder>
+        <h2>OnePass Password Manager</h2>
+        <a href="/signup">SignUp</a>
+        <a href="/login">Login</a>
+    </HomeHolder>
+);
 
 export default Home;

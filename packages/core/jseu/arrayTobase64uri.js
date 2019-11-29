@@ -6,6 +6,4 @@ import jseu from 'js-encoding-utils';
  */
 
 // ToDo: use node-jose if JWK could be performed with it
-export const arrayTobase64uri = keyArray => {
-    return jseu.encoder.encodeBase64Url(keyArray);
-};
+export const arrayTobase64uri = keyArray => jseu.encoder.encodeBase64Url(keyArray);

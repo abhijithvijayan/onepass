@@ -7,7 +7,7 @@ import { Button, Form } from 'antd';
 import ReactPasswordStrength from 'react-password-strength/dist/universal';
 import styled from 'styled-components';
 
-import { completeSignUp } from '../../state/modules/auth/operations';
+import { completeSignUp as completeSignUpOperation } from '../../state/modules/auth/operations';
 
 const FormInputHolder = styled.div`
     display: flex;
@@ -67,13 +67,7 @@ const renderInputField = ({ input, label, meta: { touched, invalid, error } }) =
     );
 };
 
-const MasterPasswordForm = ({
-    completeSignUp,
-    userId,
-    versionCode,
-    email,
-    handleSubmit
-}) => {
+const MasterPasswordForm = ({ completeSignUp, userId, versionCode, email, handleSubmit }) => {
     const onSubmit = ({ password }) => {
         completeSignUp({ email, userId, versionCode, password });
     };
@@ -87,7 +81,7 @@ const MasterPasswordForm = ({
             </Button>
         </Form>
     );
-}
+};
 
 const validate = values => {
     const errors = {};
@@ -115,11 +109,9 @@ const mapStateToProps = state => {
     };
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        completeSignUp: bindActionCreators(completeSignUp, dispatch),
-    };
-};
+const mapDispatchToProps = dispatch => ({
+    completeSignUp: bindActionCreators(completeSignUpOperation, dispatch),
+});
 
 const MasterPasswordWrapper = connect(
     mapStateToProps,
